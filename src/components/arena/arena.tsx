@@ -81,11 +81,13 @@ export function Arena({
   const [result, setResult] = useState<SubmissionResult | null>(null);
   const [submissionId, setSubmissionId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pasteWarning, setPasteWarning] = useState(false);
 
   const handleSubmit = useCallback(async () => {
     setSubmissionState("submitting");
     setError(null);
     setResult(null);
+    setPasteWarning(false);
 
     try {
       const res = await fetch("/api/submissions", {
@@ -103,9 +105,6 @@ export function Arena({
       setSubmissionId(data.id);
       setSubmissionState("queued");
 
-      // Poll for completion. The execution backend is stubbed for now; the
-      // poll will return a synthetic result so the UI flow is testable
-      // end-to-end before the real runner exists.
       pollForResult(data.id, setSubmissionState, setResult, setError);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -178,6 +177,7 @@ export function Arena({
             value={code}
             onChange={setCode}
             language={language === "GO" ? "go" : "plaintext"}
+            onSuspiciousPaste={() => setPasteWarning(true)}
           />
         </div>
 
@@ -190,6 +190,16 @@ export function Arena({
           submissionId={submissionId}
         />
       </div>
+
+      {pasteWarning && (
+        <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-lg border border-warning/40 bg-surface px-4 py-2.5 shadow-lg">
+          <p className="text-xs text-ink-secondary">
+            <span className="font-medium text-warning">Paste detected.</span>{" "}
+            Large pastes are flagged. Type your solution for the best
+            experience.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
