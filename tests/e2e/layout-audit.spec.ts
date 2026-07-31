@@ -6,7 +6,10 @@ import { certifyRoute } from "./helpers/certify";
  * Every route listed here is certified at every viewport before a phase is
  * considered done. Adding a route to this list is part of building it.
  */
-const ROUTES = [{ path: "/", name: "landing" }];
+const ROUTES = [
+  { path: "/", name: "landing" },
+  { path: "/challenges", name: "challenges" },
+];
 
 for (const route of ROUTES) {
   test.describe(`layout: ${route.name}`, () => {
