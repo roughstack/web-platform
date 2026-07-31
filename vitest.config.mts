@@ -1,15 +1,16 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react()],
+  // Native replacement for vite-tsconfig-paths; resolves the @/* alias from tsconfig.
+  resolve: { tsconfigPaths: true },
   test: {
     environment: "jsdom",
     globals: true,
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/unit/**/*.test.{ts,tsx}"],
-    // Playwright owns everything under tests/e2e and uses a conflicting `test` export.
+    // Playwright owns tests/e2e and exports a conflicting `test` symbol.
     exclude: ["tests/e2e/**", "node_modules/**", ".next/**"],
     coverage: {
       provider: "v8",

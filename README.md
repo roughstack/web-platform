@@ -68,7 +68,7 @@ npm run db:push                # create tables
 npm run db:seed                # load challenges
 ```
 
-The app is served at `http://localhost:3000`.
+The app is served at `http://localhost:3100`.
 
 ```bash
 npm run docker:logs            # tail the web container

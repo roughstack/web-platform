@@ -12,6 +12,12 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+
+  // The dev overlay is injected into the page and sits above real content, which
+  // makes the layout auditor report it as an element occluding the footer on small
+  // viewports. Hiding it keeps audit screenshots representative of production.
+  // Compile and runtime errors are still surfaced.
+  devIndicators: false,
 };
 
 export default nextConfig;

@@ -66,8 +66,21 @@ function browserAudit(opts: AuditOptions): AuditResult {
     return false;
   }
 
+  /**
+   * Elements injected by tooling rather than the application: the Next.js dev
+   * overlay, its route announcer, and browser extension roots. They are not part
+   * of the product and would otherwise be reported as covering real content.
+   */
+  function isToolingArtifact(el: Element): boolean {
+    return (
+      el.closest(
+        "nextjs-portal, next-route-announcer, [data-nextjs-dialog-overlay], [data-nextjs-toast], #__next-build-watcher",
+      ) !== null
+    );
+  }
+
   function isIgnored(el: Element): boolean {
-    return el.closest("[data-audit-ignore]") !== null;
+    return el.closest("[data-audit-ignore]") !== null || isToolingArtifact(el);
   }
 
   function hasDirectText(el: Element): boolean {
@@ -206,6 +219,8 @@ function browserAudit(opts: AuditOptions): AuditResult {
       if (!hit) continue;
       // Self, descendants and ancestors are all expected hits.
       if (hit === el || el.contains(hit) || hit.contains(el)) continue;
+      // Dev overlays and extension roots are not part of the product.
+      if (isToolingArtifact(hit)) continue;
       // A label overlaying its own control is fine.
       if (hit.closest("label") && hit.closest("label")!.contains(el)) continue;
       // Content scrolling beneath a pinned header is intended, not a defect.

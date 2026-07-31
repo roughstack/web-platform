@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const BASE_URL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
+// Port 3100 rather than 3000: the default is commonly occupied by other local
+// stacks, and a fixed non-default port keeps the audit reproducible.
+const BASE_URL = process.env.E2E_BASE_URL ?? "http://localhost:3100";
 
 export default defineConfig({
   testDir: "./tests/e2e",
