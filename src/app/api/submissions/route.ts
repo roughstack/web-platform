@@ -64,21 +64,22 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession();
   const userId = session?.user?.id;
 
+  // Per-user workload variant (anti-AI Layer 1a): each session gets a
+  // different seed and slightly different device geometry, so an
+  // AI-generated solution for one user does not transfer to another.
+  const variant = await getWorkloadVariant();
+
   const submission = await prisma.submission.create({
     data: {
       challengeId: challenge.id,
       userId: userId ?? null,
+      sessionId: variant.sessionToken,
       language: body.language as never,
       code: body.code,
       status: "PENDING",
     },
     select: { id: true },
   });
-
-  // Per-user workload variant (anti-AI Layer 1a): each session gets a
-  // different seed and slightly different device geometry, so an
-  // AI-generated solution for one user does not transfer to another.
-  const variant = await getWorkloadVariant();
 
   startExecution({
     submissionId: submission.id,

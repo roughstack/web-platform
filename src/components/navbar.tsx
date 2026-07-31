@@ -41,6 +41,17 @@ export function Navbar() {
           <Button asChild variant="ghost" size="md" className="px-2.5 sm:px-4">
             <Link href="/challenges">Challenges</Link>
           </Button>
+          {/* Dashboard is hidden on the smallest screens to keep the navbar
+              within 320px. It reappears at the sm breakpoint where there is
+              room for all three links. */}
+          <Button
+            asChild
+            variant="ghost"
+            size="md"
+            className="hidden px-2.5 sm:inline-flex sm:px-4"
+          >
+            <Link href="/dashboard">Dashboard</Link>
+          </Button>
           <Button asChild variant="secondary" size="md" className="px-2.5 sm:px-4">
             <Link href="/login">Sign in</Link>
           </Button>

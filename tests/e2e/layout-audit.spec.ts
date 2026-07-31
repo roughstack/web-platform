@@ -10,6 +10,7 @@ const ROUTES = [
   { path: "/", name: "landing" },
   { path: "/challenges", name: "challenges" },
   { path: "/challenges/ssd-ftl-gc", name: "arena" },
+  { path: "/dashboard", name: "dashboard" },
 ];
 
 for (const route of ROUTES) {

@@ -17,13 +17,28 @@ import { cookies } from "next/headers";
 const SESSION_COOKIE = "ba-variant";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
-export interface WorkloadVariant {
+export interface VariantParams {
   seed: number;
   blocks: number;
   pagesPerBlock: number;
   logicalPages: number;
   hotFraction: number;
   hotProbability: number;
+}
+
+export interface WorkloadVariant extends VariantParams {
+  /** The raw session token (cookie value), used to group submissions. */
+  sessionToken: string;
+}
+
+/**
+ * getSessionToken reads the variant cookie without creating it. Returns
+ * null if no session exists yet. Used by pages that need to look up a
+ * visitor's history without forcing a new session.
+ */
+export async function getSessionToken(): Promise<string | null> {
+  const store = await cookies();
+  return store.get(SESSION_COOKIE)?.value ?? null;
 }
 
 /**
@@ -35,23 +50,23 @@ export async function getWorkloadVariant(): Promise<WorkloadVariant> {
   const store = await cookies();
   const existing = store.get(SESSION_COOKIE)?.value;
 
+  let sessionToken: string;
   let sessionSeed: number;
   if (existing) {
+    sessionToken = existing;
     sessionSeed = hashStringToInt(existing);
   } else {
-    // Generate a fresh session token. crypto.randomUUID is available in
-    // Next.js server runtime.
-    const token = crypto.randomUUID();
-    store.set(SESSION_COOKIE, token, {
+    sessionToken = crypto.randomUUID();
+    store.set(SESSION_COOKIE, sessionToken, {
       httpOnly: true,
       sameSite: "lax",
       maxAge: SESSION_MAX_AGE_SECONDS,
       path: "/",
     });
-    sessionSeed = hashStringToInt(token);
+    sessionSeed = hashStringToInt(sessionToken);
   }
 
-  return deriveVariant(sessionSeed);
+  return { ...deriveVariant(sessionSeed), sessionToken };
 }
 
 /**
@@ -59,16 +74,14 @@ export async function getWorkloadVariant(): Promise<WorkloadVariant> {
  * ranges are deliberately narrow so the challenge stays fair (same
  * difficulty) but the exact inputs differ (no transferability).
  */
-export function deriveVariant(seed: number): WorkloadVariant {
-  // Use a simple LCG to derive sub-seeds for each parameter so they vary
-  // independently within their ranges.
+export function deriveVariant(seed: number): VariantParams {
   const rng = makeLCG(seed);
 
   // Blocks: 14-18 (centered on 16)
   const blocks = 14 + (rng() % 5);
-  // Pages per block: 48-80 (centered on 64, multiple of 16 for alignment)
+  // Pages per block: 48-112 (multiples of 16 for alignment)
   const pagesPerBlock = 48 + (rng() % 5) * 16;
-  // Logical pages: roughly 0.75x addressable capacity, ±10%
+  // Logical pages: roughly 0.7-0.9x addressable capacity
   const addressable = blocks * pagesPerBlock;
   const logicalPages = Math.round(addressable * (0.7 + (rng() % 20) / 100));
   // Hot fraction: 0.15-0.25
@@ -95,7 +108,7 @@ export function hashStringToInt(s: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i);
-  h = Math.imul(h, 0x01000193);
+    h = Math.imul(h, 0x01000193);
   }
   return h >>> 0;
 }
@@ -108,7 +121,6 @@ export function hashStringToInt(s: string): number {
 function makeLCG(seed: number): () => number {
   let state = seed || 1;
   return () => {
-    // Numerical Recipes LCG constants for 32-bit.
     state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
     return state;
   };

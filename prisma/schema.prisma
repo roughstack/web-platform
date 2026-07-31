@@ -133,6 +133,10 @@ model Challenge {
 model Submission {
   id          String           @id @default(cuid())
   userId      String?
+  /// Anonymous session identifier (from the variant cookie). Used to group
+  /// a visitor's submissions before they sign in, so the dashboard can
+  /// show their history without requiring auth.
+  sessionId   String?
   challengeId String
   language    Language
   code        String           @db.Text
@@ -152,6 +156,7 @@ model Submission {
   finishedAt DateTime?
 
   @@index([userId, createdAt])
+  @@index([sessionId, createdAt])
   @@index([challengeId])
   @@index([status])
 }
