@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, AlertCircle, Loader2, BarChart3 } from "lucide-react";
 import type { MetricDef, ScoringDef, SubmissionResult } from "./arena";
+import { SsdBlockGrid, type BlockState } from "./ssd-block-grid";
 
 export interface ResultsPanelProps {
   state: "idle" | "submitting" | "queued" | "running" | "done" | "error";
@@ -129,6 +130,19 @@ export function ResultsPanel({
           );
         })}
       </div>
+
+      {result.finalState && result.finalState.length > 0 && (
+        <div className="mt-5 border-t border-edge pt-4">
+          <SsdBlockGrid
+            blocks={result.finalState as BlockState[]}
+            pagesPerBlock={Math.max(
+              ...result.finalState.map(
+                (b) => b.valid + b.invalid + b.free,
+              ),
+            )}
+          />
+        </div>
+      )}
 
       {result.message && (
         <p className="mt-3 text-xs text-ink-muted">{result.message}</p>

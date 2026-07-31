@@ -1,6 +1,9 @@
 package ftl
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 // greedyPolicy always reclaims the block with the most invalid pages. It
 // never reclaims over-provision blocks, which are the migration reserve —
@@ -168,7 +171,7 @@ func TestRunHarnessIsDeterministic(t *testing.T) {
 	if err1 != nil || err2 != nil {
 		t.Fatalf("unexpected errors: %v %v", err1, err2)
 	}
-	if r1 != r2 {
+	if !reflect.DeepEqual(r1, r2) {
 		t.Errorf("non-deterministic result: %+v vs %+v", r1, r2)
 	}
 }

@@ -54,15 +54,15 @@ type block struct {
 
 // BlockStat is a read-only snapshot of one block, handed to solution code.
 type BlockStat struct {
-	Index      int
-	Valid      int
-	Invalid    int
-	Free       int
-	EraseCount int
+	Index           int  `json:"index"`
+	Valid           int  `json:"valid"`
+	Invalid         int  `json:"invalid"`
+	Free            int  `json:"free"`
+	EraseCount      int  `json:"eraseCount"`
 	// IsOverProvision is true for blocks in the reserved region. Host writes
 	// never land here; only GC migration uses them. A policy that reclaims an
 	// OP block shrinks the migration reserve, which is usually a bad idea.
-	IsOverProvision bool
+	IsOverProvision bool `json:"isOverProvision"`
 }
 
 // DeviceStats is the full read-only view a garbage collection policy gets to

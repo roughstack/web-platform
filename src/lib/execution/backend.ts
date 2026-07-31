@@ -22,6 +22,16 @@ export interface ExecutionResult {
   executionTimeMs: number;
   error?: string;
   buildErrors?: string;
+  finalState?: BlockState[];
+}
+
+export interface BlockState {
+  index: number;
+  valid: number;
+  invalid: number;
+  free: number;
+  eraseCount: number;
+  isOverProvision: boolean;
 }
 
 export interface ExecutionBackend {
@@ -112,6 +122,7 @@ export class LocalDockerBackend implements ExecutionBackend {
             executionTimeMs: raw.execution_time_ms ?? 0,
             error: raw.error,
             buildErrors: raw.build_errors,
+            finalState: raw.final_state ?? [],
           });
           return;
         } catch {

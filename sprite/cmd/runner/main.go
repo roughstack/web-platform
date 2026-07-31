@@ -73,6 +73,7 @@ func main() {
 		"passed":               result.Passed,
 		"execution_time_ms":   elapsed.Milliseconds(),
 		"timed_out":            time.Now().After(deadline),
+		"final_state":          result.FinalState,
 	}
 
 	if err != nil {

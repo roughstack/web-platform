@@ -40,6 +40,16 @@ export interface SubmissionResult {
   score: number;
   metrics: Record<string, number>;
   message?: string;
+  finalState?: BlockState[];
+}
+
+export interface BlockState {
+  index: number;
+  valid: number;
+  invalid: number;
+  free: number;
+  eraseCount: number;
+  isOverProvision: boolean;
 }
 
 export function Arena({
@@ -229,8 +239,7 @@ async function pollForResult(
         setError(data.error ?? "Execution failed");
         setState("error");
         return;
-      }
-    } catch {
+      }    } catch {
       // network hiccup; keep polling
     }
   }

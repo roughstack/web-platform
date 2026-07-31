@@ -78,7 +78,12 @@ async function executeSubmission(opts: {
       score: result.score,
       executionTimeMs: result.executionTimeMs,
       metrics: result.metrics,
-      testResults: { source: "local-docker" },
+      testResults: JSON.parse(
+        JSON.stringify({
+          source: "local-docker",
+          finalState: result.finalState ?? [],
+        }),
+      ),
       stderr: result.error ?? null,
     },
   });

@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
+interface BlockState {
+  index: number;
+  valid: number;
+  invalid: number;
+  free: number;
+  eraseCount: number;
+  isOverProvision: boolean;
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -26,6 +35,7 @@ export async function GET(
   // If a result exists, return it regardless of the submission status.
   if (submission.result) {
     const r = submission.result;
+    const testResults = r.testResults as { finalState?: BlockState[] };
     return NextResponse.json({
       status: "done",
       result: {
@@ -33,6 +43,7 @@ export async function GET(
         score: r.score,
         metrics: r.metrics as Record<string, number>,
         message: r.stderr ?? undefined,
+        finalState: testResults?.finalState ?? [],
       },
     });
   }
