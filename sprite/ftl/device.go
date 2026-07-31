@@ -33,10 +33,18 @@ var (
 	ErrPageNotValid = errors.New("ftl: source page is not valid")
 )
 
-// Config describes the geometry of the simulated device.
-type Config struct {
+// DeviceConfig describes the geometry of the simulated device.
+type DeviceConfig struct {
 	Blocks        int
 	PagesPerBlock int
+	// OverProvisionBlocks are extra blocks beyond the addressable space that
+	// are never written by the host but are available for garbage collection
+	// to migrate valid pages into. Without over-provisioning, a completely
+	// full device has nowhere to migrate to and reclamation deadlocks.
+	//
+	// Real SSDs reserve 7-28% of physical capacity this way. The default of 1
+	// block is the minimum that makes GC always able to make progress.
+	OverProvisionBlocks int
 }
 
 type block struct {
@@ -51,6 +59,10 @@ type BlockStat struct {
 	Invalid    int
 	Free       int
 	EraseCount int
+	// IsOverProvision is true for blocks in the reserved region. Host writes
+	// never land here; only GC migration uses them. A policy that reclaims an
+	// OP block shrinks the migration reserve, which is usually a bad idea.
+	IsOverProvision bool
 }
 
 // DeviceStats is the full read-only view a garbage collection policy gets to
@@ -67,7 +79,7 @@ type DeviceStats struct {
 
 // Device is a simulated flash device with an internal translation layer.
 type Device struct {
-	cfg    Config
+	cfg    DeviceConfig
 	blocks []block
 
 	// Logical to physical mapping, and its inverse so that garbage collection
@@ -86,15 +98,21 @@ type Device struct {
 
 // NewDevice builds an empty device. A geometry with non-positive dimensions is
 // clamped to a single page so the simulator can never divide by zero.
-func NewDevice(cfg Config) *Device {
+// OverProvisionBlocks defaults to 1 if not set, which is the minimum needed
+// for garbage collection to always have somewhere to migrate.
+func NewDevice(cfg DeviceConfig) *Device {
 	if cfg.Blocks < 1 {
 		cfg.Blocks = 1
 	}
 	if cfg.PagesPerBlock < 1 {
 		cfg.PagesPerBlock = 1
 	}
+	if cfg.OverProvisionBlocks < 1 {
+		cfg.OverProvisionBlocks = 1
+	}
 
-	blocks := make([]block, cfg.Blocks)
+	totalBlocks := cfg.Blocks + cfg.OverProvisionBlocks
+	blocks := make([]block, totalBlocks)
 	for i := range blocks {
 		blocks[i] = block{pages: make([]PageState, cfg.PagesPerBlock)}
 	}
@@ -109,9 +127,24 @@ func NewDevice(cfg Config) *Device {
 
 // --------------------------------------------------------------- geometry
 
-func (d *Device) BlockCount() int    { return d.cfg.Blocks }
+// BlockCount returns the number of addressable blocks (excluding over-provision).
+func (d *Device) BlockCount() int { return d.cfg.Blocks }
+
+// TotalBlockCount returns all blocks including over-provision.
+func (d *Device) TotalBlockCount() int { return d.cfg.Blocks + d.cfg.OverProvisionBlocks }
+
 func (d *Device) PagesPerBlock() int { return d.cfg.PagesPerBlock }
-func (d *Device) TotalPages() int    { return d.cfg.Blocks * d.cfg.PagesPerBlock }
+
+// TotalPages includes over-provision blocks. This is the physical capacity.
+func (d *Device) TotalPages() int { return d.TotalBlockCount() * d.cfg.PagesPerBlock }
+
+// AddressablePages is the capacity available for host writes.
+func (d *Device) AddressablePages() int { return d.cfg.Blocks * d.cfg.PagesPerBlock }
+
+// isOverProvision reports whether a block index is in the over-provision region.
+func (d *Device) isOverProvision(blockIdx int) bool {
+	return blockIdx >= d.cfg.Blocks
+}
 
 func (d *Device) blockOf(ppn int) int { return ppn / d.cfg.PagesPerBlock }
 func (d *Device) pageOf(ppn int) int  { return ppn % d.cfg.PagesPerBlock }
@@ -173,10 +206,29 @@ func (d *Device) GCWrites() int    { return d.gcWrites }
 
 // --------------------------------------------------------------- operations
 
-// allocate finds the next free physical page, sweeping forward from the cursor.
-// A block may be excluded so that garbage collection never relocates a page into
-// the very block it is about to erase. Pass -1 to exclude nothing.
-func (d *Device) allocate(excludeBlock int) (int, bool) {
+// allocateHost finds the next free physical page for a host write. It
+// allocates across all blocks including over-provision, because the OP
+// reserve is enforced by the GC threshold (which triggers before the
+// reserve is exhausted), not by restricting which blocks the host can
+// write to. This is how real FTL works: the controller uses all physical
+// blocks and the over-provisioning is the gap between physical capacity
+// and the logical address space.
+func (d *Device) allocateHost() (int, bool) {
+	total := d.TotalPages()
+	for i := 0; i < total; i++ {
+		ppn := (d.cursor + i) % total
+		if d.stateAt(ppn) == PageFree {
+			d.cursor = (ppn + 1) % total
+			return ppn, true
+		}
+	}
+	return 0, false
+}
+
+// allocateMigration finds a free physical page for a GC migration. It can
+// allocate anywhere except the source block, including the over-provision
+// region, which is exactly what the OP blocks are for.
+func (d *Device) allocateMigration(excludeBlock int) (int, bool) {
 	total := d.TotalPages()
 	for i := 0; i < total; i++ {
 		ppn := (d.cursor + i) % total
@@ -205,7 +257,7 @@ func (d *Device) invalidate(lpn int) {
 // overwritten in place, this always consumes a fresh physical page and leaves the
 // previous one invalid.
 func (d *Device) Write(lpn int) error {
-	ppn, ok := d.allocate(-1)
+	ppn, ok := d.allocateHost()
 	if !ok {
 		return ErrDeviceFull
 	}
@@ -256,7 +308,7 @@ func (d *Device) MigratePage(srcPPN int) error {
 		return ErrPageNotValid
 	}
 
-	dst, ok := d.allocate(d.blockOf(srcPPN))
+	dst, ok := d.allocateMigration(d.blockOf(srcPPN))
 	if !ok {
 		return ErrDeviceFull
 	}
@@ -357,11 +409,12 @@ func (d *Device) Blocks() []BlockStat {
 	stats := make([]BlockStat, len(d.blocks))
 	for i := range d.blocks {
 		stats[i] = BlockStat{
-			Index:      i,
-			Valid:      d.countInBlock(i, PageValid),
-			Invalid:    d.countInBlock(i, PageInvalid),
-			Free:       d.countInBlock(i, PageFree),
-			EraseCount: d.blocks[i].eraseCount,
+			Index:           i,
+			Valid:           d.countInBlock(i, PageValid),
+			Invalid:         d.countInBlock(i, PageInvalid),
+			Free:            d.countInBlock(i, PageFree),
+			EraseCount:      d.blocks[i].eraseCount,
+			IsOverProvision: d.isOverProvision(i),
 		}
 	}
 	return stats

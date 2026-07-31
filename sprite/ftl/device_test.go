@@ -4,16 +4,18 @@ import "testing"
 
 func newTestDevice(t *testing.T) *Device {
 	t.Helper()
-	return NewDevice(Config{Blocks: 4, PagesPerBlock: 4})
+	return NewDevice(DeviceConfig{Blocks: 4, PagesPerBlock: 4})
 }
 
 func TestNewDeviceStartsEmpty(t *testing.T) {
 	d := newTestDevice(t)
 
-	if got, want := d.TotalPages(), 16; got != want {
+	// 4 addressable + 1 OP = 5 blocks × 4 pages = 20 physical pages.
+	total := d.TotalPages()
+	if got, want := total, 20; got != want {
 		t.Fatalf("TotalPages() = %d, want %d", got, want)
 	}
-	if got, want := d.FreePages(), 16; got != want {
+	if got, want := d.FreePages(), total; got != want {
 		t.Fatalf("FreePages() = %d, want %d", got, want)
 	}
 	if got := d.ValidPages(); got != 0 {
@@ -33,7 +35,7 @@ func TestWriteConsumesFreePageAndBecomesReadable(t *testing.T) {
 		t.Fatalf("Write(7) returned error: %v", err)
 	}
 
-	if got, want := d.FreePages(), 15; got != want {
+	if got, want := d.FreePages(), d.TotalPages()-1; got != want {
 		t.Errorf("FreePages() = %d, want %d", got, want)
 	}
 	if got, want := d.ValidPages(), 1; got != want {
@@ -94,23 +96,25 @@ func TestHostWritesAreCounted(t *testing.T) {
 }
 
 func TestWriteFailsWhenNoFreePagesRemain(t *testing.T) {
-	d := NewDevice(Config{Blocks: 1, PagesPerBlock: 2})
+	// 1 addressable block × 2 pages + 1 OP block = 4 physical pages.
+	// The addressable space holds 2 logical pages; the OP block holds 2 more.
+	// Writing 4 unique LPNs fills everything; the 5th must fail.
+	d := NewDevice(DeviceConfig{Blocks: 1, PagesPerBlock: 2, OverProvisionBlocks: 1})
 
-	if err := d.Write(0); err != nil {
-		t.Fatalf("Write(0): %v", err)
+	for i := 0; i < 4; i++ {
+		if err := d.Write(i); err != nil {
+			t.Fatalf("Write(%d): %v", i, err)
+		}
 	}
-	if err := d.Write(1); err != nil {
-		t.Fatalf("Write(1): %v", err)
-	}
-	if err := d.Write(2); err == nil {
-		t.Fatal("Write(2) succeeded on a full device, want ErrDeviceFull")
+	if err := d.Write(4); err == nil {
+		t.Fatal("Write(4) succeeded on a full device, want ErrDeviceFull")
 	} else if err != ErrDeviceFull {
-		t.Fatalf("Write(2) error = %v, want ErrDeviceFull", err)
+		t.Fatalf("Write(4) error = %v, want ErrDeviceFull", err)
 	}
 }
 
 func TestEraseResetsBlockAndIncrementsWear(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 2})
 
 	// Fill block 0 then invalidate both of its pages by rewriting elsewhere.
 	if err := d.Write(0); err != nil {
@@ -144,7 +148,7 @@ func TestEraseResetsBlockAndIncrementsWear(t *testing.T) {
 // Erasing a block that still holds live data would silently destroy it. The
 // device refuses, forcing the caller to migrate valid pages first.
 func TestEraseRefusesBlockHoldingValidPages(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 2})
 	if err := d.Write(0); err != nil {
 		t.Fatal(err)
 	}
@@ -163,7 +167,8 @@ func TestEraseRefusesBlockHoldingValidPages(t *testing.T) {
 
 func TestEraseRejectsOutOfRangeBlock(t *testing.T) {
 	d := newTestDevice(t)
-	for _, idx := range []int{-1, 4, 99} {
+	// newTestDevice has 4 addressable + 1 OP = 5 total blocks (indices 0-4).
+	for _, idx := range []int{-1, 5, 99} {
 		if err := d.Erase(idx); err != ErrInvalidBlock {
 			t.Errorf("Erase(%d) error = %v, want ErrInvalidBlock", idx, err)
 		}
@@ -171,7 +176,7 @@ func TestEraseRejectsOutOfRangeBlock(t *testing.T) {
 }
 
 func TestMigratePageMovesDataAndCountsAsGarbageCollectionWrite(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 2})
 	if err := d.Write(9); err != nil {
 		t.Fatal(err)
 	}
@@ -197,14 +202,14 @@ func TestMigratePageMovesDataAndCountsAsGarbageCollectionWrite(t *testing.T) {
 }
 
 func TestMigratePageRejectsNonValidSource(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 2})
 	if err := d.MigratePage(0); err != ErrPageNotValid {
 		t.Errorf("MigratePage on a free page returned %v, want ErrPageNotValid", err)
 	}
 }
 
 func TestWriteAmplificationReflectsMigrationOverhead(t *testing.T) {
-	d := NewDevice(Config{Blocks: 4, PagesPerBlock: 4})
+	d := NewDevice(DeviceConfig{Blocks: 4, PagesPerBlock: 4})
 
 	// No garbage collection yet, so amplification is exactly 1.
 	for i := 0; i < 4; i++ {
@@ -235,7 +240,7 @@ func TestWriteAmplificationIsOneWhenNothingWasWritten(t *testing.T) {
 }
 
 func TestStatsSnapshotMatchesDeviceState(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 2})
 	if err := d.Write(0); err != nil {
 		t.Fatal(err)
 	}
@@ -245,7 +250,8 @@ func TestStatsSnapshotMatchesDeviceState(t *testing.T) {
 
 	stats := d.Stats()
 
-	if got, want := len(stats.Blocks), 2; got != want {
+	// 2 addressable blocks + 1 OP block = 3 total.
+	if got, want := len(stats.Blocks), d.TotalBlockCount(); got != want {
 		t.Fatalf("len(Stats().Blocks) = %d, want %d", got, want)
 	}
 	if got, want := stats.PagesPerBlock, 2; got != want {
@@ -258,15 +264,15 @@ func TestStatsSnapshotMatchesDeviceState(t *testing.T) {
 		invalid += b.Invalid
 		free += b.Free
 	}
-	if valid != 1 || invalid != 1 || free != 2 {
-		t.Errorf("stats totals valid=%d invalid=%d free=%d, want 1/1/2", valid, invalid, free)
+	if valid != 1 || invalid != 1 || free != 4 {
+		t.Errorf("stats totals valid=%d invalid=%d free=%d, want 1/1/4", valid, invalid, free)
 	}
 }
 
 // The snapshot handed to solution code must be a copy. If a solution mutates it,
 // the real device must be unaffected.
 func TestStatsSnapshotIsIsolatedFromDevice(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 2})
 	if err := d.Write(0); err != nil {
 		t.Fatal(err)
 	}
@@ -282,20 +288,20 @@ func TestStatsSnapshotIsIsolatedFromDevice(t *testing.T) {
 }
 
 func TestWearSpreadIsZeroWhenErasesAreEven(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 1})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 1})
 	if got := d.WearSpread(); got != 0 {
 		t.Errorf("WearSpread() = %v on a fresh device, want 0", got)
 	}
 }
 
-// Two blocks with erase counts of 1 and 0 have a mean of 0.5 and a population
-// standard deviation of exactly 0.5, so the expected value is checked precisely
-// rather than merely asserted to be positive.
+// With 2 addressable blocks + 1 OP block, erase counts of [1, 0, 0] have a
+// mean of 1/3 and a population standard deviation of sqrt(2/3) ≈ 0.471.
+// The expected value is checked precisely rather than merely asserted.
 func TestWearSpreadReflectsUnevenErasing(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 2})
 
 	// Fill block 0, then rewrite both logical pages so they relocate to block 1
-	// and block 0 is left entirely invalid.
+	// or the OP block, leaving block 0 entirely invalid.
 	for _, lpn := range []int{0, 1, 0, 1} {
 		if err := d.Write(lpn); err != nil {
 			t.Fatalf("Write(%d): %v", lpn, err)
@@ -308,8 +314,11 @@ func TestWearSpreadReflectsUnevenErasing(t *testing.T) {
 		t.Fatalf("Erase(0): %v", err)
 	}
 
-	if got, want := d.WearSpread(), 0.5; got != want {
-		t.Errorf("WearSpread() = %v, want %v for erase counts of 1 and 0", got, want)
+	// 3 blocks: erase counts [1, 0, 0]. Mean = 1/3. Variance = (4/9 + 1/9 + 1/9)/3 = 6/9/3 = 2/9.
+	// StdDev = sqrt(2/9) ≈ 0.4714.
+	want := 0.4714045207910317
+	if got := d.WearSpread(); got < want-0.001 || got > want+0.001 {
+		t.Errorf("WearSpread() = %v, want approx %v", got, want)
 	}
 	if got, want := d.MaxEraseCount(), 1; got != want {
 		t.Errorf("MaxEraseCount() = %d, want %d", got, want)
@@ -319,7 +328,7 @@ func TestWearSpreadReflectsUnevenErasing(t *testing.T) {
 // Verify is the consistency oracle the fault-injection suite relies on, so it
 // must actually pass on a device that has been exercised normally.
 func TestVerifyPassesAfterNormalUse(t *testing.T) {
-	d := NewDevice(Config{Blocks: 4, PagesPerBlock: 4})
+	d := NewDevice(DeviceConfig{Blocks: 4, PagesPerBlock: 4})
 	for i := 0; i < 12; i++ {
 		if err := d.Write(i % 5); err != nil {
 			t.Fatalf("Write: %v", err)
@@ -331,7 +340,7 @@ func TestVerifyPassesAfterNormalUse(t *testing.T) {
 }
 
 func TestVerifyPassesAfterMigrationAndErase(t *testing.T) {
-	d := NewDevice(Config{Blocks: 4, PagesPerBlock: 2})
+	d := NewDevice(DeviceConfig{Blocks: 4, PagesPerBlock: 2})
 	for _, lpn := range []int{0, 1, 0, 1} {
 		if err := d.Write(lpn); err != nil {
 			t.Fatalf("Write(%d): %v", lpn, err)
@@ -354,7 +363,7 @@ func TestVerifyPassesAfterMigrationAndErase(t *testing.T) {
 }
 
 func TestValidPagesInListsOnlyLivePages(t *testing.T) {
-	d := NewDevice(Config{Blocks: 2, PagesPerBlock: 4})
+	d := NewDevice(DeviceConfig{Blocks: 2, PagesPerBlock: 4})
 	// Three writes land in block 0; rewriting LPN 0 invalidates its first copy.
 	for _, lpn := range []int{0, 1, 2, 0} {
 		if err := d.Write(lpn); err != nil {
