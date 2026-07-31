@@ -1,0 +1,23 @@
+# Development image: hot reload, full dev dependencies, Docker CLI for local Sprite runs.
+FROM node:22-bookworm-slim
+
+# openssl is a Prisma runtime requirement; docker.io gives us the CLI that talks to
+# the host daemon through the mounted socket for EXECUTION_MODE=local.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssl ca-certificates docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy manifests first so dependency installation is cached independently of source edits.
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY prisma ./prisma
+RUN npx prisma generate || true
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
