@@ -11,6 +11,7 @@ const ROUTES = [
   { path: "/challenges", name: "challenges" },
   { path: "/challenges/ssd-ftl-gc", name: "arena" },
   { path: "/dashboard", name: "dashboard" },
+  { path: "/blog/tricking-ai", name: "blog-anti-ai" },
 ];
 
 for (const route of ROUTES) {

@@ -15,15 +15,21 @@ export function Footer() {
         <nav aria-label="Footer" className="-my-2 flex items-center gap-5">
           <Link
             href="/challenges"
-            className="inline-flex min-h-11 items-center text-xs text-ink-muted transition-colors hover:text-ink"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs text-ink-muted transition-colors hover:text-ink"
           >
             Challenges
+          </Link>
+          <Link
+            href="/blog/tricking-ai"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs text-ink-muted transition-colors hover:text-ink"
+          >
+            Anti-AI
           </Link>
           <a
             href="https://fly.io/docs/machines/"
             target="_blank"
             rel="noreferrer noopener"
-            className="inline-flex min-h-11 items-center text-xs text-ink-muted transition-colors hover:text-ink"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-xs text-ink-muted transition-colors hover:text-ink"
           >
             Runtime
           </a>

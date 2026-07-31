@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Cpu, HardDrive, Zap } from "lucide-react";
+import { Cpu, HardDrive, Zap, Database, Layers, ShieldHalf } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const DIFFERENTIATORS = [
   {
@@ -38,6 +39,29 @@ const STEPS = [
     n: "03",
     title: "Read the damage",
     body: "Get write amplification, erase counts and wear spread — not a green checkmark.",
+  },
+];
+
+const CONCEPTS = [
+  {
+    icon: HardDrive,
+    title: "Flash translation layers",
+    body: "Out-of-place writes, garbage collection, wear levelling, and the cost-benefit tradeoffs that decide which block to reclaim.",
+  },
+  {
+    icon: Database,
+    title: "Log-structured storage",
+    body: "Why LFS turns a sequential write workload into a win, and the cleaning-segment problem that comes with it.",
+  },
+  {
+    icon: Layers,
+    title: "Page replacement & caching",
+    body: "Eviction policies, recency vs. frequency, and the adversarial traces that separate LRU from LFU and ARC.",
+  },
+  {
+    icon: ShieldHalf,
+    title: "Crash consistency",
+    body: "Write-ahead logging, atomicity units, and what it takes to recover a data structure after a power loss mid-operation.",
   },
 ];
 
@@ -140,22 +164,72 @@ export default function Home() {
         {/* Differentiators */}
         <section className="border-b border-edge">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
-              {DIFFERENTIATORS.map(({ icon: Icon, title, body }) => (
-                <div key={title}>
+            <ScrollReveal>
+              <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+                Why this is different
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-secondary sm:text-base">
+                LeetCode rehearses the interview. ByteArena rehearses the
+                systems. The constraints are physical, the metrics are
+                unforgiving, and the grader is actively hostile.
+              </p>
+            </ScrollReveal>
+
+            <div className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
+              {DIFFERENTIATORS.map(({ icon: Icon, title, body }, i) => (
+                <ScrollReveal key={title} delay={i * 0.08}>
                   <span
                     aria-hidden="true"
                     className="grid size-10 place-items-center rounded-lg border border-edge bg-surface text-signal"
                   >
                     <Icon className="size-[18px]" />
                   </span>
-                  <h2 className="mt-4 text-base font-semibold text-ink">
+                  <h3 className="mt-4 text-base font-semibold text-ink">
                     {title}
-                  </h2>
+                  </h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
                     {body}
                   </p>
-                </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* What you'll learn */}
+        <section className="border-b border-edge bg-elevated/20">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+            <ScrollReveal>
+              <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+                What you'll actually learn
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-secondary sm:text-base">
+                These are the internals that every database, filesystem, and
+                storage controller has to solve. You'll solve them too — and
+                the simulator will tell you exactly how badly.
+              </p>
+            </ScrollReveal>
+
+            <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:gap-12">
+              {CONCEPTS.map(({ icon: Icon, title, body }, i) => (
+                <ScrollReveal key={title} delay={i * 0.06}>
+                  <div className="flex gap-4">
+                    <span
+                      aria-hidden="true"
+                      className="grid size-9 shrink-0 place-items-center rounded-lg border border-edge bg-surface text-signal"
+                    >
+                      <Icon className="size-4" />
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-semibold text-ink">
+                        {title}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-ink-secondary">
+                        {body}
+                      </p>
+                    </div>
+                  </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -164,29 +238,32 @@ export default function Home() {
         {/* How it works */}
         <section id="how-it-works" className="scroll-mt-20">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              How a run works
-            </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-secondary sm:text-base">
-              Your code never touches a shared machine. It is injected into a
-              fresh microVM, driven through a deterministic workload, and the
-              VM is destroyed before the results reach your screen.
-            </p>
+            <ScrollReveal>
+              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                How a run works
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-secondary sm:text-base">
+                Your code never touches a shared machine. It is injected into a
+                fresh microVM, driven through a deterministic workload, and the
+                VM is destroyed before the results reach your screen.
+              </p>
+            </ScrollReveal>
 
             <ol className="mt-10 grid gap-8 sm:grid-cols-3 sm:gap-6">
-              {STEPS.map((step) => (
-                <li
-                  key={step.n}
-                  className="border-t border-edge pt-5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5"
-                >
-                  <span className="font-mono text-xs text-signal">{step.n}</span>
-                  <h3 className="mt-2 text-base font-semibold text-ink">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
-                    {step.body}
-                  </p>
-                </li>
+              {STEPS.map((step, i) => (
+                <ScrollReveal key={step.n} delay={i * 0.1}>
+                  <li
+                    className="border-t border-edge pt-5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5"
+                  >
+                    <span className="font-mono text-xs text-signal">{step.n}</span>
+                    <h3 className="mt-2 text-base font-semibold text-ink">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+                      {step.body}
+                    </p>
+                  </li>
+                </ScrollReveal>
               ))}
             </ol>
           </div>
