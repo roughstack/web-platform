@@ -132,7 +132,7 @@ model Challenge {
 
 model Submission {
   id          String           @id @default(cuid())
-  userId      String
+  userId      String?
   challengeId String
   language    Language
   code        String           @db.Text
@@ -143,7 +143,7 @@ model Submission {
   /// Populated when the run fails before producing a result.
   error     String? @db.Text
 
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   challenge  Challenge  @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   result     Result?
 

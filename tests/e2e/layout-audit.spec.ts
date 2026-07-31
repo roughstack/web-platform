@@ -9,6 +9,7 @@ import { certifyRoute } from "./helpers/certify";
 const ROUTES = [
   { path: "/", name: "landing" },
   { path: "/challenges", name: "challenges" },
+  { path: "/challenges/ssd-ftl-gc", name: "arena" },
 ];
 
 for (const route of ROUTES) {
