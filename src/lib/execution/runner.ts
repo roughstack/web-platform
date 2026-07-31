@@ -82,6 +82,7 @@ async function executeSubmission(opts: {
         JSON.stringify({
           source: "local-docker",
           finalState: result.finalState ?? [],
+          adversarial: result.adversarial ?? null,
         }),
       ),
       stderr: result.error ?? null,

@@ -61,6 +61,16 @@ func main() {
 	})
 	elapsed := time.Since(start)
 
+	// Run the adversarial suite regardless of whether the main run passed.
+	// A policy that passes the standard workload but fails fault injection
+	// still fails overall.
+	adversarial, _ := ftl.RunAdversarial(ftl.AdversarialConfig{
+		DeviceConfig: deviceCfg,
+		Policy:       policy,
+		Seed:         *seed,
+		Operations:   *operations,
+	})
+
 	output := map[string]any{
 		"policy_name":          result.PolicyName,
 		"operations":           result.Operations,
@@ -70,10 +80,11 @@ func main() {
 		"write_amplification":  result.WriteAmplification,
 		"wear_spread":          result.WearSpread,
 		"max_erase_count":      result.MaxEraseCount,
-		"passed":               result.Passed,
-		"execution_time_ms":   elapsed.Milliseconds(),
+		"passed":               result.Passed && adversarial.Passed,
+		"execution_time_ms":    elapsed.Milliseconds(),
 		"timed_out":            time.Now().After(deadline),
 		"final_state":          result.FinalState,
+		"adversarial":          adversarial,
 	}
 
 	if err != nil {

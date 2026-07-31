@@ -10,6 +10,18 @@ interface BlockState {
   isOverProvision: boolean;
 }
 
+interface ScenarioResult {
+  name: string;
+  passed: boolean;
+  error?: string;
+  metrics?: Record<string, number>;
+}
+
+interface AdversarialResult {
+  passed: boolean;
+  scenarios: ScenarioResult[];
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -35,7 +47,10 @@ export async function GET(
   // If a result exists, return it regardless of the submission status.
   if (submission.result) {
     const r = submission.result;
-    const testResults = r.testResults as { finalState?: BlockState[] };
+    const testResults = r.testResults as {
+      finalState?: BlockState[];
+      adversarial?: AdversarialResult;
+    };
     return NextResponse.json({
       status: "done",
       result: {
@@ -44,6 +59,7 @@ export async function GET(
         metrics: r.metrics as Record<string, number>,
         message: r.stderr ?? undefined,
         finalState: testResults?.finalState ?? [],
+        adversarial: testResults?.adversarial ?? null,
       },
     });
   }

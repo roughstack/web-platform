@@ -41,6 +41,7 @@ export interface SubmissionResult {
   metrics: Record<string, number>;
   message?: string;
   finalState?: BlockState[];
+  adversarial?: AdversarialResult;
 }
 
 export interface BlockState {
@@ -50,6 +51,18 @@ export interface BlockState {
   free: number;
   eraseCount: number;
   isOverProvision: boolean;
+}
+
+export interface ScenarioResult {
+  name: string;
+  passed: boolean;
+  error?: string;
+  metrics?: Record<string, number>;
+}
+
+export interface AdversarialResult {
+  passed: boolean;
+  scenarios: ScenarioResult[];
 }
 
 export function Arena({

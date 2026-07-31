@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, AlertCircle, Loader2, BarChart3 } from "lucide-react";
 import type { MetricDef, ScoringDef, SubmissionResult } from "./arena";
 import { SsdBlockGrid, type BlockState } from "./ssd-block-grid";
+import { AdversarialPanel } from "./adversarial-panel";
 
 export interface ResultsPanelProps {
   state: "idle" | "submitting" | "queued" | "running" | "done" | "error";
@@ -143,6 +144,8 @@ export function ResultsPanel({
           />
         </div>
       )}
+
+      <AdversarialPanel adversarial={result.adversarial ?? null} />
 
       {result.message && (
         <p className="mt-3 text-xs text-ink-muted">{result.message}</p>

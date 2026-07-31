@@ -23,6 +23,19 @@ export interface ExecutionResult {
   error?: string;
   buildErrors?: string;
   finalState?: BlockState[];
+  adversarial?: AdversarialResult;
+}
+
+export interface AdversarialResult {
+  passed: boolean;
+  scenarios: ScenarioResult[];
+}
+
+export interface ScenarioResult {
+  name: string;
+  passed: boolean;
+  error?: string;
+  metrics?: Record<string, number>;
 }
 
 export interface BlockState {
@@ -123,6 +136,7 @@ export class LocalDockerBackend implements ExecutionBackend {
             error: raw.error,
             buildErrors: raw.build_errors,
             finalState: raw.final_state ?? [],
+            adversarial: raw.adversarial ?? null,
           });
           return;
         } catch {
