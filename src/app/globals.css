@@ -1,72 +1,371 @@
 @import "tailwindcss";
 
 /*
- * ByteArena design tokens.
+ * ByteArena design tokens — Linear system.
  *
- * Every foreground colour here has been checked against its intended background
- * for WCAG AA before being introduced, because the layout auditor fails the build
- * on contrast below 4.5:1. The measured ratios against --color-canvas are noted
- * inline so that darkening one later is a deliberate act rather than an accident.
+ * Neutrals, type scale, weights, radii, motion and layout are Linear's own
+ * shipped values, read out of their stylesheets rather than eyeballed.
+ *
+ * Two deliberate departures, both forced by constraints Linear does not share:
+ *
+ *   1. --color-quiet is #7c8087, not Linear's #62666d. Theirs measures 3.45:1
+ *      on the canvas and our layout auditor fails the build below 4.5:1.
+ *   2. Mono is JetBrains Mono, not Berkeley Mono, which is commercially
+ *      licensed.
+ *
+ * Contrast ratios against --color-canvas are noted inline. Colours marked
+ * "fill only" do not clear AA as text and must never be used on a label.
  */
 @theme {
-  /* Surfaces, darkest to lightest. */
+  /* ---- Floors ---------------------------------------------------------- */
   --color-canvas: #08090a;
-  --color-surface: #101214;
-  --color-elevated: #16191c;
+  --color-canvas-deep: #010102; /* hero and footer floor */
 
-  /* Hairlines. */
-  --color-edge: #23272b;
-  --color-edge-strong: #333a40;
+  /* ---- Surfaces. Elevation is lightness, never shadow. ------------------ */
+  --color-panel: #0f1011; /* framed screenshots, code */
+  --color-tint: #141516; /* cards one step above canvas */
+  --color-surface: #1c1c1f; /* inputs, menus */
+  --color-raised: #232326; /* keys, chips */
+  --color-raised-high: #28282c; /* hover on raised */
 
-  /* Foreground. */
-  --color-ink: #f4f6f8; /* 18.9:1 */
-  --color-ink-secondary: #a8b0b8; /* 8.6:1  */
-  --color-ink-muted: #8a939c; /* 6.4:1  */
+  /* ---- Hairlines ------------------------------------------------------- */
+  --color-frame: #151616; /* barely-there panel edge */
+  --color-edge: #23252a;
+  --color-edge-strong: #34343a;
+  --color-edge-bright: #3e3e44;
 
-  /* Accents. */
-  --color-signal: #34e5a0; /* 11.7:1 — success, execution, primary action */
-  --color-accent: #6e8bff; /* 6.2:1  — links and focus */
-  --color-danger: #ff6b6b; /* 6.9:1  */
+  /* ---- Foreground ------------------------------------------------------ */
+  --color-ink: #f7f8f8; /* 18.7:1 — headlines, labels */
+  --color-body: #d0d6e0; /* 13.6:1 — running text */
+  --color-muted: #8a8f98; /*  6.1:1 — secondary copy, eyebrows */
+  --color-quiet: #7c8087; /*  5.0:1 — fine print */
+
+  /* ---- Accent. Rationed: links, one badge, one glow per band. ---------- */
+  --color-accent: #7170ff; /*  5.2:1 — fill only, fails AA on raised */
+  --color-accent-hover: #828fff;
+  --color-link: #828fff; /*  7.0:1 — accent as text */
+  --color-accent-tint: #18182f; /* badge and selection fills */
+  --color-brand: #5e6ad2; /*  4.2:1 — fill only */
+
+  /* ---- Semantic -------------------------------------------------------- */
+  --color-signal: #34e5a0; /* 12.2:1 — passed, executing */
+  --color-danger: #ff6b6b; /*  6.9:1 — failed */
   --color-warning: #ffc46b; /* 11.0:1 */
+  --color-inverse: #ffffff; /* the only pure white — primary button fill */
 
-  /* Difficulty scale. */
+  /* ---- Difficulty scale ------------------------------------------------ */
   --color-tier-1: #34e5a0;
   --color-tier-2: #7ecbff;
   --color-tier-3: #ffc46b;
   --color-tier-4: #ff6b6b;
 
+  /* ---- Type ------------------------------------------------------------ */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
 
-  --radius-panel: 0.75rem;
+  /* Linear's off-standard weights. 500/600/700 read wrong against theirs. */
+  --font-weight-normal: 400;
+  --font-weight-medium: 510;
+  --font-weight-semibold: 590;
+  --font-weight-bold: 680;
+
+  /* Body scale. The negative tracking on running text is not optional; it is
+   * most of why the original reads tighter than imitations of it. */
+  --text-tiny: 0.625rem;
+  --text-tiny--line-height: 1.5;
+  --text-tiny--letter-spacing: -0.015em;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0em;
+  --text-mini: 0.8125rem;
+  --text-mini--line-height: 1.5;
+  --text-mini--letter-spacing: -0.01em;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-small--letter-spacing: -0.013em;
+  --text-regular: 0.9375rem;
+  --text-regular--line-height: 1.6;
+  --text-regular--letter-spacing: -0.011em;
+  --text-large: 1.0625rem;
+  --text-large--line-height: 1.6;
+  --text-large--letter-spacing: 0em;
+
+  /* Title scale. All intended at weight 590. */
+  --text-title-1: 1.0625rem;
+  --text-title-1--line-height: 1.4;
+  --text-title-1--letter-spacing: -0.012em;
+  --text-title-2: 1.25rem;
+  --text-title-2--line-height: 1.33;
+  --text-title-2--letter-spacing: -0.012em;
+  --text-title-3: 1.5rem;
+  --text-title-3--line-height: 1.33;
+  --text-title-3--letter-spacing: -0.012em;
+  --text-title-4: 2rem;
+  --text-title-4--line-height: 1.125;
+  --text-title-4--letter-spacing: -0.022em;
+  --text-title-5: 2.5rem;
+  --text-title-5--line-height: 1.1;
+  --text-title-5--letter-spacing: -0.022em;
+  --text-title-6: 3rem;
+  --text-title-6--line-height: 1;
+  --text-title-6--letter-spacing: -0.022em;
+  --text-title-7: 3.5rem;
+  --text-title-7--line-height: 1.1;
+  --text-title-7--letter-spacing: -0.022em;
+  --text-title-8: 4rem;
+  --text-title-8--line-height: 1.06;
+  --text-title-8--letter-spacing: -0.022em;
+
+  /* ---- Shape ----------------------------------------------------------- */
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px; /* buttons and inputs — the workhorse */
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-24: 24px;
+  --radius-32: 32px;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* Layout constants that are not Tailwind utilities. */
+:root {
+  --header-height: 64px;
+  --page-max: 1024px;
+  --page-inline: 24px;
+  --speed-quick: 0.1s;
+  --speed-default: 0.18s;
+  --speed-regular: 0.25s;
 }
 
 /*
- * The auditor resolves an element's true background by walking ancestors and
- * compositing. Painting the root opaquely guarantees that walk always terminates
- * on a real colour instead of falling through to an assumed white.
+ * These must live in `@layer base`. Unlayered CSS outranks every layered rule
+ * regardless of specificity, so a bare `h1 { color }` here would silently beat
+ * any text-colour utility placed on a heading.
  */
-html {
-  background-color: var(--color-canvas);
-  color-scheme: dark;
+@layer base {
+  /*
+   * The auditor resolves an element's true background by walking ancestors and
+   * compositing. Painting the root opaquely guarantees that walk always
+   * terminates on a real colour instead of falling through to an assumed white.
+   */
+  html {
+    background-color: var(--color-canvas);
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    /* cv01 gives the single-storey 'a'; ss03 cleans the letterforms. Without
+     * both, the type does not read as Linear no matter what the weights say. */
+    font-feature-settings: "cv01", "ss03";
+    font-variation-settings: "opsz" auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings carry ink and the semibold stop; body text stays one step down. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-ink);
+    font-weight: 590;
+  }
 }
 
-body {
-  background-color: var(--color-canvas);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+/*
+ * Long-form copy: the prose inside a problem statement's content blocks.
+ *
+ * This replaces @tailwindcss/typography, which was referenced throughout the
+ * app via `prose prose-invert prose-*:` classes but had never actually been
+ * installed — so all of that markup rendered with browser defaults. A bespoke
+ * block is preferable here anyway: the plugin ships its own type scale and
+ * would have to be fought back to these tokens value by value.
+ *
+ * In `@layer components` so a utility on the element still wins.
+ */
+@layer components {
+  .prose-ba {
+    color: var(--color-body);
+    font-size: var(--text-regular);
+    line-height: var(--text-regular--line-height);
+    letter-spacing: var(--text-regular--letter-spacing);
+  }
+
+  /*
+   * Prose in a tight slot — a list item, a table cell — where the surrounding
+   * layout already owns the vertical rhythm and a paragraph margin would show
+   * up as a stray gap.
+   */
+  .prose-ba-inline,
+  .prose-ba-inline p {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  .prose-ba > * + * {
+    margin-top: 1em;
+  }
+
+  .prose-ba h1,
+  .prose-ba h2,
+  .prose-ba h3,
+  .prose-ba h4 {
+    color: var(--color-ink);
+    font-weight: 590;
+    letter-spacing: -0.012em;
+  }
+
+  .prose-ba h1 {
+    font-size: var(--text-title-4);
+    line-height: 1.15;
+    letter-spacing: -0.022em;
+  }
+
+  .prose-ba h2 {
+    font-size: var(--text-title-3);
+    line-height: 1.33;
+  }
+
+  .prose-ba h3 {
+    font-size: var(--text-title-2);
+    line-height: 1.33;
+  }
+
+  .prose-ba h4 {
+    font-size: var(--text-title-1);
+    line-height: 1.4;
+  }
+
+  /* Headings need more air above than below so they bind to their own body. */
+  .prose-ba > :is(h1, h2, h3, h4) + * {
+    margin-top: 0.6em;
+  }
+
+  .prose-ba > * + :is(h1, h2, h3, h4) {
+    margin-top: 2em;
+  }
+
+  .prose-ba ul,
+  .prose-ba ol {
+    padding-left: 1.35em;
+  }
+
+  .prose-ba ul {
+    list-style: disc;
+  }
+
+  .prose-ba ol {
+    list-style: decimal;
+  }
+
+  .prose-ba li + li {
+    margin-top: 0.4em;
+  }
+
+  .prose-ba li::marker {
+    color: var(--color-quiet);
+  }
+
+  .prose-ba strong {
+    color: var(--color-ink);
+    font-weight: 590;
+  }
+
+  .prose-ba em {
+    font-style: italic;
+  }
+
+  .prose-ba a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(
+      in oklab,
+      var(--color-link) 40%,
+      transparent
+    );
+  }
+
+  .prose-ba a:hover {
+    text-decoration-color: var(--color-link);
+  }
+
+  .prose-ba :not(pre) > code {
+    background: var(--color-raised);
+    border-radius: var(--radius-4);
+    color: var(--color-link);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    padding: 0.15em 0.4em;
+  }
+
+  .prose-ba pre {
+    background: var(--color-canvas);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-8);
+    overflow-x: auto;
+    padding: 1em 1.15em;
+  }
+
+  .prose-ba pre code {
+    color: var(--color-body);
+    font-family: var(--font-mono);
+    font-size: var(--text-mini);
+    line-height: 1.6;
+  }
+
+  .prose-ba blockquote {
+    border-left: 2px solid var(--color-edge-strong);
+    color: var(--color-muted);
+    padding-left: 1em;
+  }
+
+  .prose-ba hr {
+    border-color: var(--color-edge);
+    margin-block: 2em;
+  }
+
+  .prose-ba table {
+    border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .prose-ba :is(th, td) {
+    border-bottom: 1px solid var(--color-edge);
+    padding: 0.5em 0.75em;
+    text-align: left;
+  }
+
+  .prose-ba th {
+    color: var(--color-ink);
+    font-size: var(--text-micro);
+    font-weight: 510;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
 }
 
 ::selection {
-  background-color: color-mix(in oklab, var(--color-signal) 30%, transparent);
+  background-color: color-mix(in oklab, var(--color-accent) 34%, transparent);
   color: var(--color-ink);
 }
 
-/* A single visible focus treatment, so keyboard navigation is never ambiguous. */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-accent-hover);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -87,7 +386,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ink-muted);
+  background: var(--color-quiet);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -101,9 +400,38 @@ body {
   }
 }
 
+/* Standard page gutter. max() keeps content clear of notched-device insets. */
+@utility page-shell {
+  margin-inline: auto;
+  max-width: var(--page-max);
+  padding-inline: max(env(safe-area-inset-left), 20px);
+}
+
 @utility grid-backdrop {
   background-image:
     linear-gradient(to right, var(--color-edge) 1px, transparent 1px),
     linear-gradient(to bottom, var(--color-edge) 1px, transparent 1px);
   background-size: 64px 64px;
+}
+
+/* Linear's hero glow is fog, not a spotlight — opacity stays under 0.08. */
+@utility glow-fog {
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--color-accent) 18%, transparent) 0%,
+    transparent 55%
+  );
+}
+
+/* Headline that fades from ink into body toward its last line. Deliberately
+ * not named `text-*`: a custom utility sharing that prefix collides with the
+ * font-size and colour namespaces in tailwind-merge. */
+@utility headline-fade {
+  background: linear-gradient(
+    180deg,
+    var(--color-ink) 10%,
+    var(--color-body) 100%
+  );
+  background-clip: text;
+  color: transparent;
 }

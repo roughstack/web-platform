@@ -144,7 +144,6 @@ export async function certifyRoute(page: Page, opts: CertifyOptions): Promise<Ce
     ),
   );
 
-  // eslint-disable-next-line no-console
   console.log(
     `  ${name} @ ${viewport.name}: ${errors.length} error(s), ${warnings.length} warning(s) | ${summarizeAnalysis(pixel)}`,
   );

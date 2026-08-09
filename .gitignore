@@ -18,6 +18,10 @@
 # Regenerated on every audit run; large binaries that would churn every commit.
 /tests/e2e/__screenshots__
 
+# Design research: scraped reference pages and scratch capture scripts.
+# Large, regenerable, and not part of the product.
+/.research
+/docs
 # next.js
 /.next/
 /out/

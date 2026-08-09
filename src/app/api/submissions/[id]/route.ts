@@ -1,25 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-interface BlockState {
-  index: number;
-  valid: number;
-  invalid: number;
-  free: number;
-  eraseCount: number;
-  isOverProvision: boolean;
-}
-
-interface ScenarioResult {
-  name: string;
-  passed: boolean;
-  error?: string;
-  metrics?: Record<string, number>;
-}
-
-interface AdversarialResult {
-  passed: boolean;
-  scenarios: ScenarioResult[];
+/**
+ * What the runner stored for this attempt.
+ *
+ * `detail` is deliberately opaque here. Its shape depends on which task ran —
+ * a slot array for compaction, a block grid for the device rungs — and this
+ * route's job is to hand it to the arena unopened, not to know the difference.
+ * Naming the variants here is how the previous version ended up only able to
+ * report results for a single challenge.
+ */
+interface StoredResults {
+  task?: string;
+  detail?: unknown;
+  console?: string;
 }
 
 export async function GET(
@@ -47,10 +41,8 @@ export async function GET(
   // If a result exists, return it regardless of the submission status.
   if (submission.result) {
     const r = submission.result;
-    const testResults = r.testResults as {
-      finalState?: BlockState[];
-      adversarial?: AdversarialResult;
-    };
+    const stored = (r.testResults ?? {}) as StoredResults;
+
     return NextResponse.json({
       status: "done",
       result: {
@@ -58,8 +50,8 @@ export async function GET(
         score: r.score,
         metrics: r.metrics as Record<string, number>,
         message: r.stderr ?? undefined,
-        finalState: testResults?.finalState ?? [],
-        adversarial: testResults?.adversarial ?? null,
+        console: stored.console ?? "",
+        detail: stored.detail ?? null,
       },
     });
   }

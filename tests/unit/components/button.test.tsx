@@ -51,6 +51,9 @@ describe("Button", () => {
   it("renders as a link when asChild is used with an anchor", () => {
     render(
       <Button asChild>
+        {/* A bare anchor is the point of this test: it checks that asChild
+            forwards to whatever element it is given, not to next/link. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/challenges">Browse</a>
       </Button>,
     );

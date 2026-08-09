@@ -34,7 +34,15 @@ export default async function DashboardPage() {
   const sessionToken = await getSessionToken();
 
   let submissions: SubmissionRow[] = [];
-  let bestPerChallenge: { title: string; slug: string; difficulty: string; category: string; bestScore: number; attempts: number; passed: boolean }[] = [];
+  let bestPerChallenge: {
+    title: string;
+    slug: string;
+    difficulty: string;
+    category: string;
+    bestScore: number;
+    attempts: number;
+    passed: boolean;
+  }[] = [];
 
   if (sessionToken) {
     const raw = await prisma.submission.findMany({
@@ -62,7 +70,18 @@ export default async function DashboardPage() {
     submissions = raw as SubmissionRow[];
 
     // Compute best score per challenge.
-    const byChallenge = new Map<string, { title: string; slug: string; difficulty: string; category: string; bestScore: number; attempts: number; passed: boolean }>();
+    const byChallenge = new Map<
+      string,
+      {
+        title: string;
+        slug: string;
+        difficulty: string;
+        category: string;
+        bestScore: number;
+        attempts: number;
+        passed: boolean;
+      }
+    >();
     for (const s of submissions) {
       if (!s.result) continue;
       const key = s.challenge.slug;
@@ -85,16 +104,16 @@ export default async function DashboardPage() {
         }
       }
     }
-    bestPerChallenge = Array.from(byChallenge.values()).sort((a, b) => b.bestScore - a.bestScore);
+    bestPerChallenge = Array.from(byChallenge.values()).sort(
+      (a, b) => b.bestScore - a.bestScore,
+    );
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:py-14">
+    <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-ink-muted">
+        <h1 className="text-title-4 sm:text-title-5">Dashboard</h1>
+        <p className="mt-3 max-w-xl text-regular text-muted">
           {sessionToken
             ? "Your submission history for this session. Sign in to keep it across devices."
             : "No session yet. Solve a challenge to start building your history."}
@@ -103,7 +122,7 @@ export default async function DashboardPage() {
 
       {bestPerChallenge.length > 0 && (
         <section className="mb-10">
-          <h2 className="mb-3 text-xs font-medium uppercase tracking-wider text-ink-muted">
+          <h2 className="mb-3 text-micro font-medium tracking-wider text-quiet uppercase">
             Best scores
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -111,32 +130,30 @@ export default async function DashboardPage() {
               <Link
                 key={c.slug}
                 href={`/challenges/${c.slug}`}
-                className="group rounded-lg border border-edge bg-surface p-4 transition-colors hover:border-signal/40"
+                className="group rounded-12 border border-edge bg-tint p-4 transition-colors duration-150 ease-out-quad hover:border-edge-bright hover:bg-raised"
               >
                 <div className="flex items-center justify-between">
                   <div className="min-w-0">
-                    <h3 className="truncate text-sm font-medium text-ink">
-                      {c.title}
-                    </h3>
+                    <h3 className="truncate text-title-1">{c.title}</h3>
                     <div className="mt-1 flex items-center gap-2">
                       <DifficultyBadge difficulty={c.difficulty as never} />
                       <Badge variant="neutral">{c.category}</Badge>
                     </div>
                   </div>
                   <div className="ml-3 shrink-0 text-right">
-                    <p className="font-mono text-lg font-semibold text-ink">
+                    <p className="font-mono text-title-2 tabular-nums text-ink">
                       {c.bestScore}
                     </p>
-                    <p className="font-mono text-[10px] text-ink-muted">
-                      / 100
-                    </p>
+                    <p className="font-mono text-tiny text-quiet">/ 100</p>
                   </div>
                 </div>
-                <div className="mt-3 flex items-center justify-between text-[11px] text-ink-muted">
-                  <span>{c.attempts} attempt{c.attempts === 1 ? "" : "s"}</span>
-                  <span className="inline-flex items-center gap-1 text-ink-secondary group-hover:text-signal">
+                <div className="mt-3 flex items-center justify-between text-micro text-quiet">
+                  <span>
+                    {c.attempts} attempt{c.attempts === 1 ? "" : "s"}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-muted group-hover:text-ink">
                     {c.passed ? "Passed" : "In progress"}
-                    <ArrowRight className="h-3 w-3" />
+                    <ArrowRight className="size-3" aria-hidden="true" />
                   </span>
                 </div>
               </Link>
@@ -146,50 +163,56 @@ export default async function DashboardPage() {
       )}
 
       <section>
-        <h2 className="mb-3 text-xs font-medium uppercase tracking-wider text-ink-muted">
+        <h2 className="mb-3 text-micro font-medium tracking-wider text-quiet uppercase">
           Recent submissions
         </h2>
         {submissions.length === 0 ? (
-          <div className="rounded-lg border border-edge bg-surface p-8 text-center">
-            <p className="text-sm text-ink-muted">
+          <div className="rounded-12 border border-edge bg-tint p-10 text-center">
+            <p className="text-mini text-muted">
               No submissions yet.{" "}
-              <Link href="/challenges" className="text-signal hover:underline">
+              <Link href="/challenges" className="text-link hover:underline">
                 Browse challenges →
               </Link>
             </p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-lg border border-edge">
-            <table className="w-full text-sm">
-              <thead className="bg-elevated/50">
-                <tr className="text-left text-[11px] uppercase tracking-wider text-ink-muted">
+          <div className="overflow-x-auto rounded-12 border border-edge">
+            <table className="w-full min-w-[34rem] text-mini">
+              <thead className="bg-raised/40">
+                <tr className="text-left text-micro tracking-wider text-quiet uppercase">
                   <th className="px-4 py-2.5 font-medium">Challenge</th>
                   <th className="px-4 py-2.5 font-medium">Status</th>
                   <th className="px-4 py-2.5 font-medium">Score</th>
                   <th className="px-4 py-2.5 font-medium">When</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-edge/50">
+              <tbody className="divide-y divide-edge">
                 {submissions.map((s) => (
-                  <tr key={s.id} className="hover:bg-elevated/30">
+                  <tr
+                    key={s.id}
+                    className="transition-colors duration-100 hover:bg-raised/40"
+                  >
                     <td className="px-4 py-3">
                       <Link
                         href={`/challenges/${s.challenge.slug}`}
-                        className="font-medium text-ink hover:text-signal"
+                        className="font-medium text-ink hover:text-link"
                       >
                         {s.challenge.title}
                       </Link>
-                      <p className="text-[10px] text-ink-muted">
+                      <p className="text-tiny text-quiet">
                         {s.challenge.category} · {s.language}
                       </p>
                     </td>
                     <td className="px-4 py-3">
-                      <StatusBadge status={s.status} passed={s.result?.passed} />
+                      <StatusBadge
+                        status={s.status}
+                        passed={s.result?.passed}
+                      />
                     </td>
-                    <td className="px-4 py-3 font-mono text-ink-secondary">
+                    <td className="px-4 py-3 font-mono tabular-nums text-body">
                       {s.result ? s.result.score : "—"}
                     </td>
-                    <td className="px-4 py-3 text-ink-muted">
+                    <td className="px-4 py-3 text-quiet">
                       <time dateTime={s.createdAt.toISOString()}>
                         {formatRelative(s.createdAt)}
                       </time>
@@ -208,31 +231,29 @@ export default async function DashboardPage() {
 function StatusBadge({ status, passed }: { status: string; passed?: boolean }) {
   if (status === "COMPLETED" && passed) {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-signal">
-        <CheckCircle2 className="h-3.5 w-3.5" />
+      <span className="inline-flex items-center gap-1 text-micro text-signal">
+        <CheckCircle2 className="size-3.5" aria-hidden="true" />
         Passed
       </span>
     );
   }
   if (status === "COMPLETED" || status === "FAILED") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-warning">
-        <XCircle className="h-3.5 w-3.5" />
+      <span className="inline-flex items-center gap-1 text-micro text-warning">
+        <XCircle className="size-3.5" aria-hidden="true" />
         Failed
       </span>
     );
   }
   if (status === "RUNNING" || status === "PENDING") {
     return (
-      <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
-        <Clock className="h-3.5 w-3.5" />
+      <span className="inline-flex items-center gap-1 text-micro text-quiet">
+        <Clock className="size-3.5" aria-hidden="true" />
         {status === "PENDING" ? "Queued" : "Running"}
       </span>
     );
   }
-  return (
-    <span className="text-xs text-ink-muted">{status}</span>
-  );
+  return <span className="text-micro text-quiet">{status}</span>;
 }
 
 function formatRelative(date: Date): string {

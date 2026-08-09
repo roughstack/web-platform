@@ -72,16 +72,22 @@ model VerificationToken {
 // Domain models
 // ---------------------------------------------------------------------------
 
+/// The three rungs a ladder is divided into. A ladder teaches one idea in
+/// escalating form, so difficulty is a position in a sequence rather than a
+/// loose label.
 enum Difficulty {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
-  EXPERT
+  EASY
+  MEDIUM
+  HARD
 }
 
 enum Language {
   GO
   PYTHON
+  C
+  CPP
+  JAVA
+  RUST
 }
 
 enum SubmissionStatus {
@@ -93,28 +99,47 @@ enum SubmissionStatus {
 }
 
 model Challenge {
-  id          String     @id @default(cuid())
-  slug        String     @unique
-  title       String
+  id      String @id @default(cuid())
+  slug    String @unique
+  title   String
   /// One-line hook shown on the challenge card.
-  summary     String
-  /// Full problem statement, rendered as markdown.
-  description String     @db.Text
-  difficulty  Difficulty
+  summary String
+
+  /// The problem statement, as an array of typed content blocks rather than a
+  /// markdown blob. One renderer draws any array, so a new challenge is data
+  /// rather than a new page. See src/lib/blocks/types.ts.
+  blocks Json
+
+  difficulty Difficulty
   /// Grouping label such as "Storage" or "Memory".
-  category    String
-  languages   Language[]
+  category   String
+  languages  Language[]
+
+  /// Which frontend pack supplies this challenge's bespoke blocks and
+  /// illustrations, for example "ssd". Packs register themselves; the core
+  /// renderer never learns what they contain.
+  pack String @default("ssd")
+
+  /// Which registered sprite task grades this challenge, for example
+  /// "victim-selection". Must match a name in the sprite task registry.
+  task String
+
+  /// Ladders group the rungs that teach one idea in escalating form. Rungs in
+  /// the same ladder share a key and are ordered by tier, so the arena can
+  /// offer "next rung" without a self-relation.
+  ladder String
+  tier   Int    @default(1)
 
   /// Per-language starter code, keyed by Language enum value.
   starterCode Json
-  /// Markdown describing the interface the solution must implement.
-  interfaceDoc String? @db.Text
+  /// Parameters handed to the sprite task, such as seed and geometry.
+  taskParams  Json?
 
   timeLimitSec  Int @default(30)
   memoryLimitMb Int @default(512)
 
   /// Declares which metrics the harness emits and how to display and score them.
-  metricsConfig Json
+  metricsConfig    Json
   /// Metrics produced by a known-good solution, used as the comparison baseline.
   referenceMetrics Json?
 
@@ -123,11 +148,43 @@ model Challenge {
   isPublished Boolean @default(false)
 
   submissions Submission[]
+  replies     Reply[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([isPublished, sortOrder])
+  @@index([ladder, tier])
+}
+
+/// A short comment on a problem statement.
+///
+/// Replies are capped, reject code blocks, and can be marked as containing a
+/// hint. The intent is discussion of the idea, not distribution of solutions,
+/// so the constraints are part of the model rather than a UI convention.
+model Reply {
+  id          String @id @default(cuid())
+  challengeId String
+  /// Anonymous session identifier, so a visitor can see and delete their own
+  /// replies before signing in.
+  sessionId   String
+  /// Short display handle derived from the session, for example "anon-4f2a".
+  authorLabel String
+
+  body String @db.Text
+  /// Marks a reply as containing a hint. The UI renders it blurred until the
+  /// reader chooses to see it.
+  isSpoiler Boolean @default(false)
+  /// Set when a reply is withdrawn. Kept rather than deleted so reply counts
+  /// and thread ordering stay stable.
+  isHidden  Boolean @default(false)
+
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([challengeId, createdAt])
+  @@index([sessionId, createdAt])
 }
 
 model Submission {

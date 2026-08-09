@@ -9,6 +9,12 @@ export interface EditorProps {
   language: string;
   /** Called when a paste event exceeds the suspicious-paste threshold. */
   onSuspiciousPaste?: (pastedLength: number) => void;
+  /**
+   * Editor font size in pixels, driven by the zoom control. Kept separate from
+   * browser zoom so the code can be scaled without also scaling the problem
+   * statement and the chrome around it.
+   */
+  fontSize?: number;
 }
 
 /**
@@ -19,10 +25,16 @@ export interface EditorProps {
  */
 const SUSPICIOUS_PASTE_THRESHOLD = 120;
 
-export function CodeEditor({ value, onChange, language, onSuspiciousPaste }: EditorProps) {
+export function CodeEditor({
+  value,
+  onChange,
+  language,
+  onSuspiciousPaste,
+  fontSize = 13,
+}: EditorProps) {
   const pasteWarnedRef = useRef(false);
 
-  const handleMount: OnMount = (editor, _monaco) => {
+  const handleMount: OnMount = (editor) => {
     editor.focus();
 
     // Block copy and cut from the editor. This is a friction defense, not a
@@ -43,8 +55,12 @@ export function CodeEditor({ value, onChange, language, onSuspiciousPaste }: Edi
       // we report pastes above the threshold so the parent can flag the
       // submission.
       editorDom.addEventListener("paste", (e) => {
-        const pasted = (e as ClipboardEvent).clipboardData?.getData("text") ?? "";
-        if (pasted.length > SUSPICIOUS_PASTE_THRESHOLD && !pasteWarnedRef.current) {
+        const pasted =
+          (e as ClipboardEvent).clipboardData?.getData("text") ?? "";
+        if (
+          pasted.length > SUSPICIOUS_PASTE_THRESHOLD &&
+          !pasteWarnedRef.current
+        ) {
           pasteWarnedRef.current = true;
           onSuspiciousPaste?.(pasted.length);
         }
@@ -56,12 +72,17 @@ export function CodeEditor({ value, onChange, language, onSuspiciousPaste }: Edi
     }
   };
 
-  const handleChange: OnChange = useCallback((v) => {
-    onChange(v ?? "");
-  }, [onChange]);
+  const handleChange: OnChange = useCallback(
+    (v) => {
+      onChange(v ?? "");
+    },
+    [onChange],
+  );
 
   return (
-    <div className="h-[50vh] min-h-[300px] w-full lg:h-[60vh] lg:min-h-[400px]">
+    // Fills whatever the split gives it. The arena owns the sizing now, so the
+    // editor never fights the layout for height.
+    <div className="h-full min-h-0 w-full">
       <Editor
         height="100%"
         defaultLanguage={language}
@@ -71,7 +92,7 @@ export function CodeEditor({ value, onChange, language, onSuspiciousPaste }: Edi
         onMount={handleMount}
         theme="vs-dark"
         options={{
-          fontSize: 13,
+          fontSize,
           fontFamily: "var(--font-jetbrains), ui-monospace, monospace",
           fontLigatures: true,
           minimap: { enabled: false },
@@ -91,4 +112,3 @@ export function CodeEditor({ value, onChange, language, onSuspiciousPaste }: Edi
     </div>
   );
 }
-

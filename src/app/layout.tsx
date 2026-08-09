@@ -53,9 +53,16 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col bg-canvas text-ink">
-        {children}
-      </body>
+      {/*
+        Only the document shell lives here. Chrome is decided one level down,
+        because the site and the arena want opposite things from a page: the
+        site is a document that scrolls under a nav and ends in a footer, while
+        the arena is a workspace that owns the whole viewport and brings its
+        own toolbar. Putting a shared nav and footer here forced the arena to
+        live inside furniture it did not want, and the footer ended up
+        overlapping the problem description.
+      */}
+      <body className="min-h-full bg-canvas text-body">{children}</body>
     </html>
   );
 }

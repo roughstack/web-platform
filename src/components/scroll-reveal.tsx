@@ -17,7 +17,12 @@ interface ScrollRevealProps {
  * Respects prefers-reduced-motion: if the user has reduced motion enabled,
  * the content is shown immediately with no animation.
  */
-export function ScrollReveal({ children, delay = 0, y = 16, className }: ScrollRevealProps) {
+export function ScrollReveal({
+  children,
+  delay = 0,
+  y = 16,
+  className,
+}: ScrollRevealProps) {
   const reduceMotion = useReducedMotion();
 
   if (reduceMotion) {

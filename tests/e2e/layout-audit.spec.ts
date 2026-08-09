@@ -9,9 +9,13 @@ import { certifyRoute } from "./helpers/certify";
 const ROUTES = [
   { path: "/", name: "landing" },
   { path: "/challenges", name: "challenges" },
-  { path: "/challenges/ssd-ftl-gc", name: "arena" },
+  // All three rungs, because they render different illustrations and the
+  // hard one carries the most content in the description panel.
+  { path: "/challenges/compaction", name: "arena-easy" },
+  { path: "/challenges/victim-selection", name: "arena-medium" },
+  { path: "/challenges/wear-levelling", name: "arena-hard" },
   { path: "/dashboard", name: "dashboard" },
-  { path: "/blog/tricking-ai", name: "blog-anti-ai" },
+  { path: "/leaderboard", name: "leaderboard" },
 ];
 
 for (const route of ROUTES) {

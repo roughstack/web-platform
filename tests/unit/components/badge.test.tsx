@@ -16,25 +16,24 @@ describe("Badge", () => {
 
 describe("DifficultyBadge", () => {
   it.each([
-    ["BEGINNER", "Beginner"],
-    ["INTERMEDIATE", "Intermediate"],
-    ["ADVANCED", "Advanced"],
-    ["EXPERT", "Expert"],
+    ["EASY", "Easy"],
+    ["MEDIUM", "Medium"],
+    ["HARD", "Hard"],
   ] as const)("renders %s as the readable label %s", (difficulty, label) => {
     render(<DifficultyBadge difficulty={difficulty} />);
     expect(screen.getByText(label)).toBeInTheDocument();
   });
 
   it("exposes the difficulty to assistive technology, not just via colour", () => {
-    render(<DifficultyBadge difficulty="EXPERT" />);
-    expect(screen.getByLabelText("Difficulty: Expert")).toBeInTheDocument();
+    render(<DifficultyBadge difficulty="HARD" />);
+    expect(screen.getByLabelText("Difficulty: Hard")).toBeInTheDocument();
   });
 
-  it("uses a distinct colour class per tier so tiers are visually separable", () => {
-    const { rerender } = render(<DifficultyBadge difficulty="BEGINNER" />);
-    const beginner = screen.getByText("Beginner").className;
-    rerender(<DifficultyBadge difficulty="EXPERT" />);
-    const expert = screen.getByText("Expert").className;
-    expect(beginner).not.toEqual(expert);
+  it("uses a distinct colour class per rung so rungs are visually separable", () => {
+    const { rerender } = render(<DifficultyBadge difficulty="EASY" />);
+    const easy = screen.getByText("Easy").className;
+    rerender(<DifficultyBadge difficulty="HARD" />);
+    const hard = screen.getByText("Hard").className;
+    expect(easy).not.toEqual(hard);
   });
 });

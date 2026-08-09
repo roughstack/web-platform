@@ -30,9 +30,7 @@ export function checkRateLimit(
   const bucket = buckets.get(identity) ?? { timestamps: [] };
 
   // Drop timestamps outside the window.
-  bucket.timestamps = bucket.timestamps.filter(
-    (t) => now - t < WINDOW_MS,
-  );
+  bucket.timestamps = bucket.timestamps.filter((t) => now - t < WINDOW_MS);
 
   if (bucket.timestamps.length >= maxPerWindow) {
     buckets.set(identity, bucket);

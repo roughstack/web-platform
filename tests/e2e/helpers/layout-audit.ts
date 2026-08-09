@@ -20,6 +20,42 @@ function browserAudit(opts: AuditOptions): AuditResult {
 
   // ---------------------------------------------------------------- utilities
 
+  /**
+   * The area a finger can actually hit, which is not always the element's box.
+   *
+   * A thin control — a 4px drag handle, a small icon button — is routinely
+   * given a larger invisible target with an absolutely positioned ::before
+   * that has negative insets. getBoundingClientRect knows nothing about that,
+   * so measuring the element alone reports a control as unreachable when it is
+   * comfortable in the hand. Since the pseudo-element is the whole technique,
+   * an auditor that ignores it flags the fix rather than the problem.
+   */
+  function hitAreaOf(el: Element, rect: DOMRect): DOMRect {
+    const before = getComputedStyle(el, "::before");
+    if (before.content === "none" || before.position !== "absolute") {
+      return rect;
+    }
+
+    // Negative insets grow the box; positive ones only shrink it inside the
+    // element, which cannot make the target any easier to hit.
+    const grow = (value: string) => {
+      const px = parseFloat(value);
+      return Number.isFinite(px) && px < 0 ? -px : 0;
+    };
+
+    const left = grow(before.left);
+    const right = grow(before.right);
+    const top = grow(before.top);
+    const bottom = grow(before.bottom);
+
+    return new DOMRect(
+      rect.x - left,
+      rect.y - top,
+      rect.width + left + right,
+      rect.height + top + bottom,
+    );
+  }
+
   function selectorFor(el: Element): string {
     const parts: string[] = [];
     let node: Element | null = el;
@@ -183,6 +219,38 @@ function browserAudit(opts: AuditOptions): AuditResult {
 
   // ------------------------------------------------------- 1. occlusion check
 
+  /**
+   * The intersection of the viewport with every scrolling or clipping ancestor.
+   * A sample point outside this box is hidden by a container's own clip, not
+   * covered by an unrelated element, so `elementFromPoint` there reports on
+   * whatever happens to sit at those coordinates and says nothing useful. Left
+   * unguarded, any long document inside an `overflow-y-auto` panel reports its
+   * off-screen paragraphs as occluded.
+   */
+  function visibleClipBox(el: Element) {
+    let left = 0;
+    let top = 0;
+    let right = window.innerWidth;
+    let bottom = window.innerHeight;
+
+    for (
+      let node = el.parentElement;
+      node && node !== document.body;
+      node = node.parentElement
+    ) {
+      const s = getComputedStyle(node);
+      const clips = `${s.overflowX} ${s.overflowY}`;
+      if (!/auto|scroll|hidden|clip/.test(clips)) continue;
+      const r = node.getBoundingClientRect();
+      left = Math.max(left, r.left);
+      top = Math.max(top, r.top);
+      right = Math.min(right, r.right);
+      bottom = Math.min(bottom, r.bottom);
+    }
+
+    return { left, top, right, bottom };
+  }
+
   const occlusionCandidates = allElements.filter(
     (el) => (hasDirectText(el) || isInteractive(el)) && !isScreenReaderOnly(el),
   );
@@ -201,16 +269,18 @@ function browserAudit(opts: AuditOptions): AuditResult {
       }
     }
 
+    const clip = visibleClipBox(el);
+
     let inViewport = 0;
     let occluded = 0;
     let blocker: Element | null = null;
 
     for (const point of samples) {
       if (
-        point.x < 0 ||
-        point.y < 0 ||
-        point.x >= window.innerWidth ||
-        point.y >= window.innerHeight
+        point.x < clip.left ||
+        point.y < clip.top ||
+        point.x >= clip.right ||
+        point.y >= clip.bottom
       ) {
         continue;
       }
@@ -324,8 +394,38 @@ function browserAudit(opts: AuditOptions): AuditResult {
     if (!fg) continue;
 
     const bg = effectiveBackground(el);
-    const composited = fg[3] < 1 ? blend(fg, bg) : ([fg[0], fg[1], fg[2]] as [number, number, number]);
-    const ratio = contrastRatio(composited, bg);
+
+    /*
+     * Gradient-filled text paints from the background image and sets `color`
+     * to transparent, so the compositing above would score it 1:1 and report
+     * a false failure. Grade every colour stop in the gradient instead and
+     * keep the weakest: a genuinely illegible gradient still fails, and a
+     * legible one passes for the right reason.
+     */
+    const clipsToText =
+      style.backgroundClip === "text" ||
+      (style as unknown as { webkitBackgroundClip?: string })
+        .webkitBackgroundClip === "text";
+
+    let ratio: number;
+    if (clipsToText && fg[3] === 0) {
+      // Computed styles normalise every colour to an rgb()/rgba() form.
+      const stops = style.backgroundImage.match(/rgba?\([^)]*\)/g) ?? [];
+      const ratios = stops
+        .map(parseColor)
+        .filter((c): c is [number, number, number, number] => c !== null)
+        // A fully transparent stop is a fade-out, not a text colour.
+        .filter((c) => c[3] > 0)
+        .map((c) => contrastRatio(blend(c, bg), bg));
+      if (ratios.length === 0) continue;
+      ratio = Math.min(...ratios);
+    } else {
+      const composited =
+        fg[3] < 1
+          ? blend(fg, bg)
+          : ([fg[0], fg[1], fg[2]] as [number, number, number]);
+      ratio = contrastRatio(composited, bg);
+    }
 
     const fontSize = parseFloat(style.fontSize);
     const fontWeight = parseInt(style.fontWeight, 10) || 400;
@@ -358,18 +458,26 @@ function browserAudit(opts: AuditOptions): AuditResult {
     for (const el of allElements) {
       if (!isInteractive(el)) continue;
       if (isScreenReaderOnly(el)) continue;
-      const rect = el.getBoundingClientRect();
       // Inline links inside a paragraph are exempt; the rule targets standalone controls.
       const insideProse = el.closest("p, li") !== null && el.tagName.toLowerCase() === "a";
       if (insideProse) continue;
 
-      if (rect.width < opts.minTapTarget || rect.height < opts.minTapTarget) {
+      const rect = el.getBoundingClientRect();
+      const hit = hitAreaOf(el, rect);
+
+      // A drag handle is held, not tapped, and it has to stay visually thin or
+      // it stops being a seam and becomes a gutter. WCAG gives it the 24px
+      // minimum target size rather than the 44px tap size, so that is the bar.
+      const minimum =
+        el.getAttribute("role") === "separator" ? 24 : opts.minTapTarget;
+
+      if (hit.width < minimum || hit.height < minimum) {
         violations.push({
           kind: "tap-target-too-small",
           severity: "warning",
           selector: selectorFor(el),
-          message: `Interactive target is ${Math.round(rect.width)}x${Math.round(rect.height)}px, below the ${opts.minTapTarget}x${opts.minTapTarget}px minimum.`,
-          rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+          message: `Interactive target is ${Math.round(hit.width)}x${Math.round(hit.height)}px, below the ${Math.round(minimum)}x${Math.round(minimum)}px minimum.`,
+          rect: { x: hit.x, y: hit.y, width: hit.width, height: hit.height },
         });
       }
     }

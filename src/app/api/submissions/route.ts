@@ -23,9 +23,10 @@ export async function POST(req: NextRequest) {
 
   // Rate limit per IP (anti-AI Layer 3c). For logged-in users this should
   // also key on userId; for now, IP is the only stable identity.
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-    ?? req.headers.get("x-real-ip")
-    ?? "unknown";
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    req.headers.get("x-real-ip") ??
+    "unknown";
   const rateKey = `submit:${ip}`;
   if (!checkRateLimit(rateKey, MAX_SUBMISSIONS_PER_MINUTE)) {
     const retry = msUntilReset(rateKey);
@@ -48,10 +49,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (!challenge) {
-    return NextResponse.json(
-      { error: "Challenge not found" },
-      { status: 404 },
-    );
+    return NextResponse.json({ error: "Challenge not found" }, { status: 404 });
   }
 
   if (!challenge.languages.includes(body.language as never)) {
@@ -83,17 +81,10 @@ export async function POST(req: NextRequest) {
 
   startExecution({
     submissionId: submission.id,
+    challengeId: challenge.id,
     code: body.code,
     language: body.language,
-    seed: variant.seed,
-    operations: 5000,
-    blocks: variant.blocks,
-    pagesPerBlock: variant.pagesPerBlock,
-    overProvisionBlocks: 2,
-    logicalPages: variant.logicalPages,
-    hotFraction: variant.hotFraction,
-    hotProbability: variant.hotProbability,
-    timeoutSec: challenge.timeLimitSec,
+    variant,
   });
 
   return NextResponse.json({ id: submission.id });
