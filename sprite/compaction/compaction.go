@@ -124,15 +124,24 @@ func Grade(initial []int, moves [][2]int) Result {
 	result := Result{
 		InitialSlots: initial,
 		LiveValues:   live,
-		Moves:        len(moves),
 		Optimal:      Optimal(initial),
 	}
 
-	if err := apply(slots, moves); err != nil {
+	applied, err := apply(slots, moves)
+	if err != nil {
+		// Moves reports how many moves were actually applied before the
+		// rejection, not how many the solution returned. A solution that
+		// returns 66 moves but fails on the first one used zero: nothing
+		// was compacted. Reporting len(moves) here would make the metrics
+		// table show "moves=66, optimal=66" next to a Failed pill, which
+		// looks like a perfect score and is the opposite of what happened.
+		result.Moves = applied
 		result.FinalSlots = slots
 		result.Error = err.Error()
 		return result
 	}
+
+	result.Moves = applied
 
 	if err := checkCompacted(initial, slots, live); err != nil {
 		result.FinalSlots = slots
@@ -147,34 +156,37 @@ func Grade(initial []int, moves [][2]int) Result {
 }
 
 // apply replays the moves, rejecting any that is not physically meaningful.
-func apply(slots []int, moves [][2]int) error {
+// It returns the number of moves successfully applied before any rejection (or
+// len(moves) if all succeeded), so the caller can report how much work was
+// actually done rather than how much was attempted.
+func apply(slots []int, moves [][2]int) (int, error) {
 	for i, move := range moves {
 		from, to := move[0], move[1]
 
 		if from < 0 || from >= len(slots) {
-			return fmt.Errorf("move %d reads slot %d, which is outside the array (0 to %d)",
+			return i, fmt.Errorf("move %d reads slot %d, which is outside the array (0 to %d)",
 				i, from, len(slots)-1)
 		}
 		if to < 0 || to >= len(slots) {
-			return fmt.Errorf("move %d writes slot %d, which is outside the array (0 to %d)",
+			return i, fmt.Errorf("move %d writes slot %d, which is outside the array (0 to %d)",
 				i, to, len(slots)-1)
 		}
 		if from == to {
-			return fmt.Errorf("move %d moves slot %d onto itself, which does nothing but still costs a write",
+			return i, fmt.Errorf("move %d moves slot %d onto itself, which does nothing but still costs a write",
 				i, from)
 		}
 		if slots[from] == Empty {
-			return fmt.Errorf("move %d reads slot %d, which is empty", i, from)
+			return i, fmt.Errorf("move %d reads slot %d, which is empty", i, from)
 		}
 		if slots[to] != Empty {
-			return fmt.Errorf("move %d writes slot %d, which already holds value %d; overwriting it would lose data",
+			return i, fmt.Errorf("move %d writes slot %d, which already holds value %d; overwriting it would lose data",
 				i, to, slots[to])
 		}
 
 		slots[to] = slots[from]
 		slots[from] = Empty
 	}
-	return nil
+	return len(moves), nil
 }
 
 // checkCompacted verifies the array ends up compacted with nothing lost.

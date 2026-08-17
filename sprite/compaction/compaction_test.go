@@ -225,3 +225,41 @@ func TestDoingNothingToAFragmentedArrayFails(t *testing.T) {
 		t.Fatal("an untouched fragmented array should not pass")
 	}
 }
+
+// TestInvalidMovesReportZeroAppliedNotReturnedCount ensures the Moves metric
+// reflects how many moves were actually applied, not how many the solution
+// returned. A solution that returns 66 self-moves used zero: nothing was
+// compacted. Reporting 66 would make the metrics table show "moves=66,
+// optimal=66" next to a Failed pill, which looks like a perfect score.
+func TestInvalidMovesReportZeroAppliedNotReturnedCount(t *testing.T) {
+	slots := []int{Empty, 1, Empty, 2, Empty, Empty}
+
+	// Four self-moves: all invalid, none applied.
+	result := Grade(slots, [][2]int{{0, 0}, {1, 1}, {2, 2}, {3, 3}})
+	if result.Passed {
+		t.Fatal("self-moves should not pass")
+	}
+	if result.Moves != 0 {
+		t.Errorf("Moves = %d, want 0 (no moves were applied before the rejection); "+
+			"reporting len(moves) would mislead the user into thinking their solution worked",
+			result.Moves)
+	}
+}
+
+// TestPartiallyValidMovesReportAppliedCount ensures that when some moves
+// succeed before one fails, the Moves metric reports the count that actually
+// applied — not the total returned, and not zero.
+func TestPartiallyValidMovesReportAppliedCount(t *testing.T) {
+	slots := []int{Empty, 1, Empty, 2}
+
+	// Move 0 ({1,0}) is valid: it moves value 1 into slot 0.
+	// Move 1 ({0,0}) is a self-move and fails.
+	result := Grade(slots, [][2]int{{1, 0}, {0, 0}})
+	if result.Passed {
+		t.Fatal("an invalid move should not pass")
+	}
+	if result.Moves != 1 {
+		t.Errorf("Moves = %d, want 1 (one move was applied before the rejection)",
+			result.Moves)
+	}
+}
