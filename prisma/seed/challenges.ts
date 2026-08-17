@@ -209,6 +209,14 @@ export const CHALLENGES = [
       },
       { kind: "interface" },
       {
+        kind: "example",
+        input:
+          "stats.blocks = [\n  {index:0, valid:7, invalid:1, free:0, eraseCount:3, isOverProvision:false},\n  {index:1, valid:2, invalid:6, free:0, eraseCount:4, isOverProvision:false},\n  {index:2, valid:8, invalid:0, free:0, eraseCount:2, isOverProvision:false},\n  {index:3, valid:1, invalid:7, free:0, eraseCount:5, isOverProvision:false},\n  {index:4, valid:4, invalid:3, free:1, eraseCount:3, isOverProvision:false},\n  {index:5, valid:0, invalid:0, free:8, eraseCount:6, isOverProvision:true},\n]\npagesPerBlock = 8",
+        output: "3",
+        explain:
+          "Block 3 has the most dead pages (7), so erasing it frees the most space for the least migration — only one live page to copy. Block 1 is also mostly dead but holds two live pages, so it costs twice as much to reclaim for the same gain. Greedy picks block 3 here, and greedy is right on this snapshot.\n\nThe hard part is that the snapshot changes. If block 3's single live page is about to be overwritten by the next write, waiting one more reclaim would have freed it for nothing — you would have paid one migration to save a page that was about to die on its own. Greedy cannot see that coming. A policy that tracks *why* a block is full of dead pages (hot data churning) can sometimes do better by reclaiming a block whose dead pages are dead for good, not just dead for now.",
+      },
+      {
         kind: "figure",
         label: "FIG 2",
         illustration: {
@@ -249,6 +257,12 @@ export const CHALLENGES = [
         tone: "note",
         title: "No single right answer",
         md: "Unlike the first rung, there is no provable optimum here — it depends on traffic nobody can see in advance. So you are ranked rather than scored against a target. Beating greedy is the real bar.",
+      },
+      {
+        kind: "callout",
+        tone: "note",
+        title: "Further reading",
+        md: "The cost-benefit heuristic — weigh the space a reclaim frees against the live data it costs to move — comes from Mendel Rosenblum and John Ousterhout's *The Log-Structured File System* (ACM Transactions on Computer Systems, 1991). It is the canonical reference for victim selection and the starting point for almost every FTL garbage collector since.\n\nFor a flash-specific overview, Eran Gal and Sivan Toledo's *Algorithms and Data Structures for Flash Memories* (ACM Computing Surveys, 2005) surveys the whole FTL design space, including the victim-selection trade-offs you are navigating here. The Wikipedia articles on [Write amplification](https://en.wikipedia.org/wiki/Write_amplification) and [Garbage collection (computer science) § Flash memory](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) are gentler on-ramps if the papers are dense.",
       },
     ],
   },
@@ -338,6 +352,14 @@ export const CHALLENGES = [
       },
       { kind: "interface" },
       {
+        kind: "example",
+        input:
+          "stats.blocks = [\n  {index:0, valid:7, invalid:1, free:0, eraseCount:3, isOverProvision:false},\n  {index:1, valid:2, invalid:6, free:0, eraseCount:4, isOverProvision:false},\n  {index:2, valid:8, invalid:0, free:0, eraseCount:2, isOverProvision:false},\n  {index:3, valid:1, invalid:7, free:0, eraseCount:17, isOverProvision:false},\n  {index:4, valid:4, invalid:3, free:1, eraseCount:3, isOverProvision:false},\n  {index:5, valid:0, invalid:0, free:8, eraseCount:6, isOverProvision:true},\n]\npagesPerBlock = 8",
+        output: "1",
+        explain:
+          "Greedy looks at invalid pages alone and picks block 3 (7 dead, 1 live). But block 3 has already been erased 17 times — far more than any other block — because its hot data keeps dying and being rewritten. Reclaiming it again accelerates it towards failure.\n\nBlock 1 is the wear-aware choice: 6 dead pages (almost as good for write amplification), 2 live pages (one extra migration), but an erase count of 4 — near the device average. Spreading this erase to block 1 keeps the histogram flat. The cost is one extra migration write now; the saving is a block that does not burn out early.\n\nThis is the whole rung in one decision: the cheapest block *right now* is often the one you are already killing.",
+      },
+      {
         kind: "steps",
         items: [
           {
@@ -356,14 +378,14 @@ export const CHALLENGES = [
       },
       {
         kind: "prose",
-        md: "### Fault injection\n\nA policy that scores beautifully on clean traffic and corrupts data under stress has not solved anything. Three scenarios run after the main workload, and failing any of them fails the submission:",
+        md: "### Fault injection\n\nA policy that scores beautifully on clean traffic and corrupts data under stress has not solved anything. Three scenarios run after the main workload, each against a **fresh solution process** so a stateful policy cannot carry learned state from one scenario into the next. Failing any of them fails the submission:",
       },
       {
         kind: "constraints",
         items: [
-          "**Hot-page thrash.** One page is rewritten thousands of times. Policies that migrate it on every reclaim pay for it.",
-          "**Capacity pressure.** The device is filled to its limit with minimal reserve, leaving no room for a late or wasteful reclaim.",
-          "**Power loss during migration.** Your reclaim is interrupted after some pages have moved but before the erase. The device must still be consistent afterwards.",
+          "**Hot-page thrash.** One logical page is rewritten on every other operation; the rest of the traffic is spread across the cold set. A policy that migrates the hot page every time its block is reclaimed pays a huge write-amplification penalty. The scenario counts how many times the hot page was moved; moving it on more than 1/20 of the operations fails the scenario. A wear-aware policy leaves hot data where it is.",
+          "**Capacity pressure.** The device runs with only one over-provision block instead of four, and the workload fills every addressable page. A policy that reclaims too late, wastes space, or picks a block that cannot free enough pages will stall — there is no reserve to absorb a late or wasteful reclaim.",
+          "**Power loss during migration.** Halfway through the workload, one reclaim is interrupted: the policy has migrated some (but not all) valid pages out of the victim, and then the harness *skips the erase* — simulating a crash between migration and erase. The block is left partially migrated. The next write triggers a fresh reclaim, and the policy must deal with the messy state. At the end, the device's consistency check must still pass.",
         ],
       },
       {
@@ -371,6 +393,12 @@ export const CHALLENGES = [
         tone: "insight",
         title: "What good looks like",
         md: "A flat wear histogram and write amplification close to what you managed on the previous rung. If your amplification barely moved but the tall bar is gone, you have done the hard part.",
+      },
+      {
+        kind: "callout",
+        tone: "note",
+        title: "Further reading",
+        md: "The cost-benefit heuristic from Mendel Rosenblum and John Ousterhout's *The Log-Structured File System* (ACM TOCS, 1991) is the foundation for wear-aware victim selection: it folds a block's erase count and age into the reclaim decision, not just its dead-page count.\n\nFor wear levelling specifically, Li-Pin Chang, Tei-Wei Kuo and Shih-Hao Huang's *A management scheme for the wear-leveling of flash-memory storage systems* (ACM Transactions on Design Automation of Electronic Systems, 2004) is the canonical reference, and it is where the hot/cold separation idea in the steps above comes from.\n\nEran Gal and Sivan Toledo's *Algorithms and Data Structures for Flash Memories* (ACM Computing Surveys, 2005) surveys both FTL design and wear levelling in one place. The Wikipedia articles on [Wear leveling](https://en.wikipedia.org/wiki/Wear_leveling) and [Write amplification](https://en.wikipedia.org/wiki/Write_amplification) are good on-ramps if the papers are dense.",
       },
     ],
   },

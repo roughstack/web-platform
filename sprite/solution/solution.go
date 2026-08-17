@@ -14,6 +14,11 @@ type Policy struct{}
 
 func (Policy) Name() string { return "greedy" }
 
+// Close is a no-op for the in-process reference policy. The adversarial suite
+// calls it after each scenario; a real (remote) policy would tear down its
+// child process here.
+func (Policy) Close() error { return nil }
+
 func (Policy) Reclaim(d *ftl.Device, stats ftl.DeviceStats) (int, error) {
 	best := -1
 	maxInvalid := -1

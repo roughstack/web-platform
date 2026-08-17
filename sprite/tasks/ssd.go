@@ -46,7 +46,7 @@ func (t compactionTask) Config(p Params) proto.Config {
 	return proto.Config{SlotCount: p.Slots}
 }
 
-func (t compactionTask) Run(host *proto.Host, p Params) Outcome {
+func (t compactionTask) Run(host *proto.Host, _ HostFactory, p Params) Outcome {
 	p = t.Defaults(p)
 
 	slots := compaction.Generate(compaction.Config{
@@ -97,13 +97,27 @@ func (t victimSelectionTask) Config(p Params) proto.Config {
 	return deviceConfig(t.Defaults(p))
 }
 
-func (t victimSelectionTask) Run(host *proto.Host, p Params) Outcome {
+func (t victimSelectionTask) Run(host *proto.Host, _ HostFactory, p Params) Outcome {
 	p = t.Defaults(p)
 
 	result, err := runDevice(host, p)
 	metrics := deviceMetrics(result)
 	if err != nil {
 		return failed(err, metrics, map[string]any{"final_state": result.FinalState})
+	}
+
+	// Performance gate: a solution that finishes without stalling but writes
+	// far more than the reference greedy policy has not actually solved the
+	// problem — it has just survived it. Write amplification is the headline
+	// metric for this rung, so a solution more than 1.5× the reference is a
+	// failure even though the device stayed consistent. The gate is relative
+	// rather than absolute because every session draws a different geometry,
+	// and a fixed threshold would either let bad solutions through on small
+	// devices or fail good ones on hostile ones.
+	if gate := performanceGate(metrics, referenceMetrics(p), map[string]float64{
+		"write_amplification": 1.5,
+	}); gate != "" {
+		return failed(errors.New(gate), metrics, map[string]any{"final_state": result.FinalState})
 	}
 
 	return Outcome{
@@ -136,7 +150,7 @@ func (t wearLevelingTask) Config(p Params) proto.Config {
 	return deviceConfig(t.Defaults(p))
 }
 
-func (t wearLevelingTask) Run(host *proto.Host, p Params) Outcome {
+func (t wearLevelingTask) Run(host *proto.Host, newHost HostFactory, p Params) Outcome {
 	p = t.Defaults(p)
 
 	policy := remote.New(host)
@@ -156,17 +170,53 @@ func (t wearLevelingTask) Run(host *proto.Host, p Params) Outcome {
 	detail := map[string]any{"final_state": result.FinalState}
 
 	if runErr != nil {
+		_ = policy.Close()
 		return failed(runErr, metrics, detail)
+	}
+
+	// The main workload is done; close the solution's first process before the
+	// adversarial suite starts its own. The suite needs a fresh process per
+	// scenario, and leaving the main one open would just be a process the
+	// runner has to clean up later. Close is idempotent, so the runner's own
+	// close after Run returns is a no-op.
+	if err := policy.Close(); err != nil {
+		return failed(fmt.Errorf("could not close the solution after the main workload: %w", err), metrics, detail)
+	}
+
+	// Performance gate on the main workload, before paying for the adversarial
+	// suite. A solution that writes more than 1.5× the reference or burns the
+	// erase budget unevenly has not solved the wear-leveling problem, even if
+	// the device stayed consistent. Wear spread is the headline metric for
+	// this rung: a policy that concentrates erases on a few blocks will wear
+	// them out early, which is exactly what the rung is meant to punish.
+	if gate := performanceGate(metrics, referenceMetrics(p), map[string]float64{
+		"write_amplification": 1.5,
+		"wear_spread":         1.5,
+	}); gate != "" {
+		return failed(errors.New(gate), metrics, detail)
 	}
 
 	// A policy that scores well on the standard workload but corrupts data
 	// under fault injection has not solved the problem, so the suite runs even
 	// when the main pass looked clean.
+	//
+	// Each scenario gets a fresh solution process via newHost. A stateful
+	// solution (one that caches victim choice or learns thresholds from the
+	// workload) would otherwise carry scenario 1's state into scenarios 2 and
+	// 3, which silently invalidates the isolation the suite is meant to
+	// enforce. The constructor wraps each fresh host in a remote.Policy that
+	// closes the process when the scenario ends.
 	adversarial, advErr := ftl.RunAdversarial(ftl.AdversarialConfig{
 		DeviceConfig: cfg,
-		Policy:       policy,
-		Seed:         p.Seed,
-		Operations:   p.Operations,
+		NewPolicy: func() (ftl.Policy, error) {
+			h, err := newHost()
+			if err != nil {
+				return nil, fmt.Errorf("could not start a fresh solution for an adversarial scenario: %w", err)
+			}
+			return remote.New(h), nil
+		},
+		Seed:       p.Seed,
+		Operations: p.Operations,
 	})
 	detail["adversarial"] = adversarial
 	metrics["adversarial_passed"] = boolMetric(adversarial.Passed)
@@ -285,6 +335,41 @@ func boolMetric(b bool) float64 {
 		return 1
 	}
 	return 0
+}
+
+// performanceGate checks the solution's metrics against the reference greedy
+// baseline. For each metric in limits, the solution must be no worse than
+// limit× the reference; otherwise it returns a human-readable reason. A zero or
+// missing reference means the reference run itself failed, which is our bug
+// rather than the author's, so the gate is skipped — the run is left unscored
+// rather than scored against nonsense.
+//
+// The gate is deliberately a hard pass/fail, not a soft penalty: a solution
+// that writes 3× the reference is not "partially correct", it is wrong in a
+// way that the adversarial suite would only catch by luck. Failing it here
+// gives the author a clear, specific message instead of a vague leaderboard
+// rank.
+func performanceGate(metrics, reference map[string]float64, limits map[string]float64) string {
+	for key, limit := range limits {
+		ref, ok := reference[key]
+		if !ok || ref <= 0 {
+			continue
+		}
+		got := metrics[key]
+		// A solution that did zero work (e.g. the workload produced no writes)
+		// is not penalised; the gate only fires when the solution actually
+		// did something measurably worse than the reference.
+		if got <= 0 {
+			continue
+		}
+		if got > limit*ref {
+			return fmt.Sprintf(
+				"%s was %.2f, more than %.1f× the reference greedy baseline of %.2f; the solution is surviving the workload, not solving it",
+				key, got, limit, ref,
+			)
+		}
+	}
+	return ""
 }
 
 // firstFailure names the scenario that broke, so the author is told which fault

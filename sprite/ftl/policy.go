@@ -27,9 +27,17 @@ type Policy interface {
 	//
 	// If the policy cannot make progress it returns an error, and the run fails.
 	Reclaim(d *Device, stats DeviceStats) (blockToErase int, err error)
+
+	// Close releases any resources held by the policy. For an in-process
+	// policy it is a no-op; for a remote policy it terminates the solution
+	// child process. The adversarial suite calls NewPolicy once per scenario
+	// and Close when the scenario ends, so a stateful solution never carries
+	// state from one scenario into the next.
+	Close() error
 }
 
 // PolicyConstructor builds a fresh Policy for each run. The harness calls this
 // once at the start so the policy can hold per-run state without leaking
-// between submissions.
-type PolicyConstructor func() Policy
+// between submissions. The adversarial suite calls it once per scenario so
+// each scenario gets a clean solution process.
+type PolicyConstructor func() (Policy, error)

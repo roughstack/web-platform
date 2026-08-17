@@ -107,6 +107,26 @@ func start(t *testing.T, task tasks.Task, params tasks.Params, behaviour string)
 	return host
 }
 
+// factoryFor returns a HostFactory that starts fresh processes with the same
+// behaviour as the host a test already started. The wear-leveling rung uses it
+// to give each adversarial scenario its own process.
+func factoryFor(t *testing.T, task tasks.Task, params tasks.Params, behaviour string) tasks.HostFactory {
+	t.Helper()
+	return func() (*proto.Host, error) {
+		h, err := proto.StartHost(proto.HostConfig{
+			Command: []string{os.Args[0]},
+			Env:     []string{behaviourVar + "=" + behaviour},
+			Task:    task.Protocol(),
+			Config:  task.Config(params),
+		})
+		if err != nil {
+			return nil, err
+		}
+		t.Cleanup(func() { _ = h.Close() })
+		return h, nil
+	}
+}
+
 func TestEveryRungGradesACompetentSolution(t *testing.T) {
 	// Small geometries keep the suite fast; the rungs are being checked for
 	// wiring, not for how they behave at scale.
@@ -141,7 +161,7 @@ func TestEveryRungGradesACompetentSolution(t *testing.T) {
 			}
 
 			params := task.Defaults(c.params)
-			outcome := task.Run(start(t, task, params, "good"), params)
+			outcome := task.Run(start(t, task, params, "good"), factoryFor(t, task, params, "good"), params)
 
 			if !outcome.Passed {
 				t.Fatalf("a competent solution should pass, got: %s", outcome.Error)
@@ -165,7 +185,7 @@ func TestCompactionRejectsASolutionThatDoesNothing(t *testing.T) {
 	}
 
 	params := task.Defaults(tasks.Params{Seed: 3, Slots: 48, LiveFraction: 0.5})
-	outcome := task.Run(start(t, task, params, "lazy"), params)
+	outcome := task.Run(start(t, task, params, "lazy"), factoryFor(t, task, params, "lazy"), params)
 
 	if outcome.Passed {
 		t.Fatal("a solution that returns no moves should not pass a fragmented array")
@@ -187,7 +207,7 @@ func TestCompactionScoresAnOptimalSolutionPerfectly(t *testing.T) {
 	}
 
 	params := task.Defaults(tasks.Params{Seed: 11, Slots: 64, LiveFraction: 0.6})
-	outcome := task.Run(start(t, task, params, "good"), params)
+	outcome := task.Run(start(t, task, params, "good"), factoryFor(t, task, params, "good"), params)
 
 	if !outcome.Passed {
 		t.Fatalf("expected a pass, got: %s", outcome.Error)

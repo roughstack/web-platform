@@ -226,9 +226,16 @@ export class LocalDockerBackend implements ExecutionBackend {
         });
       });
 
-      // Handle the timeout event from spawn
-      child.on("exit", () => {
-        if (child.killed) timedOut = true;
+      // Handle the timeout event from spawn. Node emits 'timeout' before
+      // 'exit' and 'close' when the spawn timeout fires, so setting the flag
+      // here guarantees the close handler sees it. The previous version
+      // inferred timeout from child.killed inside the exit handler, which is
+      // fragile: child.killed is true for any kill (including a manual one)
+      // and the exit/close ordering of that flag was not guaranteed. Listening
+      // to the dedicated event is the documented contract.
+      child.on("timeout", () => {
+        timedOut = true;
+        child.kill();
       });
 
       // Write user code to stdin and close it.

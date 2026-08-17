@@ -62,6 +62,20 @@ type Outcome struct {
 	Baseline map[string]float64 `json:"baseline,omitempty"`
 }
 
+// HostFactory starts a fresh solution process configured for the same task and
+// geometry as the host the runner already started. A task uses it when it needs
+// more than one process — notably the wear-leveling rung, which must give each
+// adversarial scenario a fresh solution so a stateful policy cannot carry state
+// from one scenario into the next.
+//
+// The factory exists because isolation is a property of the harness, not of the
+// solution: a stateless solution would be fine sharing one process, but a
+// stateful one would silently leak scenario 1's learned thresholds into
+// scenario 2, and the whole point of the adversarial suite is to catch exactly
+// that. Making the caller ask for a fresh process each time is the only way to
+// guarantee it.
+type HostFactory func() (*proto.Host, error)
+
 // Task is one gradable challenge.
 type Task interface {
 	// Name is the registry key, and the value the frontend stores per challenge.
@@ -76,7 +90,12 @@ type Task interface {
 	Defaults(p Params) Params
 	// Run grades one attempt. A solution that misbehaves produces a failing
 	// Outcome rather than an error; an error means the harness itself broke.
-	Run(host *proto.Host, p Params) Outcome
+	//
+	// The host is the solution's first process; the task owns it for the
+	// duration of the run and must Close it when it is done (the runner also
+	// closes it, and Close is idempotent). newHost starts a fresh process with
+	// the same configuration, for tasks that need one process per phase.
+	Run(host *proto.Host, newHost HostFactory, p Params) Outcome
 }
 
 var (

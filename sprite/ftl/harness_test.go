@@ -12,6 +12,8 @@ type greedyPolicy struct{}
 
 func (greedyPolicy) Name() string { return "greedy" }
 
+func (greedyPolicy) Close() error { return nil }
+
 func (greedyPolicy) Reclaim(d *Device, stats DeviceStats) (int, error) {
 	// Pick the block with the most invalid pages. Over-provision blocks
 	// are eligible too: when migrated data is later invalidated by rewrites,
@@ -58,6 +60,7 @@ func (greedyPolicy) Reclaim(d *Device, stats DeviceStats) (int, error) {
 type stallPolicy struct{}
 
 func (stallPolicy) Name() string { return "stall" }
+func (stallPolicy) Close() error  { return nil }
 func (stallPolicy) Reclaim(_ *Device, _ DeviceStats) (int, error) {
 	return 0, ErrPolicyStalled
 }
@@ -198,6 +201,7 @@ func TestRunHarnessDetectsCorruption(t *testing.T) {
 type corruptPolicy struct{}
 
 func (corruptPolicy) Name() string { return "corrupt" }
+func (corruptPolicy) Close() error  { return nil }
 func (corruptPolicy) Reclaim(d *Device, stats DeviceStats) (int, error) {
 	// Return a block with valid pages still in it, without migrating them.
 	for _, b := range stats.Blocks {

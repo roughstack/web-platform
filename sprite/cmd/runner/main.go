@@ -103,7 +103,7 @@ func main() {
 	deadline := time.Now().Add(budget)
 	start := time.Now()
 
-	host, err := proto.StartHost(proto.HostConfig{
+	hostCfg := proto.HostConfig{
 		Command: command,
 		Task:    task.Protocol(),
 		Config:  task.Config(params),
@@ -112,7 +112,9 @@ func main() {
 		// hangs on its first answer would look identical to one that is merely
 		// slow overall.
 		RequestTimeout: perRequestTimeout(budget),
-	})
+	}
+
+	host, err := proto.StartHost(hostCfg)
 	if err != nil {
 		// A solution that dies during the handshake has usually printed the
 		// reason — a traceback, a missing symbol — and that output is the only
@@ -133,7 +135,13 @@ func main() {
 		os.Exit(2)
 	}
 
-	outcome := task.Run(host, params)
+	// newHost starts a fresh solution process with the same configuration, for
+	// tasks that need one process per phase (the wear-leveling rung, which
+	// gives each adversarial scenario its own process). Tasks that do not need
+	// it ignore the factory.
+	newHost := func() (*proto.Host, error) { return proto.StartHost(hostCfg) }
+
+	outcome := task.Run(host, newHost, params)
 	console := host.Console()
 	name := host.Name()
 	_ = host.Close()

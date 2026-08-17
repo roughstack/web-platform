@@ -36,6 +36,11 @@ func (p *Policy) Name() string { return p.host.Name() }
 // Console returns everything the solution wrote to stderr.
 func (p *Policy) Console() string { return p.host.Console() }
 
+// Close terminates the solution child process. The adversarial suite calls
+// this after each scenario so a stateful solution never carries state from
+// one scenario into the next.
+func (p *Policy) Close() error { return p.host.Close() }
+
 // Reclaim asks the solution for a victim block, validates the answer, migrates
 // the block's live pages, and hands the index back to the harness to erase.
 func (p *Policy) Reclaim(d *ftl.Device, stats ftl.DeviceStats) (int, error) {

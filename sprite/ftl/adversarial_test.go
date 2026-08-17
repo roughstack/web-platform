@@ -10,6 +10,7 @@ import (
 type stallPolicyReclaim struct{}
 
 func (stallPolicyReclaim) Name() string { return "stall" }
+func (stallPolicyReclaim) Close() error  { return nil }
 func (stallPolicyReclaim) Reclaim(d *Device, _ DeviceStats) (int, error) {
 	return 0, ErrPolicyStalled
 }
@@ -18,6 +19,7 @@ func (stallPolicyReclaim) Reclaim(d *Device, _ DeviceStats) (int, error) {
 type greedyPolicyReclaim struct{}
 
 func (greedyPolicyReclaim) Name() string { return "greedy" }
+func (greedyPolicyReclaim) Close() error  { return nil }
 func (greedyPolicyReclaim) Reclaim(d *Device, stats DeviceStats) (int, error) {
 	best := -1
 	maxInvalid := -1
@@ -46,10 +48,21 @@ func defaultAdversarialDeviceConfig() DeviceConfig {
 	}
 }
 
+// greedyCtor and stallCtor wrap a stateless in-process policy as a
+// PolicyConstructor, so the adversarial tests exercise the same fresh-per-
+// scenario path that real (stateful) solutions go through.
+func greedyCtor() PolicyConstructor {
+	return func() (Policy, error) { return greedyPolicyReclaim{}, nil }
+}
+
+func stallCtor() PolicyConstructor {
+	return func() (Policy, error) { return stallPolicyReclaim{}, nil }
+}
+
 func TestAdversarialPassesWithGreedyPolicy(t *testing.T) {
 	cfg := AdversarialConfig{
 		DeviceConfig: defaultAdversarialDeviceConfig(),
-		Policy:       greedyPolicyReclaim{},
+		NewPolicy:    greedyCtor(),
 		Seed:         42,
 	}
 
@@ -73,7 +86,7 @@ func TestAdversarialPassesWithGreedyPolicy(t *testing.T) {
 func TestAdversarialFailsWithStallPolicy(t *testing.T) {
 	cfg := AdversarialConfig{
 		DeviceConfig: defaultAdversarialDeviceConfig(),
-		Policy:       stallPolicyReclaim{},
+		NewPolicy:    stallCtor(),
 		Seed:         42,
 	}
 
@@ -86,7 +99,7 @@ func TestAdversarialFailsWithStallPolicy(t *testing.T) {
 func TestAdversarialHotPageThrashMeasuresMigrationCount(t *testing.T) {
 	cfg := AdversarialConfig{
 		DeviceConfig: defaultAdversarialDeviceConfig(),
-		Policy:       greedyPolicyReclaim{},
+		NewPolicy:    greedyCtor(),
 		Seed:         42,
 	}
 
@@ -108,7 +121,7 @@ func TestAdversarialHotPageThrashMeasuresMigrationCount(t *testing.T) {
 func TestAdversarialCapacityPressureStallsBadPolicy(t *testing.T) {
 	cfg := AdversarialConfig{
 		DeviceConfig: defaultAdversarialDeviceConfig(),
-		Policy:       stallPolicyReclaim{},
+		NewPolicy:    stallCtor(),
 		Seed:         42,
 	}
 
@@ -125,7 +138,7 @@ func TestAdversarialCapacityPressureStallsBadPolicy(t *testing.T) {
 func TestAdversarialPowerLossRecoveryChecksConsistency(t *testing.T) {
 	cfg := AdversarialConfig{
 		DeviceConfig: defaultAdversarialDeviceConfig(),
-		Policy:       greedyPolicyReclaim{},
+		NewPolicy:    greedyCtor(),
 		Seed:         42,
 	}
 
@@ -142,7 +155,7 @@ func TestAdversarialPowerLossRecoveryChecksConsistency(t *testing.T) {
 func TestAdversarialIsDeterministic(t *testing.T) {
 	cfg := AdversarialConfig{
 		DeviceConfig: defaultAdversarialDeviceConfig(),
-		Policy:       greedyPolicyReclaim{},
+		NewPolicy:    greedyCtor(),
 		Seed:         99,
 	}
 
@@ -156,12 +169,73 @@ func TestAdversarialIsDeterministic(t *testing.T) {
 func TestAdversarialRejectsNilPolicy(t *testing.T) {
 	cfg := AdversarialConfig{
 		DeviceConfig: defaultAdversarialDeviceConfig(),
-		Policy:       nil,
+		NewPolicy:    nil,
 		Seed:         42,
 	}
 	if _, err := RunAdversarial(cfg); err == nil {
-		t.Errorf("expected error for nil policy")
+		t.Errorf("expected error for nil policy constructor")
 	}
+}
+
+// TestAdversarialFreshPolicyPerScenario is the regression test for the
+// state-leak bug. RunAdversarial must call the constructor exactly once per
+// scenario (3 times total) so each scenario gets a fresh policy. Before the
+// fix, all three scenarios shared one policy instance, so a stateful
+// solution carried state from scenario 1 into scenarios 2 and 3.
+func TestAdversarialFreshPolicyPerScenario(t *testing.T) {
+	calls := 0
+	ctor := func() (Policy, error) {
+		calls++
+		return greedyPolicyReclaim{}, nil
+	}
+	cfg := AdversarialConfig{
+		DeviceConfig: defaultAdversarialDeviceConfig(),
+		NewPolicy:    ctor,
+		Seed:         42,
+	}
+
+	if _, err := RunAdversarial(cfg); err != nil {
+		t.Fatalf("adversarial run failed: %v", err)
+	}
+	if calls != 3 {
+		t.Errorf("NewPolicy should be called once per scenario (3 times), got %d", calls)
+	}
+}
+
+// TestAdversarialClosesEveryScenarioPolicy verifies that every policy
+// returned by the constructor is Closed when its scenario ends, so a remote
+// solution process is not left running between scenarios.
+func TestAdversarialClosesEveryScenarioPolicy(t *testing.T) {
+	closed := 0
+	ctor := func() (Policy, error) {
+		return &closeTrackingPolicy{greedy: greedyPolicyReclaim{}, closed: &closed}, nil
+	}
+	cfg := AdversarialConfig{
+		DeviceConfig: defaultAdversarialDeviceConfig(),
+		NewPolicy:    ctor,
+		Seed:         42,
+	}
+
+	if _, err := RunAdversarial(cfg); err != nil {
+		t.Fatalf("adversarial run failed: %v", err)
+	}
+	if closed != 3 {
+		t.Errorf("every scenario policy should be Closed (3 times), got %d", closed)
+	}
+}
+
+type closeTrackingPolicy struct {
+	greedy greedyPolicyReclaim
+	closed *int
+}
+
+func (c *closeTrackingPolicy) Name() string { return "close-tracking-greedy" }
+func (c *closeTrackingPolicy) Close() error {
+	*c.closed++
+	return nil
+}
+func (c *closeTrackingPolicy) Reclaim(d *Device, stats DeviceStats) (int, error) {
+	return c.greedy.Reclaim(d, stats)
 }
 
 func findScenario(result AdversarialResult, name string) *ScenarioResult {

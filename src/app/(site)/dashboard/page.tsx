@@ -69,44 +69,55 @@ export default async function DashboardPage() {
     });
     submissions = raw as SubmissionRow[];
 
-    // Compute best score per challenge.
-    const byChallenge = new Map<
-      string,
-      {
-        title: string;
-        slug: string;
+    // Best score per challenge, computed in the database rather than in JS.
+    //
+    // The previous version aggregated the last 50 submissions in memory, which
+    // silently dropped any attempt older than the 50th row. A user who solved a
+    // challenge early and kept grinding others would see their best score
+    // disappear once it fell out of the window. The aggregate query reads
+    // every submission for the session, so the best score is stable.
+    //
+    // `passed` is BOOL_OR rather than tied to the best-scoring attempt: a
+    // challenge is "passed" if the user ever passed it, even if a later,
+    // higher-scoring attempt happened to fail on a stricter instance. The best
+    // score and the pass flag answer different questions and must not be
+    // coupled.
+    const bestRows = await prisma.$queryRaw<
+      Array<{
+        challengeSlug: string;
+        challengeTitle: string;
         difficulty: string;
         category: string;
         bestScore: number;
-        attempts: number;
+        attempts: bigint;
         passed: boolean;
-      }
-    >();
-    for (const s of submissions) {
-      if (!s.result) continue;
-      const key = s.challenge.slug;
-      const existing = byChallenge.get(key);
-      if (!existing) {
-        byChallenge.set(key, {
-          title: s.challenge.title,
-          slug: s.challenge.slug,
-          difficulty: s.challenge.difficulty,
-          category: s.challenge.category,
-          bestScore: s.result.score,
-          attempts: 1,
-          passed: s.result.passed,
-        });
-      } else {
-        existing.attempts++;
-        if (s.result.score > existing.bestScore) {
-          existing.bestScore = s.result.score;
-          existing.passed = s.result.passed;
-        }
-      }
-    }
-    bestPerChallenge = Array.from(byChallenge.values()).sort(
-      (a, b) => b.bestScore - a.bestScore,
-    );
+      }>
+    >`
+      SELECT
+        c.slug AS "challengeSlug",
+        c.title AS "challengeTitle",
+        c.difficulty::text AS "difficulty",
+        c.category,
+        MAX(r.score) AS "bestScore",
+        COUNT(*) AS "attempts",
+        BOOL_OR(r.passed) AS "passed"
+      FROM "Submission" s
+      JOIN "Result" r ON r."submissionId" = s.id
+      JOIN "Challenge" c ON c.id = s."challengeId"
+      WHERE s."sessionId" = ${sessionToken}
+        AND c."isPublished" = true
+      GROUP BY c.slug, c.title, c.difficulty, c.category
+      ORDER BY "bestScore" DESC
+    `;
+    bestPerChallenge = bestRows.map((r) => ({
+      title: r.challengeTitle,
+      slug: r.challengeSlug,
+      difficulty: r.difficulty,
+      category: r.category,
+      bestScore: r.bestScore,
+      attempts: Number(r.attempts),
+      passed: r.passed,
+    }));
   }
 
   return (
