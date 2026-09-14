@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "test:audit": "playwright test tests/e2e/layout-audit.spec.ts",
     "test:go": "cd sprite && go test ./...",
+    "arena:validate": "tsx scripts/arena-validate.mts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -44,6 +45,7 @@
     "recharts": "^3.10.1",
     "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
+    "yaml": "^2.8.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
