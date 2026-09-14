@@ -21,7 +21,10 @@
 # Design research: scraped reference pages and scratch capture scripts.
 # Large, regenerable, and not part of the product.
 /.research
-/docs
+/docs/*
+!/docs/adr/
+!/docs/adr/**
+!/docs/architecture-audit.md
 # next.js
 /.next/
 /out/
