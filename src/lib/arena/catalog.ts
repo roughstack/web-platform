@@ -24,6 +24,7 @@ const arenaRegistryV1Schema = z
   .strict();
 
 export type ArenaCatalogEntry = z.infer<typeof arenaCatalogEntrySchema>;
+export type ArenaRegistryV1 = z.infer<typeof arenaRegistryV1Schema>;
 
 export interface ArenaCatalogOptions {
   environment?: string;
@@ -39,12 +40,18 @@ export async function loadArenaCatalog(
       ? await loadPublishedRegistry(
           options.registryPath ?? process.env[ARENA_REGISTRY_ENV],
         )
-      : (await discoverArenaManifests(options.roots)).map(
-          ({ manifest, digest }) => ({ manifest, manifestDigest: digest }),
-        );
+      : (await createArenaRegistry(options.roots)).arenas;
 
-  assertUniqueArenaVersions(entries);
-  return entries.filter(isPublicArena).sort(compareArenaEntries);
+  return normalizeEntries(entries);
+}
+
+export async function createArenaRegistry(
+  roots?: string[],
+): Promise<ArenaRegistryV1> {
+  const arenas = (await discoverArenaManifests(roots)).map(
+    ({ manifest, digest }) => ({ manifest, manifestDigest: digest }),
+  );
+  return { schemaVersion: 1, arenas: normalizeEntries(arenas) };
 }
 
 async function loadPublishedRegistry(
@@ -61,6 +68,11 @@ async function loadPublishedRegistry(
 
 function isPublicArena(entry: ArenaCatalogEntry): boolean {
   return entry.manifest.metadata.visibility === "public";
+}
+
+function normalizeEntries(entries: ArenaCatalogEntry[]): ArenaCatalogEntry[] {
+  assertUniqueArenaVersions(entries);
+  return entries.filter(isPublicArena).sort(compareArenaEntries);
 }
 
 function assertUniqueArenaVersions(entries: ArenaCatalogEntry[]): void {

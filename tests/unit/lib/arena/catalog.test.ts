@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   ARENA_REGISTRY_ENV,
+  createArenaRegistry,
   loadArenaCatalog,
 } from "@/lib/arena/catalog";
 import { parseArenaManifest } from "@/lib/arena/manifest";
@@ -100,6 +101,25 @@ async function writeRegistry(value: unknown): Promise<string> {
 }
 
 describe("arena catalog", () => {
+  it("creates a production registry from public external arenas", async () => {
+    const root = await temporaryDirectory("bytearena-arenas-");
+    await writeArena(root, "public", manifestYaml);
+    await writeArena(
+      root,
+      "private",
+      manifestYaml
+        .replace("id: test-arena", "id: private-arena")
+        .replace("visibility: public", "visibility: private"),
+    );
+
+    const registry = await createArenaRegistry([root]);
+
+    expect(registry.schemaVersion).toBe(1);
+    expect(registry.arenas).toHaveLength(1);
+    expect(registry.arenas[0]?.manifest.metadata.id).toBe("test-arena");
+    expect(registry.arenas[0]?.manifestDigest).toMatch(/^[a-f0-9]{64}$/);
+  });
+
   it("maps local discovery to deterministic path-free public entries", async () => {
     const root = await temporaryDirectory("bytearena-arenas-");
     await writeArena(

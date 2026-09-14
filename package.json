@@ -14,6 +14,7 @@
     "test:audit": "playwright test tests/e2e/layout-audit.spec.ts",
     "test:go": "cd sprite && go test ./...",
     "arena:validate": "tsx scripts/arena-validate.mts",
+    "arena:registry": "tsx scripts/arena-registry.mts",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
