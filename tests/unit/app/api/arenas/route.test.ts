@@ -30,7 +30,7 @@ describe("GET /api/arenas", () => {
     loadArenaCatalogMock.mockRejectedValue(
       new Error(`ENOENT: no such file or directory, open '${internalPath}'`),
     );
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    const log = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     const response = await GET();
     const body = await response.text();
@@ -38,5 +38,6 @@ describe("GET /api/arenas", () => {
     expect(response.status).toBe(500);
     expect(body).not.toContain(internalPath);
     expect(JSON.parse(body)).toEqual({ error: "Arena catalog is unavailable" });
+    expect(JSON.stringify(log.mock.calls)).not.toContain(internalPath);
   });
 });

@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   ARENA_REGISTRY_ENV,
@@ -56,6 +56,7 @@ scoring:
 `;
 
 afterEach(async () => {
+  vi.unstubAllEnvs();
   await Promise.all(
     temporaryDirectories.splice(0).map((directory) =>
       rm(directory, { force: true, recursive: true }),
@@ -146,6 +147,8 @@ describe("arena catalog", () => {
   });
 
   it("fails closed when production registry configuration is absent", async () => {
+    vi.stubEnv(ARENA_REGISTRY_ENV, "");
+
     await expect(
       loadArenaCatalog({ environment: "production", registryPath: undefined }),
     ).rejects.toThrow(ARENA_REGISTRY_ENV);

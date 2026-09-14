@@ -13,7 +13,9 @@ export async function GET() {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
-    console.error("Failed to load arena catalog", error);
+    console.error("Failed to load arena catalog", {
+      errorType: error instanceof Error ? error.name : typeof error,
+    });
     return NextResponse.json(
       { error: "Arena catalog is unavailable" },
       { status: 500 },
