@@ -1,55 +1,70 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
+# Dependencies and package-manager state
+/node_modules/
+/.pnp/
 .pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+/.yarn/*
+!/.yarn/patches/
+!/.yarn/plugins/
+!/.yarn/releases/
+!/.yarn/versions/
 
-# testing
-/coverage
-/playwright-report
-/test-results
-/tests/e2e/__artifacts__
-# Regenerated on every audit run; large binaries that would churn every commit.
-/tests/e2e/__screenshots__
-
-# Design research: scraped reference pages and scratch capture scripts.
-# Large, regenerable, and not part of the product.
-/.research
-/docs/*
-!/docs/adr/
-!/docs/adr/**
-!/docs/architecture-audit.md
-# next.js
+# Framework and build output
 /.next/
 /out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-# The template carries no secrets and must be committed.
-!.env.example
-
-# vercel
-.vercel
-
-# typescript
+/build/
+/dist/
 *.tsbuildinfo
 next-env.d.ts
+
+# Tests and generated reports
+/coverage/
+/playwright-report/
+/test-results/
+/tests/e2e/__artifacts__/
+/tests/e2e/__screenshots__/
+coverage.out
+*.test
+
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+/.pytest_cache/
+/.mypy_cache/
+/.ruff_cache/
+
+# Local databases and runtime data
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+/data/
+/logs/
+/tmp/
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local tools, editors, and scratch material
+/.docdex/
+/.docdex-state/
+/.docdex_state/
+/.research/
+/claude_code_dumps/
+/work/
+/docs/PLAN.md
+/.idea/
+/.vscode/
+.DS_Store
+*.log
+*.swp
+*.swo
+*~
+
+# Deployment provider state
+/.vercel/
