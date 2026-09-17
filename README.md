@@ -9,8 +9,10 @@ flash device. Your code is scored on write amplification, erase count, and wear 
 against a synthetic workload of thousands of operations, then attacked with injected
 hardware faults to see whether the logic actually holds up.
 
-Every submission runs in a throwaway Firecracker microVM on Fly.io that boots in a few
-hundred milliseconds, executes the code, and is destroyed.
+The current open-source runtime executes submissions through a local Docker
+backend. A synthetic stub is available for UI development. Durable judging,
+production worker isolation, and official evaluation are under active
+development and must not be represented as production-ready security boundaries.
 
 ---
 
@@ -21,24 +23,28 @@ flowchart LR
     User["Browser<br/>Monaco editor"] --> App["Next.js app"]
     App --> DB[("Postgres")]
     App --> Backend["Execution backend"]
-    Backend --> Sprite["Ephemeral Sprite VM<br/>runs harness + user code"]
+    Backend --> Sprite["Isolated runner<br/>runs harness + user code"]
     Sprite -->|"JSON on stdout"| Backend
     Backend --> App
     App -->|"metrics + verdict"| User
 ```
 
-A submission becomes an ephemeral VM ("Sprite") built from a purpose-built image that
-contains the challenge harness. User code is injected, the harness drives it through a
-deterministic workload while recording metrics, one JSON object is written to stdout, and
-the machine is destroyed. The backend reads that JSON, scores it, and stores the result.
+A submission is materialized into a purpose-built runner image containing the
+challenge harness. User code is injected, the harness drives it through a
+deterministic workload while recording metrics, one JSON object is written to
+stdout, and the container is removed. The backend validates that result and stores
+the current challenge result.
 
 The execution layer sits behind a single interface with two implementations, so the whole
-system runs locally against Docker without touching Fly.io or spending credits:
+system runs locally without hosted execution credentials:
 
 | `EXECUTION_MODE` | Backend | Used for |
 |------------------|---------|----------|
 | `local` | Local Docker daemon | Development and the entire test suite |
-| `fly` | Fly.io Machines API | Production |
+| `stub` or unset | Synthetic result | UI development only; never official |
+
+There is no production Fly adapter in the current tree. The architecture audit
+tracks the migration from in-process execution to a durable, isolated worker.
 
 ---
 
@@ -51,7 +57,8 @@ system runs locally against Docker without touching Fly.io or spending credits:
 | Editor | Monaco |
 | Database | PostgreSQL 16 via Prisma 7 |
 | Auth | NextAuth v5, GitHub and Google OAuth |
-| Sandbox | Fly.io Machines, Firecracker microVMs |
+| Current local isolation | Docker container |
+| Planned production isolation | Dedicated judge worker with a reviewed sandbox |
 | Simulator | Go |
 | Tests | Vitest, Playwright, `go test` |
 
@@ -59,13 +66,16 @@ system runs locally against Docker without touching Fly.io or spending credits:
 
 ## Running it
 
-Requires Docker. Nothing else needs to be installed on the host.
+Requires Docker, Node.js 22, and npm. Go is required only when running the
+simulator tests directly on the host.
 
 ```bash
-cp .env.example .env.local     # then fill in OAuth credentials
-npm run docker:up              # Postgres + web, hot reload enabled
-npm run db:push                # create tables
-npm run db:seed                # load challenges
+npm ci
+cp .env.example .env.local
+docker build -t bytearena-sprite:latest ./sprite
+npm run docker:up
+npm run db:push
+npm run db:seed
 ```
 
 The app is served at `http://localhost:3100`.
@@ -89,6 +99,7 @@ npm run test        # unit and component tests (Vitest)
 npm run test:e2e    # end-to-end and layout audit (Playwright)
 npm run test:audit  # layout audit only
 npm run test:go     # simulator tests
+npm run hygiene     # tracked-file and public/private-boundary checks
 npm run verify      # typecheck, lint, unit, e2e
 ```
 
@@ -159,3 +170,14 @@ docs/
 - [`docs/product.md`](docs/product.md) — what this is and who it is for
 - [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) — decisions taken without explicit
   sign-off, each with its rationale and the cost of reversing it
+- [`docs/architecture-audit.md`](docs/architecture-audit.md) — implemented
+  architecture and migration gaps
+- [`docs/releases.md`](docs/releases.md) — release and compatibility policy
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution and verification rules
+- [`SECURITY.md`](SECURITY.md) — private vulnerability reporting and current
+  security limitations
+
+## License
+
+ByteArena is licensed under the [Apache License 2.0](LICENSE). See
+[NOTICE](NOTICE) for attribution information.
