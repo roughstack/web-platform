@@ -12,9 +12,9 @@ var ErrPolicyStalled = errors.New("ftl: policy could not reclaim space")
 // HarnessConfig describes a single graded run.
 type HarnessConfig struct {
 	DeviceConfig DeviceConfig
-	Workload      []int
-	Policy        Policy
-	MaxReclaims   int
+	Workload     []int
+	Policy       Policy
+	MaxReclaims  int
 	// ReclaimThreshold is the free-page count at or below which the harness
 	// triggers reclamation before the next write. It must be at least
 	// PagesPerBlock so there is always room to migrate a full block's worth
@@ -30,16 +30,16 @@ type HarnessConfig struct {
 // HarnessResult is the full output of a graded run, serialized to JSON by the
 // runner and parsed by the backend.
 type HarnessResult struct {
-	PolicyName         string      `json:"policy_name"`
-	Operations         int         `json:"operations"`
-	HostWrites         int         `json:"host_writes"`
-	GCWrites           int         `json:"gc_writes"`
-	TotalErases        int         `json:"total_erases"`
-	WriteAmplification float64     `json:"write_amplification"`
-	WearSpread         float64     `json:"wear_spread"`
-	MaxEraseCount      int         `json:"max_erase_count"`
-	Passed             bool        `json:"passed"`
-	Error              string      `json:"error,omitempty"`
+	PolicyName         string  `json:"policy_name"`
+	Operations         int     `json:"operations"`
+	HostWrites         int     `json:"host_writes"`
+	GCWrites           int     `json:"gc_writes"`
+	TotalErases        int     `json:"total_erases"`
+	WriteAmplification float64 `json:"write_amplification"`
+	WearSpread         float64 `json:"wear_spread"`
+	MaxEraseCount      int     `json:"max_erase_count"`
+	Passed             bool    `json:"passed"`
+	Error              string  `json:"error,omitempty"`
 	// FinalState is a snapshot of every block after the run, used by the
 	// frontend to render the SSD block grid. Each entry has the block's
 	// valid, invalid, free page counts and its erase count.

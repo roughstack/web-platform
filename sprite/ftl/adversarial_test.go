@@ -10,7 +10,7 @@ import (
 type stallPolicyReclaim struct{}
 
 func (stallPolicyReclaim) Name() string { return "stall" }
-func (stallPolicyReclaim) Close() error  { return nil }
+func (stallPolicyReclaim) Close() error { return nil }
 func (stallPolicyReclaim) Reclaim(d *Device, _ DeviceStats) (int, error) {
 	return 0, ErrPolicyStalled
 }
@@ -19,7 +19,7 @@ func (stallPolicyReclaim) Reclaim(d *Device, _ DeviceStats) (int, error) {
 type greedyPolicyReclaim struct{}
 
 func (greedyPolicyReclaim) Name() string { return "greedy" }
-func (greedyPolicyReclaim) Close() error  { return nil }
+func (greedyPolicyReclaim) Close() error { return nil }
 func (greedyPolicyReclaim) Reclaim(d *Device, stats DeviceStats) (int, error) {
 	best := -1
 	maxInvalid := -1
@@ -42,8 +42,8 @@ func (greedyPolicyReclaim) Reclaim(d *Device, stats DeviceStats) (int, error) {
 
 func defaultAdversarialDeviceConfig() DeviceConfig {
 	return DeviceConfig{
-		Blocks:             16,
-		PagesPerBlock:      64,
+		Blocks:              16,
+		PagesPerBlock:       64,
 		OverProvisionBlocks: 2,
 	}
 }
