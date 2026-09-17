@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose a scoped platform capability.
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or maintainer problem needs to be solved?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe scope, compatibility, security boundaries, and alternatives.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Acceptance criteria
+      description: List deterministic tests or observable outcomes.
+    validations:
+      required: true

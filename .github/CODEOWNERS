@@ -1,0 +1,9 @@
+* @triggeredcode
+
+/src/lib/arena/ @triggeredcode
+/src/lib/execution/ @triggeredcode
+/src/app/api/ @triggeredcode
+/prisma/ @triggeredcode
+/sprite/ @triggeredcode
+/.github/workflows/ @triggeredcode
+/SECURITY.md @triggeredcode
