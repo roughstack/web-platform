@@ -31,9 +31,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run security:audit
+      - run: npm run db:generate
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test
+      - run: npm run build
 
   simulator:
     runs-on: ubuntu-latest
