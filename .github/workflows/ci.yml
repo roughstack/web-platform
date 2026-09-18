@@ -36,6 +36,10 @@ jobs:
       - run: npm run lint
       - run: npm run test
       - run: npm run build
+        env:
+          # Route modules construct the Prisma adapter during Next.js page-data
+          # collection, but the build does not connect to this placeholder URL.
+          DATABASE_URL: postgresql://bytearena:bytearena_dev@127.0.0.1:5432/bytearena
 
   simulator:
     runs-on: ubuntu-latest
