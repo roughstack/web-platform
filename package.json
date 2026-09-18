@@ -14,6 +14,7 @@
     "test:audit": "playwright test tests/e2e/layout-audit.spec.ts",
     "test:go": "cd sprite && go test ./...",
     "hygiene": "sh scripts/check-repository-hygiene.sh",
+    "security:audit": "npm audit --audit-level=high",
     "arena:validate": "tsx scripts/arena-validate.mts",
     "arena:registry": "tsx scripts/arena-registry.mts",
     "db:generate": "prisma generate",
@@ -25,7 +26,7 @@
     "docker:down": "docker compose down",
     "docker:reset": "docker compose down -v && docker compose up -d --build",
     "docker:logs": "docker compose logs -f web",
-    "verify": "npm run hygiene && npm run typecheck && npm run lint && npm run test && npm run test:e2e"
+    "verify": "npm run hygiene && npm run security:audit && npm run typecheck && npm run lint && npm run test && npm run test:e2e"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

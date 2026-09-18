@@ -173,6 +173,8 @@ docs/
 - [`docs/architecture-audit.md`](docs/architecture-audit.md) — implemented
   architecture and migration gaps
 - [`docs/releases.md`](docs/releases.md) — release and compatibility policy
+- [`docs/dependency-policy.md`](docs/dependency-policy.md) — dependency,
+  advisory, and license review requirements
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution and verification rules
 - [`SECURITY.md`](SECURITY.md) — private vulnerability reporting and current
   security limitations
