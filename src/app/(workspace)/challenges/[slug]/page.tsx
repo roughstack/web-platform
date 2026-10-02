@@ -42,10 +42,14 @@ async function getChallenge(slug: string) {
 
 async function getOrMaterializeChallenge(slug: string) {
   const existing = await getChallenge(slug);
-  if (existing) return existing;
+  if (existing && !existing.task.startsWith(ARENA_TASK_PREFIX)) return existing;
 
+  // Public arena packages own their educational statement. Re-materialize an
+  // existing arena so a normal refresh picks up statement and starter changes;
+  // if source is unavailable (for example a registry-only production node),
+  // the last materialized database record remains a safe fallback.
   await materializeArenaChallenge(slug).catch(() => null);
-  return getChallenge(slug);
+  return (await getChallenge(slug)) ?? existing;
 }
 
 /** The sibling rungs, so the arena can offer stepping up or down a level. */

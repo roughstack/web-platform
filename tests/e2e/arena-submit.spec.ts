@@ -79,6 +79,10 @@ test.describe("arena submission", () => {
     await expect(page.getByRole("tab", { name: "Discussion" })).toBeVisible();
     await expect(page.getByRole("tab", { name: "Submissions" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Submit" })).toBeVisible();
+    await expect(page.getByRole("img", { name: "A cache read path" })).toBeVisible();
+    await expect(page.getByText("The invariant", { exact: true })).toBeVisible();
+    await expect(page.getByText("What you implement", { exact: true })).toBeVisible();
+    await expect(page.getByText("A good way in", { exact: true })).toHaveCount(0);
 
     await page.getByRole("button", { name: "Submit" }).click();
     const metrics = page.locator("dl");
