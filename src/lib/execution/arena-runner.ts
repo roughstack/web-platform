@@ -152,6 +152,7 @@ async function runInContainer(
   const args = [
     "run",
     "--rm",
+    "--interactive",
     "--network=none",
     "--read-only",
     "--security-opt=no-new-privileges",
@@ -160,32 +161,41 @@ async function runInContainer(
     `--memory=${resources.memoryMiB}m`,
     `--pids-limit=${resources.maxProcesses}`,
     `--tmpfs=/tmp:rw,exec,nosuid,nodev,size=${resources.diskMiB}m`,
+    `--tmpfs=/workspace:rw,exec,nosuid,nodev,size=${resources.diskMiB}m,mode=1777`,
     "--user=65534:65534",
     "--env=HOME=/tmp",
     "--env=GOCACHE=/tmp/go-cache",
     "--env=GOTMPDIR=/tmp",
     "--env=GOMAXPROCS=1",
     "--env=GOFLAGS=-p=1",
-    `--volume=${workspace}:/workspace:ro`,
     "--workdir=/workspace",
     image,
+    "sh",
+    "-c",
+    'tar -xf - -C /workspace && exec "$@"',
+    "bytearena-entrypoint",
     ...command,
   ];
 
-  return captureProcess("docker", args, timeoutSeconds * 1000);
+  return captureContainerWithWorkspace(workspace, args, timeoutSeconds * 1000);
 }
 
-function captureProcess(
-  executable: string,
-  args: readonly string[],
+function captureContainerWithWorkspace(
+  workspace: string,
+  dockerArgs: readonly string[],
   timeoutMs: number,
 ): Promise<CommandResult> {
   return new Promise((resolve, reject) => {
-    const child = spawn(executable, args, {
+    const archive = spawn("tar", ["-C", workspace, "-cf", "-", "."], {
       stdio: ["ignore", "pipe", "pipe"],
+    });
+    const child = spawn("docker", dockerArgs, {
+      stdio: ["pipe", "pipe", "pipe"],
       timeout: timeoutMs,
       killSignal: "SIGKILL",
     });
+    archive.stdout.pipe(child.stdin);
+
     let stdout = "";
     let stderr = "";
     let timedOut = false;
@@ -194,6 +204,7 @@ function captureProcess(
     const append = (current: string, chunk: Buffer): string => {
       if (Buffer.byteLength(current) + chunk.byteLength > MAX_OUTPUT_BYTES) {
         outputExceeded = true;
+        archive.kill("SIGKILL");
         child.kill("SIGKILL");
         return current;
       }
@@ -206,11 +217,23 @@ function captureProcess(
     child.stderr.on("data", (chunk: Buffer) => {
       stderr = append(stderr, chunk);
     });
+    archive.stderr.on("data", (chunk: Buffer) => {
+      stderr = append(stderr, chunk);
+    });
     child.on("timeout", () => {
       timedOut = true;
+      archive.kill("SIGKILL");
+    });
+    archive.on("error", (error) => {
+      child.kill("SIGKILL");
+      reject(error);
+    });
+    child.stdin.on("error", (error: NodeJS.ErrnoException) => {
+      if (error.code !== "EPIPE") reject(error);
     });
     child.on("error", reject);
     child.on("close", (exitCode) => {
+      if (archive.exitCode === null) archive.kill("SIGKILL");
       resolve({ exitCode, stdout, stderr, timedOut, outputExceeded });
     });
   });
