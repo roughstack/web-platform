@@ -3,6 +3,7 @@ import path from "node:path";
 
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import type { ContentBlock } from "@/lib/blocks/types";
 
 import { loadArenaCatalog, type ArenaCatalogEntry } from "./catalog";
 import { discoverArenaManifests } from "./discovery";
@@ -16,6 +17,7 @@ import {
   humanizeIdentifier,
   readmeSummary,
 } from "./presentation";
+import { loadArenaStatement } from "./statement";
 
 export const ARENA_TASK_PREFIX = "arena:";
 
@@ -24,6 +26,7 @@ export interface ArenaChallengeSource {
   readonly loaded: LoadedArenaManifest;
   readonly readme: string;
   readonly starterCode: string;
+  readonly blocks: readonly ContentBlock[];
 }
 
 export interface ArenaChallengeCard {
@@ -101,12 +104,19 @@ export async function loadArenaChallengeSource(
     );
   }
 
-  const [readme, starterCode] = await Promise.all([
+  const [readme, starterCode, statement] = await Promise.all([
     readFile(path.join(loaded.arenaRoot, "README.md"), "utf8"),
     readFile(path.join(loaded.arenaRoot, entry.manifest.submission.entrypoint), "utf8"),
+    loadArenaStatement(loaded.arenaRoot),
   ]);
 
-  return { entry, loaded, readme, starterCode };
+  return {
+    entry,
+    loaded,
+    readme,
+    starterCode,
+    blocks: statement ?? arenaReadmeBlocks(readme),
+  };
 }
 
 export async function materializeArenaChallenge(id: string) {
@@ -130,7 +140,7 @@ export async function materializeArenaChallenge(id: string) {
       slug: id,
       title,
       summary,
-      blocks: arenaReadmeBlocks(source.readme) as Prisma.InputJsonValue,
+      blocks: source.blocks as Prisma.InputJsonValue,
       difficulty,
       category,
       languages: ["GO"],
@@ -152,7 +162,7 @@ export async function materializeArenaChallenge(id: string) {
     update: {
       title,
       summary,
-      blocks: arenaReadmeBlocks(source.readme) as Prisma.InputJsonValue,
+      blocks: source.blocks as Prisma.InputJsonValue,
       difficulty,
       category,
       languages: ["GO"],

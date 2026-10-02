@@ -2,6 +2,7 @@ import path from "node:path";
 
 import { configuredArenaRoots, discoverArenaManifests } from "../src/lib/arena/discovery";
 import { loadArenaManifest } from "../src/lib/arena/manifest";
+import { loadArenaStatement } from "../src/lib/arena/statement";
 
 const args = process.argv.slice(2);
 
@@ -21,6 +22,7 @@ if (manifests.length === 0) {
 
 for (const loaded of manifests) {
   const { id, version } = loaded.manifest.metadata;
+  const statement = await loadArenaStatement(loaded.arenaRoot);
   console.log(`valid ${id}@${version} sha256:${loaded.digest}`);
+  if (statement) console.log(`  statement: ${statement.length} blocks`);
 }
-
