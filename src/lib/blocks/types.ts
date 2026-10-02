@@ -53,6 +53,12 @@ export type CoreBlock =
       readonly output: string;
       readonly explain?: string;
     }
+  | {
+      readonly kind: "code";
+      readonly code: string;
+      readonly label?: string;
+      readonly language?: string;
+    }
   | { readonly kind: "constraints"; readonly items: readonly string[] }
   /**
    * Renders the signature for whichever language the reader has selected. This

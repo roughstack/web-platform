@@ -7,5 +7,6 @@
  */
 
 import "./ssd";
+import "./systems";
 
 export { getIllustration, getInterface, getPackBlock, registeredIllustrations, registeredPackBlocks } from "./registry";

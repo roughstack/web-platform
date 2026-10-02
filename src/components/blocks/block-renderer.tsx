@@ -76,6 +76,9 @@ function renderCore(block: CoreBlock, context: BlockContext) {
     case "example":
       return <Example input={block.input} output={block.output} explain={block.explain} />;
 
+    case "code":
+      return <CodeBlock code={block.code} label={block.label} language={block.language} />;
+
     case "constraints":
       return <Constraints items={block.items} />;
 
@@ -196,6 +199,32 @@ function ExampleRow({ label, value }: { label: string; value: string }) {
       <span className="text-micro uppercase tracking-wide text-quiet">{label}</span>
       <pre className="overflow-x-auto rounded-8 bg-canvas-deep px-3 py-2 font-mono text-mini text-ink">
         <code>{value}</code>
+      </pre>
+    </div>
+  );
+}
+
+function CodeBlock({
+  code,
+  label,
+  language,
+}: {
+  code: string;
+  label?: string;
+  language?: string;
+}) {
+  return (
+    <div className="space-y-2">
+      {(label || language) && (
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-micro font-medium uppercase tracking-wide text-muted">
+            {label ?? "Code"}
+          </span>
+          {language && <span className="font-mono text-micro text-quiet">{language}</span>}
+        </div>
+      )}
+      <pre className="overflow-x-auto rounded-12 border border-edge bg-canvas-deep px-4 py-3 font-mono text-mini leading-relaxed text-ink">
+        <code>{code}</code>
       </pre>
     </div>
   );
