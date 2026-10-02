@@ -58,4 +58,35 @@ test.describe("arena submission", () => {
       fullPage: false,
     });
   });
+
+  test("a public arena uses the complete challenge workspace", async ({ page }) => {
+    await page.goto("/challenges");
+
+    const card = page.getByRole("link", {
+      name: /Difficulty: Easy Cache Cache Pressure/,
+    });
+    await expect(card).toBeVisible();
+    await expect(card).not.toContainText("Cache Pressure — Easy");
+    await card.click();
+
+    await expect(page).toHaveURL(/\/challenges\/cache-pressure-easy$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Cache Pressure" }),
+    ).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Difficulty" })).toContainText(
+      "medium",
+    );
+    await expect(page.getByRole("tab", { name: "Discussion" })).toBeVisible();
+    await expect(page.getByRole("tab", { name: "Submissions" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Submit" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Submit" }).click();
+    const metrics = page.locator("dl");
+    await expect(metrics).toBeVisible({ timeout: 120_000 });
+    await expect(metrics).toContainText("Backing reads");
+    await expect(metrics).toContainText("Peak accounted bytes");
+    await expect(
+      page.locator("section").filter({ has: metrics }).getByText("Passed", { exact: true }),
+    ).toBeVisible();
+  });
 });
