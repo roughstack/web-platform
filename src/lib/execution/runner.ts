@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/db";
+import { ARENA_TASK_PREFIX } from "@/lib/arena/challenge";
 import { getExecutionBackend, type ExecutionRequest } from "./backend";
+import { executeArenaSubmission } from "./arena-runner";
 import { computeScore, scoredMetricsFrom } from "@/lib/scoring";
 import type { VariantParams } from "@/lib/variants";
 
@@ -50,27 +52,36 @@ async function executeSubmission(opts: ExecutionOptions): Promise<void> {
     throw new Error("The challenge disappeared between submitting and running");
   }
 
-  const backend = getExecutionBackend();
-
   await prisma.submission.update({
     where: { id: opts.submissionId },
     data: { status: "RUNNING", startedAt: new Date() },
   });
 
-  const result = await backend.execute({
-    code: opts.code,
-    language: opts.language,
-    task: challenge.task,
-    timeoutSec: challenge.timeLimitSec,
-    ...workloadFor(challenge.task, challenge.taskParams, opts.variant),
-  });
+  const arenaId = challenge.task.startsWith(ARENA_TASK_PREFIX)
+    ? challenge.task.slice(ARENA_TASK_PREFIX.length)
+    : null;
+  const result = arenaId
+    ? await executeArenaSubmission({
+        arenaId,
+        code: opts.code,
+        seed: opts.variant.seed,
+      })
+    : await getExecutionBackend().execute({
+        code: opts.code,
+        language: opts.language,
+        task: challenge.task,
+        timeoutSec: challenge.timeLimitSec,
+        ...workloadFor(challenge.task, challenge.taskParams, opts.variant),
+      });
 
   const score = result.passed
-    ? computeScore(
-        result.metrics,
-        result.baseline,
-        scoredMetricsFrom(challenge.metricsConfig),
-      )
+    ? arenaId
+      ? result.score
+      : computeScore(
+          result.metrics,
+          result.baseline,
+          scoredMetricsFrom(challenge.metricsConfig),
+        )
     : 0;
 
   await prisma.result.create({
