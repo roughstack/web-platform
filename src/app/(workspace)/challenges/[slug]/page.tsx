@@ -2,6 +2,9 @@ import { notFound } from "next/navigation";
 
 import { Arena, type LadderRung } from "@/components/arena/arena";
 import type { MetricDef } from "@/components/arena/types";
+import { ARENA_TASK_PREFIX, materializeArenaChallenge } from "@/lib/arena/challenge";
+import { loadArenaCatalog } from "@/lib/arena/catalog";
+import { arenaFamilyId, buildArenaLadder } from "@/lib/arena/presentation";
 import { parseBlocks } from "@/lib/blocks/types";
 import { prisma } from "@/lib/db";
 import { orderLanguages } from "@/lib/languages";
@@ -25,6 +28,7 @@ async function getChallenge(slug: string) {
     select: {
       slug: true,
       title: true,
+      summary: true,
       blocks: true,
       difficulty: true,
       task: true,
@@ -34,6 +38,14 @@ async function getChallenge(slug: string) {
       metricsConfig: true,
     },
   });
+}
+
+async function getOrMaterializeChallenge(slug: string) {
+  const existing = await getChallenge(slug);
+  if (existing) return existing;
+
+  await materializeArenaChallenge(slug).catch(() => null);
+  return getChallenge(slug);
 }
 
 /** The sibling rungs, so the arena can offer stepping up or down a level. */
@@ -46,16 +58,18 @@ async function getLadder(ladder: string): Promise<LadderRung[]> {
   return rungs;
 }
 
+async function getArenaLadder(slug: string): Promise<LadderRung[]> {
+  const catalog = await loadArenaCatalog();
+  return buildArenaLadder(catalog, arenaFamilyId(slug));
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const challenge = await prisma.challenge.findUnique({
-    where: { slug, isPublished: true },
-    select: { title: true, summary: true },
-  });
+  const challenge = await getOrMaterializeChallenge(slug);
 
   if (!challenge) return { title: "Challenge not found" };
   return { title: `${challenge.title} · ByteArena`, description: challenge.summary };
@@ -67,10 +81,12 @@ export default async function ChallengePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const challenge = await getChallenge(slug);
+  const challenge = await getOrMaterializeChallenge(slug);
   if (!challenge) notFound();
 
-  const ladder = await getLadder(challenge.ladder);
+  const ladder = challenge.task.startsWith(ARENA_TASK_PREFIX)
+    ? await getArenaLadder(challenge.slug)
+    : await getLadder(challenge.ladder);
   const metricsConfig = (challenge.metricsConfig ?? {}) as MetricsConfig;
 
   return (

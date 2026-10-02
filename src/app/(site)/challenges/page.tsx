@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { ArrowRight, Cpu, Clock, MemoryStick, FileCode } from "lucide-react";
+
+import {
+  loadArenaChallengeCards,
+  type ArenaChallengeCard,
+} from "@/lib/arena/challenge";
 import { prisma } from "@/lib/db";
 import { Badge, DifficultyBadge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Eyebrow } from "@/components/ui/label";
-import { ArrowRight, Cpu, Clock, MemoryStick, FileCode } from "lucide-react";
 
 export const metadata = {
   title: "Challenges",
@@ -30,12 +35,27 @@ async function getChallenges() {
   });
 }
 
+async function getPublicArenas(): Promise<ArenaChallengeCard[]> {
+  try {
+    return await loadArenaChallengeCards();
+  } catch {
+    return [];
+  }
+}
+
 function titleCase(value: string) {
   return value.charAt(0) + value.slice(1).toLowerCase();
 }
 
 export default async function ChallengesPage() {
-  const challenges = await getChallenges();
+  const [challenges, arenas] = await Promise.all([
+    getChallenges(),
+    getPublicArenas(),
+  ]);
+  const bySlug = new Map(
+    [...challenges, ...arenas].map((challenge) => [challenge.slug, challenge]),
+  );
+  const allChallenges = [...bySlug.values()];
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
@@ -52,7 +72,7 @@ export default async function ChallengesPage() {
         </p>
       </header>
 
-      {challenges.length === 0 ? (
+      {allChallenges.length === 0 ? (
         <Card className="p-10 text-center">
           <p className="text-mini text-muted">
             No challenges published yet. Check back soon.
@@ -60,7 +80,7 @@ export default async function ChallengesPage() {
         </Card>
       ) : (
         <ul className="grid gap-3">
-          {challenges.map((c) => (
+          {allChallenges.map((c) => (
             <li key={c.slug}>
               <Link href={`/challenges/${c.slug}`} className="group block">
                 <Card interactive className="p-5 sm:p-6">
