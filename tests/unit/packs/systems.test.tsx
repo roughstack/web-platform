@@ -15,7 +15,7 @@ describe("systems illustrations", () => {
 
     expect(screen.getByRole("img", { name: "Request path" })).toBeInTheDocument();
     expect(screen.getByText("01")).toBeInTheDocument();
-    expect(screen.getByText("lookup")).toBeInTheDocument();
+    expect(screen.getByText(/lookup/)).toBeInTheDocument();
   });
 
   it("renders state transitions and timeline finalization as text", () => {

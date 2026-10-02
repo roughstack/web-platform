@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight, Clock3 } from "lucide-react";
+import { ArrowDown, Clock3 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -75,7 +75,17 @@ function DiagramFallback() {
   );
 }
 
-function NodeCard({ item, index, state }: { item: DiagramItem; index: number; state?: boolean }) {
+function NodeCard({
+  item,
+  index,
+  state,
+  edge,
+}: {
+  item: DiagramItem;
+  index: number;
+  state?: boolean;
+  edge?: string;
+}) {
   return (
     <div
       className={cn(
@@ -91,6 +101,11 @@ function NodeCard({ item, index, state }: { item: DiagramItem; index: number; st
         <span className="text-mini font-medium text-ink">{item.label}</span>
       </div>
       {item.detail && <p className="mt-1 text-micro leading-relaxed text-muted">{item.detail}</p>}
+      {edge && (
+        <p className="mt-2 border-t border-edge pt-1.5 text-tiny text-quiet">
+          then · {edge}
+        </p>
+      )}
     </div>
   );
 }
@@ -102,20 +117,15 @@ export function FlowDiagram({ label, nodes: rawNodes, edges: rawEdges }: FlowDia
 
   const description = label ?? nodes.map((node) => node.label).join(" then ");
   return (
-    <div role="img" aria-label={description} className="overflow-x-auto pb-1">
-      <div className="flex min-w-max items-stretch gap-2">
-        {nodes.map((node, index) => (
-          <div key={`${node.label}-${index}`} className="flex items-center gap-2">
-            <NodeCard item={node} index={index} />
-            {index < nodes.length - 1 && (
-              <div className="flex w-12 shrink-0 flex-col items-center gap-1 text-center">
-                {edges[index] && <span className="text-tiny leading-tight text-quiet">{edges[index]}</span>}
-                <ArrowRight className="size-4 text-muted" aria-hidden />
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+    <div role="img" aria-label={description} className="grid grid-cols-2 gap-2">
+      {nodes.map((node, index) => (
+        <NodeCard
+          key={`${node.label}-${index}`}
+          item={node}
+          index={index}
+          edge={index < nodes.length - 1 ? edges[index] : undefined}
+        />
+      ))}
     </div>
   );
 }
