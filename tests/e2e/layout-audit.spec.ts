@@ -14,6 +14,9 @@ const ROUTES = [
   { path: "/challenges/compaction", name: "arena-easy" },
   { path: "/challenges/victim-selection", name: "arena-medium" },
   { path: "/challenges/wear-levelling", name: "arena-hard" },
+  // External statements exercise the generic systems diagrams and the
+  // materialization boundary rather than the seeded SSD pack.
+  { path: "/challenges/cache-pressure-easy", name: "arena-public" },
   { path: "/dashboard", name: "dashboard" },
   { path: "/leaderboard", name: "leaderboard" },
 ];
