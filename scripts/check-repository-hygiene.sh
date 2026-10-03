@@ -17,8 +17,8 @@ if printf '%s\n' "$history_paths" | grep -E '(^|/)(__pycache__|claude_code_dumps
   exit 1
 fi
 
-matches_file=${TMPDIR:-/tmp}/bytearena-hygiene-matches-$$
-if git grep -I -l -E 'ByteArena-Open-Source-Pivot-Spec|roughstack-arena-generation-spec|root_byteareana|work/(ollama-runs|worktree-runs)' -- . ':(exclude)scripts/check-repository-hygiene.sh' >"$matches_file" 2>/dev/null; then
+matches_file=${TMPDIR:-/tmp}/roughstack-hygiene-matches-$$
+if git grep -I -l -E 'ByteArena-Open-Source-Pivot-Spec|roughstack-arena-generation-spec|root_byteareana|work/(ollama-runs|worktree-runs)|github\.com/bytearena/sprite|bytearena-sprite:latest' -- . ':(exclude)scripts/check-repository-hygiene.sh' >"$matches_file" 2>/dev/null; then
   echo "error: private workspace reference found in public files" >&2
   sed -n '1,50p' "$matches_file" >&2
   rm -f "$matches_file"
