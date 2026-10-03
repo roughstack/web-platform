@@ -1,6 +1,6 @@
 # Dependency policy
 
-Bytearena treats dependency maintenance as part of its security posture.
+Rough Stack treats dependency maintenance as part of its security posture.
 
 ## Requirements
 
