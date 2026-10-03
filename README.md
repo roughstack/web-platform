@@ -172,6 +172,8 @@ docs/
   sign-off, each with its rationale and the cost of reversing it
 - [`docs/architecture-audit.md`](docs/architecture-audit.md): implemented
   architecture and migration gaps
+- [`docs/production-readiness.md`](docs/production-readiness.md): launch blockers
+  and the ordered product roadmap
 - [`docs/releases.md`](docs/releases.md): release and compatibility policy
 - [`docs/dependency-policy.md`](docs/dependency-policy.md): dependency,
   advisory, and license review requirements
