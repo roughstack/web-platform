@@ -31,7 +31,7 @@ services:
       NEXTAUTH_URL: http://localhost:3100
       NODE_ENV: development
       WATCHPACK_POLLING: "true"
-      BYTEARENA_ARENA_ROOTS: /bytearena-arenas/arenas
+      BYTEARENA_ARENA_ROOTS: /roughstack-challenges/challenges
     env_file:
       - path: .env.local
         required: false
@@ -39,7 +39,7 @@ services:
       - "3100:3100"
     volumes:
       - .:/app
-      - ../bytearena-arenas:/bytearena-arenas:ro
+      - ../challenges:/roughstack-challenges:ro
       # Anonymous volumes keep container-built artifacts from being shadowed by
       # the host bind mount above. node_modules in particular must stay Linux-native.
       - /app/node_modules

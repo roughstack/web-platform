@@ -169,6 +169,8 @@ docs/
 - [`docs/product.md`](docs/product.md): what this is and who it is for
 - [`docs/architecture-audit.md`](docs/architecture-audit.md): implemented
   architecture and migration gaps
+- [`docs/adr/0002-repository-responsibilities.md`](docs/adr/0002-repository-responsibilities.md):
+  repository ownership and dependency boundaries
 - [`docs/production-readiness.md`](docs/production-readiness.md): launch blockers
   and the ordered product roadmap
 - [`docs/releases.md`](docs/releases.md): release and compatibility policy
