@@ -117,7 +117,7 @@ export function DiscussionPanel({ slug }: { slug: string }) {
           value={body}
           onChange={(event) => setBody(event.target.value)}
           rows={3}
-          placeholder="Share how you thought about it. No code — describe the idea."
+          placeholder="Share how you thought about it. Describe the idea without posting code."
           className={cn(
             "w-full resize-y rounded-8 border bg-tint px-3 py-2.5 text-mini text-body placeholder:text-quiet",
             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",

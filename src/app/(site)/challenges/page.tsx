@@ -65,10 +65,10 @@ export default async function ChallengesPage() {
           Systems engineering, executed.
         </h1>
         <p className="mt-4 max-w-2xl text-regular text-muted">
-          Each challenge gives you a real subsystem to implement — a flash
-          translation layer, a write-ahead log, a scheduler — and scores your
-          solution against metrics that matter in production: amplification,
-          latency, fairness, durability.
+          Each challenge gives you a real subsystem to implement, such as a
+          flash translation layer, write-ahead log, or scheduler. Your solution
+          is measured against production concerns including amplification,
+          latency, fairness, and durability.
         </p>
       </header>
 
@@ -136,7 +136,7 @@ export default async function ChallengesPage() {
               Solutions are graded on a deterministic, seeded workload so every
               submission faces identical traffic. Metrics are compared against a
               reference solution and a clairvoyant lower bound. Your score is a
-              weighted ratio — beat the reference to score above 100.
+              weighted ratio. Beat the reference to score above 100.
             </p>
           </div>
         </div>

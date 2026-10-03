@@ -63,7 +63,7 @@ export function validateReply(body: string): ValidationResult {
     return {
       ok: false,
       reason: "too-short",
-      message: `Say a little more — at least ${MIN_REPLY_LENGTH} characters.`,
+      message: `Say a little more. Use at least ${MIN_REPLY_LENGTH} characters.`,
     };
   }
 

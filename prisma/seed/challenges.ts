@@ -96,7 +96,7 @@ export const CHALLENGES = [
         input: "slots = [4, -1, -1, 7, -1]",
         output: "[[3, 1]]",
         explain:
-          "Three live values means they belong in slots 0, 1 and 2. Slot 0 already holds one and slot 2 is empty — but so is slot 1, and value 7 at slot 3 is the only one out of place. One move is enough.",
+          "Three live values means they belong in slots 0, 1 and 2. Slot 0 already holds one, and slots 1 and 2 are empty. Value 7 at slot 3 is the only one out of place, so one move is enough.",
       },
       {
         kind: "callout",
@@ -108,7 +108,7 @@ export const CHALLENGES = [
         kind: "constraints",
         items: [
           "A move's source must hold a live value, and its destination must be empty.",
-          "Moving a slot onto itself is rejected — it does nothing and still costs a write.",
+          "Moving a slot onto itself is rejected because it does nothing and still costs a write.",
           "Nothing may be lost or duplicated. The values at the end must be the values you started with.",
           "The array holds up to 256 slots.",
         ],
@@ -117,7 +117,7 @@ export const CHALLENGES = [
         kind: "callout",
         tone: "note",
         title: "Why this is the first rung",
-        md: "An SSD cannot overwrite data in place. Superseded data sits there dead until the space is reclaimed, and reclaiming it means copying the live data somewhere else first. That copying is the entire cost of garbage collection, and it is what you are minimising here — before any of the vocabulary shows up.",
+        md: "An SSD cannot overwrite data in place. Superseded data sits there dead until the space is reclaimed, and reclaiming it means copying the live data somewhere else first. That copying is the entire cost of garbage collection. You will minimise it here before any of the vocabulary shows up.",
       },
     ],
   },
@@ -185,7 +185,7 @@ export const CHALLENGES = [
     blocks: [
       {
         kind: "prose",
-        md: "Now the flat array becomes a real device. Pages are grouped into **blocks**, and the grouping is not cosmetic — it is the whole problem.",
+        md: "Now the flat array becomes a real device. Pages are grouped into **blocks**, and that grouping creates the central constraint.",
       },
       {
         kind: "figure",
@@ -201,7 +201,7 @@ export const CHALLENGES = [
         kind: "callout",
         tone: "warn",
         title: "You cannot free a page",
-        md: "Flash is written a page at a time but erased a **block** at a time. A dead page is not reusable on its own — the whole block containing it has to be erased. And erasing takes everything with it, so every live page in that block must be copied elsewhere first.",
+        md: "Flash is written a page at a time but erased a **block** at a time. A dead page is not reusable on its own. The whole block containing it has to be erased, and every live page in that block must be copied elsewhere first.",
       },
       {
         kind: "prose",
@@ -214,7 +214,7 @@ export const CHALLENGES = [
           "stats.blocks = [\n  {index:0, valid:7, invalid:1, free:0, eraseCount:3, isOverProvision:false},\n  {index:1, valid:2, invalid:6, free:0, eraseCount:4, isOverProvision:false},\n  {index:2, valid:8, invalid:0, free:0, eraseCount:2, isOverProvision:false},\n  {index:3, valid:1, invalid:7, free:0, eraseCount:5, isOverProvision:false},\n  {index:4, valid:4, invalid:3, free:1, eraseCount:3, isOverProvision:false},\n  {index:5, valid:0, invalid:0, free:8, eraseCount:6, isOverProvision:true},\n]\npagesPerBlock = 8",
         output: "3",
         explain:
-          "Block 3 has the most dead pages (7), so erasing it frees the most space for the least migration — only one live page to copy. Block 1 is also mostly dead but holds two live pages, so it costs twice as much to reclaim for the same gain. Greedy picks block 3 here, and greedy is right on this snapshot.\n\nThe hard part is that the snapshot changes. If block 3's single live page is about to be overwritten by the next write, waiting one more reclaim would have freed it for nothing — you would have paid one migration to save a page that was about to die on its own. Greedy cannot see that coming. A policy that tracks *why* a block is full of dead pages (hot data churning) can sometimes do better by reclaiming a block whose dead pages are dead for good, not just dead for now.",
+          "Block 3 has the most dead pages (7), so erasing it frees the most space for the least migration. Only one live page must be copied. Block 1 is also mostly dead but holds two live pages, so it costs twice as much to reclaim for the same gain. Greedy picks block 3 here, and greedy is right on this snapshot.\n\nThe hard part is that the snapshot changes. If block 3's single live page is about to be overwritten by the next write, waiting one more reclaim would have freed it for nothing. You would have paid one migration to save a page that was about to die on its own. Greedy cannot see that coming. A policy that tracks *why* a block is full of dead pages (hot data churning) can sometimes do better by reclaiming a block whose dead pages are dead for good, not just dead for now.",
       },
       {
         kind: "figure",
@@ -231,7 +231,7 @@ export const CHALLENGES = [
         items: [
           {
             title: "Start greedy",
-            md: "Reclaim the block with the most dead pages. It is the obvious move and it is a genuinely decent baseline — the starter code already does it.",
+            md: "Reclaim the block with the most dead pages. It is the obvious move and a genuinely useful baseline. The starter code already does it.",
           },
           {
             title: "Notice what greedy ignores",
@@ -239,7 +239,7 @@ export const CHALLENGES = [
           },
           {
             title: "Think about age",
-            md: "Data that has survived a long time tends to keep surviving. Data written recently tends to be replaced soon. A block full of old data will not decay on its own — but a block full of young data might, if you leave it alone a little longer.",
+            md: "Data that has survived a long time tends to keep surviving. Data written recently tends to be replaced soon. A block full of old data will not decay on its own. A block full of young data might if you leave it alone a little longer.",
           },
         ],
       },
@@ -256,13 +256,13 @@ export const CHALLENGES = [
         kind: "callout",
         tone: "note",
         title: "No single right answer",
-        md: "Unlike the first rung, there is no provable optimum here — it depends on traffic nobody can see in advance. So you are ranked rather than scored against a target. Beating greedy is the real bar.",
+        md: "Unlike the first rung, there is no provable optimum here because future traffic is unknown. You are ranked rather than scored against a fixed target. Beating greedy is the real bar.",
       },
       {
         kind: "callout",
         tone: "note",
         title: "Further reading",
-        md: "The cost-benefit heuristic — weigh the space a reclaim frees against the live data it costs to move — comes from Mendel Rosenblum and John Ousterhout's *The Log-Structured File System* (ACM Transactions on Computer Systems, 1991). It is the canonical reference for victim selection and the starting point for almost every FTL garbage collector since.\n\nFor a flash-specific overview, Eran Gal and Sivan Toledo's *Algorithms and Data Structures for Flash Memories* (ACM Computing Surveys, 2005) surveys the whole FTL design space, including the victim-selection trade-offs you are navigating here. The Wikipedia articles on [Write amplification](https://en.wikipedia.org/wiki/Write_amplification) and [Garbage collection (computer science) § Flash memory](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) are gentler on-ramps if the papers are dense.",
+        md: "The cost-benefit heuristic weighs the space a reclaim frees against the live data it costs to move. It comes from Mendel Rosenblum and John Ousterhout's *The Log-Structured File System* (ACM Transactions on Computer Systems, 1991). It is the canonical reference for victim selection and the starting point for almost every FTL garbage collector since.\n\nFor a flash-specific overview, Eran Gal and Sivan Toledo's *Algorithms and Data Structures for Flash Memories* (ACM Computing Surveys, 2005) surveys the whole FTL design space, including the victim-selection trade-offs you are navigating here. The Wikipedia articles on [Write amplification](https://en.wikipedia.org/wiki/Write_amplification) and [Garbage collection (computer science) § Flash memory](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) are gentler on-ramps if the papers are dense.",
       },
     ],
   },
@@ -272,7 +272,7 @@ export const CHALLENGES = [
     slug: "wear-levelling",
     title: "Wear Levelling",
     summary:
-      "Blocks die after a finite number of erases. Keep write amplification low without burning any single block out — under fault injection.",
+      "Blocks die after a finite number of erases. Keep write amplification low without burning out any single block while faults are injected.",
     difficulty: "HARD" as const,
     category: "Storage",
     pack: "ssd",
@@ -338,13 +338,13 @@ export const CHALLENGES = [
         label: "FIG 1",
         illustration: { id: "ssd.wearHistogram", props: { eraseCounts: UNEVEN_WEAR } },
         caption:
-          "A policy optimising only for write amplification. Block 5 is being erased four times as often as any other — the device will fail there while every other block is barely used.",
+          "This policy optimises only for write amplification. Block 5 is being erased four times as often as any other, so the device will fail there while every other block is barely used.",
       },
       {
         kind: "callout",
         tone: "warn",
         title: "The tension",
-        md: "The block that is cheapest to reclaim is the one with the most dead pages. But a block fills with dead pages because the data in it is hot, and hot data keeps being rewritten. So the cheapest block to reclaim, over and over, is the same one — and you burn it out.\n\nSpreading wear means sometimes reclaiming a block you would rather not. That costs write amplification. Both are scored.",
+        md: "The block that is cheapest to reclaim is the one with the most dead pages. But a block fills with dead pages because the data in it is hot, and hot data keeps being rewritten. The cheapest block to reclaim, over and over, is therefore the same one. Eventually you burn it out.\n\nSpreading wear means sometimes reclaiming a block you would rather not. That costs write amplification. Both are scored.",
       },
       {
         kind: "prose",
@@ -357,7 +357,7 @@ export const CHALLENGES = [
           "stats.blocks = [\n  {index:0, valid:7, invalid:1, free:0, eraseCount:3, isOverProvision:false},\n  {index:1, valid:2, invalid:6, free:0, eraseCount:4, isOverProvision:false},\n  {index:2, valid:8, invalid:0, free:0, eraseCount:2, isOverProvision:false},\n  {index:3, valid:1, invalid:7, free:0, eraseCount:17, isOverProvision:false},\n  {index:4, valid:4, invalid:3, free:1, eraseCount:3, isOverProvision:false},\n  {index:5, valid:0, invalid:0, free:8, eraseCount:6, isOverProvision:true},\n]\npagesPerBlock = 8",
         output: "1",
         explain:
-          "Greedy looks at invalid pages alone and picks block 3 (7 dead, 1 live). But block 3 has already been erased 17 times — far more than any other block — because its hot data keeps dying and being rewritten. Reclaiming it again accelerates it towards failure.\n\nBlock 1 is the wear-aware choice: 6 dead pages (almost as good for write amplification), 2 live pages (one extra migration), but an erase count of 4 — near the device average. Spreading this erase to block 1 keeps the histogram flat. The cost is one extra migration write now; the saving is a block that does not burn out early.\n\nThis is the whole rung in one decision: the cheapest block *right now* is often the one you are already killing.",
+          "Greedy looks at invalid pages alone and picks block 3 (7 dead, 1 live). But block 3 has already been erased 17 times, far more than any other block, because its hot data keeps dying and being rewritten. Reclaiming it again accelerates it towards failure.\n\nBlock 1 is the wear-aware choice: 6 dead pages (almost as good for write amplification), 2 live pages (one extra migration), and an erase count of 4, which is near the device average. Spreading this erase to block 1 keeps the histogram flat. The cost is one extra migration write now; the saving is a block that does not burn out early.\n\nThis is the whole rung in one decision: the cheapest block *right now* is often the one you are already killing.",
       },
       {
         kind: "steps",
@@ -384,8 +384,8 @@ export const CHALLENGES = [
         kind: "constraints",
         items: [
           "**Hot-page thrash.** One logical page is rewritten on every other operation; the rest of the traffic is spread across the cold set. A policy that migrates the hot page every time its block is reclaimed pays a huge write-amplification penalty. The scenario counts how many times the hot page was moved; moving it on more than 1/20 of the operations fails the scenario. A wear-aware policy leaves hot data where it is.",
-          "**Capacity pressure.** The device runs with only one over-provision block instead of four, and the workload fills every addressable page. A policy that reclaims too late, wastes space, or picks a block that cannot free enough pages will stall — there is no reserve to absorb a late or wasteful reclaim.",
-          "**Power loss during migration.** Halfway through the workload, one reclaim is interrupted: the policy has migrated some (but not all) valid pages out of the victim, and then the harness *skips the erase* — simulating a crash between migration and erase. The block is left partially migrated. The next write triggers a fresh reclaim, and the policy must deal with the messy state. At the end, the device's consistency check must still pass.",
+          "**Capacity pressure.** The device runs with only one over-provision block instead of four, and the workload fills every addressable page. A policy that reclaims too late, wastes space, or picks a block that cannot free enough pages will stall. There is no reserve to absorb a late or wasteful reclaim.",
+          "**Power loss during migration.** Halfway through the workload, one reclaim is interrupted. The policy has migrated some (but not all) valid pages out of the victim, and then the harness *skips the erase* to simulate a crash between migration and erase. The block is left partially migrated. The next write triggers a fresh reclaim, and the policy must deal with the messy state. At the end, the device's consistency check must still pass.",
         ],
       },
       {

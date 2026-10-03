@@ -44,7 +44,7 @@ const STEPS = [
   {
     n: "03",
     title: "Read the damage",
-    body: "Get write amplification, erase counts and wear spread — not a green checkmark.",
+    body: "Get write amplification, erase counts, and wear spread instead of a generic green checkmark.",
   },
 ];
 
@@ -157,10 +157,11 @@ export default function Home() {
               </h1>
 
               <p className="mt-6 max-w-xl text-regular text-body sm:text-large">
-                Everywhere else you rehearse algorithms. Here you implement the
-                internals — flash translation layers, write-ahead logs, garbage
-                collectors — and they are graded on write amplification and
-                resilience, not on passing a unit test.
+                Most platforms rehearse algorithms. Here you implement the
+                machinery behind real systems: flash translation layers,
+                write-ahead logs, garbage collectors, schedulers, and caches.
+                Your work is graded on measurable behavior, not a single unit
+                test.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -176,7 +177,7 @@ export default function Home() {
             <div className="lg:pl-4">
               <MetricsPreview />
               <FigureLabel className="mt-3 block">
-                Fig 0.1 — run output
+                Fig 0.1: run output
               </FigureLabel>
             </div>
           </div>
@@ -192,9 +193,9 @@ export default function Home() {
               Why this is different
             </h2>
             <p className="mt-4 max-w-2xl text-regular text-muted">
-              LeetCode rehearses the interview. ByteArena rehearses the systems.
-              The constraints are physical, the metrics are unforgiving, and the
-              grader is actively hostile.
+              Rough Stack is a workshop for systems internals. The constraints
+              are physical, the metrics are unforgiving, and the grader probes
+              the failure modes that simple examples miss.
             </p>
           </ScrollReveal>
 
@@ -226,9 +227,9 @@ export default function Home() {
               What you&apos;ll actually learn
             </h2>
             <p className="mt-4 max-w-2xl text-regular text-muted">
-              These are the internals that every database, filesystem, and
-              storage controller has to solve. You&apos;ll solve them too — and
-              the simulator will tell you exactly how badly.
+              These are the problems every database, filesystem, and storage
+              controller has to solve. You&apos;ll build them yourself, then use
+              the simulator&apos;s measurements to understand each tradeoff.
             </p>
           </ScrollReveal>
 
@@ -294,7 +295,8 @@ export default function Home() {
               Find out whether your policy survives the hardware.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-regular text-muted">
-              One challenge is live now. No account required to run it.
+              Start with any published challenge. No account is required for a
+              first run.
             </p>
             <div className="mt-8 flex justify-center">
               <Button asChild size="lg">
