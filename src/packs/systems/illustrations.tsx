@@ -89,7 +89,7 @@ function NodeCard({
   return (
     <div
       className={cn(
-        "min-w-32 flex-1 border px-3 py-2.5",
+        "min-w-0 flex-1 border px-3 py-2.5",
         state ? "rounded-full text-center" : "rounded-8",
         toneClass(item.tone),
       )}
@@ -117,7 +117,7 @@ export function FlowDiagram({ label, nodes: rawNodes, edges: rawEdges }: FlowDia
 
   const description = label ?? nodes.map((node) => node.label).join(" then ");
   return (
-    <div role="img" aria-label={description} className="grid grid-cols-2 gap-2">
+    <div role="img" aria-label={description} className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {nodes.map((node, index) => (
         <NodeCard
           key={`${node.label}-${index}`}
