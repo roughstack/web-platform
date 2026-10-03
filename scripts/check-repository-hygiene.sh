@@ -2,7 +2,7 @@
 set -eu
 
 tracked_paths=$(git ls-files)
-forbidden_tracked=$(printf '%s\n' "$tracked_paths" | grep -E '(^|/)(__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache|node_modules|\.next|coverage|playwright-report|test-results|tmp|logs)(/|$)|\.(pyc|pyo|class|o|so|dylib|dll|exe|log|tmp|swp)$|(^|/)(\.env($|\.)|coverage\.out$)' | grep -v '^\.env\.example$' || true)
+forbidden_tracked=$(printf '%s\n' "$tracked_paths" | grep -E '(^|/)(__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache|node_modules|\.next|coverage|playwright-report|test-results|tmp|logs|pi-sessions)(/|$)|\.(pyc|pyo|class|o|so|dylib|dll|exe|log|tmp|swp)$|(^|/)(\.env($|\.)|coverage\.out$|AGENTS\.md$|CLAUDE\.md$|prompt\.md$|transcript[^/]*\.jsonl$|\.DS_Store$)' | grep -v '^\.env\.example$' || true)
 
 if [ -n "$forbidden_tracked" ]; then
   echo "error: generated, secret, cache, or runtime artifact is tracked" >&2
@@ -11,9 +11,9 @@ if [ -n "$forbidden_tracked" ]; then
 fi
 
 history_paths=$(git log --all --name-only --format= | sort -u)
-if printf '%s\n' "$history_paths" | grep -E '(^|/)(__pycache__|claude_code_dumps)(/|$)|\.(pyc|pyo)$' >/dev/null; then
+if printf '%s\n' "$history_paths" | grep -E '(^|/)(__pycache__|claude_code_dumps|pi-sessions)(/|$)|\.(pyc|pyo)$|(^|/)(AGENTS\.md|CLAUDE\.md|prompt\.md|transcript[^/]*\.jsonl|\.DS_Store)$' >/dev/null; then
   echo "error: forbidden generated or internal artifact exists in reachable history" >&2
-  printf '%s\n' "$history_paths" | grep -E '(^|/)(__pycache__|claude_code_dumps)(/|$)|\.(pyc|pyo)$' >&2
+  printf '%s\n' "$history_paths" | grep -E '(^|/)(__pycache__|claude_code_dumps|pi-sessions)(/|$)|\.(pyc|pyo)$|(^|/)(AGENTS\.md|CLAUDE\.md|prompt\.md|transcript[^/]*\.jsonl|\.DS_Store)$' >&2
   exit 1
 fi
 

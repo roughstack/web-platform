@@ -160,7 +160,6 @@ tests/
   e2e/           Playwright specs and the layout auditor
 docs/
   product.md     product brief
-  ASSUMPTIONS.md every decision made without sign-off, and why
 ```
 
 ---
@@ -168,8 +167,6 @@ docs/
 ## Documentation
 
 - [`docs/product.md`](docs/product.md): what this is and who it is for
-- [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md): decisions taken without explicit
-  sign-off, each with its rationale and the cost of reversing it
 - [`docs/architecture-audit.md`](docs/architecture-audit.md): implemented
   architecture and migration gaps
 - [`docs/production-readiness.md`](docs/production-readiness.md): launch blockers

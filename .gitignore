@@ -58,6 +58,13 @@ __pycache__/
 /claude_code_dumps/
 /work/
 /docs/PLAN.md
+/.claude/
+/.codex/
+/AGENTS.md
+/CLAUDE.md
+**/prompt.md
+**/transcript*.jsonl
+**/pi-sessions/
 /.idea/
 /.vscode/
 .DS_Store
