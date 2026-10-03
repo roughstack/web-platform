@@ -8,8 +8,11 @@ Rough Stack treats dependency maintenance as part of its security posture.
   resolved reproducibly by `package-lock.json`.
 - Pull requests must use `npm ci`; changes to `package.json` must include the
   corresponding lockfile update.
-- CI rejects high- and critical-severity advisories with
-  `npm run security:audit`.
+- CI rejects high- and critical-severity advisories in production dependencies
+  with `npm run security:audit`.
+- Maintainers review the full dependency tree with `npm run security:audit:all`.
+  Unpatched development-tool advisories remain visible without blocking a
+  production release when they cannot affect the shipped application.
 - Automated dependency pull requests are enabled through Dependabot and still
   require the normal test and review gates.
 - Exact transitive overrides are allowed only to remediate a published
@@ -26,6 +29,7 @@ Run these checks before a dependency release:
 ```sh
 npm ci
 npm run security:audit
+npm run security:audit:all
 npm ls --all
 npm run typecheck
 npm run lint
