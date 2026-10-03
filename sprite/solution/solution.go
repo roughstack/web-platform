@@ -7,7 +7,7 @@
 // is measured against.
 package solution
 
-import "github.com/bytearena/sprite/ftl"
+import "github.com/roughstack/execution-runtime/ftl"
 
 // Policy implements the ftl.Policy interface using greedy victim selection.
 type Policy struct{}

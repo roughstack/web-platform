@@ -1,3 +1,3 @@
-module github.com/bytearena/sprite
+module github.com/roughstack/execution-runtime
 
 go 1.26

@@ -16,7 +16,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/bytearena/sprite/proto"
+	"github.com/roughstack/execution-runtime/proto"
 )
 
 // Params carries every knob any task might need. Tasks read the fields they

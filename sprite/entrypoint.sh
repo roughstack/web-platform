@@ -62,9 +62,9 @@ module solution
 
 go 1.26
 
-require github.com/bytearena/sprite v0.0.0
+require github.com/roughstack/execution-runtime v0.0.0
 
-replace github.com/bytearena/sprite => /opt/bytearena/go
+replace github.com/roughstack/execution-runtime => /opt/bytearena/go
 MOD
     # GOCACHE is set in the image to a directory this user owns and that was
     # warmed at build time, so this build is incremental and needs no network.

@@ -39,7 +39,7 @@ jobs:
         env:
           # Route modules construct the Prisma adapter during Next.js page-data
           # collection, but the build does not connect to this placeholder URL.
-          DATABASE_URL: postgresql://bytearena:bytearena_dev@127.0.0.1:5432/bytearena
+          DATABASE_URL: postgresql://roughstack:roughstack_dev@127.0.0.1:5432/roughstack
 
   simulator:
     runs-on: ubuntu-latest

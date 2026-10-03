@@ -12,8 +12,8 @@ package remote
 import (
 	"fmt"
 
-	"github.com/bytearena/sprite/ftl"
-	"github.com/bytearena/sprite/proto"
+	"github.com/roughstack/execution-runtime/ftl"
+	"github.com/roughstack/execution-runtime/proto"
 )
 
 // Policy implements ftl.Policy by asking a child process which block to

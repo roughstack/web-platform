@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bytearena/sprite/proto"
-	"github.com/bytearena/sprite/tasks"
+	"github.com/roughstack/execution-runtime/proto"
+	"github.com/roughstack/execution-runtime/tasks"
 )
 
 // report is the single shape the backend parses, whatever the task measured.

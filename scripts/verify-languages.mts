@@ -1,7 +1,7 @@
 /**
- * Runs the seeded starter code for every language through the real sprite
- * container, and checks that each one builds, speaks the protocol, and gets
- * graded.
+ * Runs the seeded starter code for every language through the real execution
+ * runtime container, and checks that each one builds, speaks the protocol, and
+ * gets graded.
  *
  * This exercises the one path that unit tests cannot: the entrypoint's build
  * commands, the SDKs as they are installed in the image, and the runner's
@@ -13,7 +13,10 @@ import { spawn } from "node:child_process";
 import { LANGUAGE_IDS } from "../src/lib/languages";
 import { COMPACTION_STARTERS, VICTIM_STARTERS } from "../prisma/seed/starters";
 
-const IMAGE = process.env.SPRITE_IMAGE ?? "bytearena-sprite:latest";
+const IMAGE =
+  process.env.EXECUTION_RUNTIME_IMAGE ??
+  process.env.SPRITE_IMAGE ??
+  "roughstack-execution-runtime:latest";
 
 interface Report {
   passed?: boolean;

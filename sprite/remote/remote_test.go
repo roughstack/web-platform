@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bytearena/sprite/ftl"
-	"github.com/bytearena/sprite/proto"
-	"github.com/bytearena/sprite/remote"
-	"github.com/bytearena/sprite/sdk"
-	"github.com/bytearena/sprite/solution"
+	"github.com/roughstack/execution-runtime/ftl"
+	"github.com/roughstack/execution-runtime/proto"
+	"github.com/roughstack/execution-runtime/remote"
+	"github.com/roughstack/execution-runtime/sdk"
+	"github.com/roughstack/execution-runtime/solution"
 )
 
 // The tests spawn this same test binary as the child solution, selecting a

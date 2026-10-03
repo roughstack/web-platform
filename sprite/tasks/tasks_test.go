@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bytearena/sprite/proto"
-	"github.com/bytearena/sprite/sdk"
-	"github.com/bytearena/sprite/tasks"
+	"github.com/roughstack/execution-runtime/proto"
+	"github.com/roughstack/execution-runtime/sdk"
+	"github.com/roughstack/execution-runtime/tasks"
 )
 
 // Each test spawns this binary as the solution, choosing a behaviour with an

@@ -32,7 +32,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bytearena/sprite/proto"
+	"github.com/roughstack/execution-runtime/proto"
 )
 
 // Stats is the whole-device view handed to SelectVictim.

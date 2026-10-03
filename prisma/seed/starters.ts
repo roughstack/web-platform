@@ -10,7 +10,7 @@
 export const COMPACTION_STARTERS: Record<string, string> = {
   GO: `package main
 
-import "github.com/bytearena/sprite/sdk"
+import "github.com/roughstack/execution-runtime/sdk"
 
 type Solution struct{}
 
@@ -171,7 +171,7 @@ fn main() {
 export const VICTIM_STARTERS: Record<string, string> = {
   GO: `package main
 
-import "github.com/bytearena/sprite/sdk"
+import "github.com/roughstack/execution-runtime/sdk"
 
 type Solution struct{}
 

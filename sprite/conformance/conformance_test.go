@@ -20,10 +20,10 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/bytearena/sprite/ftl"
-	"github.com/bytearena/sprite/proto"
-	"github.com/bytearena/sprite/remote"
-	"github.com/bytearena/sprite/solution"
+	"github.com/roughstack/execution-runtime/ftl"
+	"github.com/roughstack/execution-runtime/proto"
+	"github.com/roughstack/execution-runtime/remote"
+	"github.com/roughstack/execution-runtime/solution"
 )
 
 // language describes how to turn one SDK's reference solution into a runnable
