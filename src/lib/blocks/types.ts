@@ -7,7 +7,7 @@
  *
  * The union is split in two on purpose. Core kinds are closed, so the renderer
  * can switch over them exhaustively and adding one is a compile error until it
- * is handled everywhere. Pack kinds are open, because ByteArena will span SSDs,
+ * is handled everywhere. Pack kinds are open, because Rough Stack will span SSDs,
  * LSM trees, write-ahead logs and distributed systems, and a fixed taxonomy
  * would be wrong by the second domain.
  */

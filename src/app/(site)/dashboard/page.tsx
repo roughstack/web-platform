@@ -7,7 +7,7 @@ import { CheckCircle2, XCircle, Clock, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dashboard · ByteArena",
+  title: "Dashboard",
   description: "Your submission history and best scores.",
 };
 
@@ -221,7 +221,7 @@ export default async function DashboardPage() {
                       />
                     </td>
                     <td className="px-4 py-3 font-mono tabular-nums text-body">
-                      {s.result ? s.result.score : "—"}
+                      {s.result ? s.result.score : "Not scored"}
                     </td>
                     <td className="px-4 py-3 text-quiet">
                       <time dateTime={s.createdAt.toISOString()}>

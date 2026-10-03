@@ -1,6 +1,6 @@
 # Releases and compatibility
 
-ByteArena has not published a stable release yet. Until the first tagged
+Rough Stack has not published a stable release yet. Until the first tagged
 release, `main` is the integration branch and public v1 arena/result contracts
 must remain backward-compatible unless a documented migration is approved.
 

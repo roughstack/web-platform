@@ -1,4 +1,4 @@
-# ByteArena
+# Rough Stack
 
 An interactive coding platform and secure evaluation engine for **systems engineering**
 challenges. Not another algorithm quiz site: you implement real storage and hardware
@@ -167,19 +167,19 @@ docs/
 
 ## Documentation
 
-- [`docs/product.md`](docs/product.md) — what this is and who it is for
-- [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) — decisions taken without explicit
+- [`docs/product.md`](docs/product.md): what this is and who it is for
+- [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md): decisions taken without explicit
   sign-off, each with its rationale and the cost of reversing it
-- [`docs/architecture-audit.md`](docs/architecture-audit.md) — implemented
+- [`docs/architecture-audit.md`](docs/architecture-audit.md): implemented
   architecture and migration gaps
-- [`docs/releases.md`](docs/releases.md) — release and compatibility policy
-- [`docs/dependency-policy.md`](docs/dependency-policy.md) — dependency,
+- [`docs/releases.md`](docs/releases.md): release and compatibility policy
+- [`docs/dependency-policy.md`](docs/dependency-policy.md): dependency,
   advisory, and license review requirements
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution and verification rules
-- [`SECURITY.md`](SECURITY.md) — private vulnerability reporting and current
+- [`CONTRIBUTING.md`](CONTRIBUTING.md): contribution and verification rules
+- [`SECURITY.md`](SECURITY.md): private vulnerability reporting and current
   security limitations
 
 ## License
 
-ByteArena is licensed under the [Apache License 2.0](LICENSE). See
+Rough Stack is licensed under the [Apache License 2.0](LICENSE). See
 [NOTICE](NOTICE) for attribution information.

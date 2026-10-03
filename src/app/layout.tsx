@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import {
+  PRODUCT_DESCRIPTION,
+  PRODUCT_NAME,
+  PRODUCT_TAGLINE,
+} from "@/lib/brand";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,12 +21,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "ByteArena — systems engineering challenges",
-    template: "%s — ByteArena",
+    default: `${PRODUCT_NAME}: ${PRODUCT_TAGLINE}`,
+    template: `%s | ${PRODUCT_NAME}`,
   },
-  description:
-    "Write and execute real code for low-level systems problems. Implement flash translation layers, write-ahead logs and garbage collectors, then watch them graded on write amplification and resilience to injected hardware faults.",
-  applicationName: "ByteArena",
+  description: PRODUCT_DESCRIPTION,
+  applicationName: PRODUCT_NAME,
   keywords: [
     "systems engineering",
     "SSD",
@@ -31,9 +35,8 @@ export const metadata: Metadata = {
     "database internals",
   ],
   openGraph: {
-    title: "ByteArena — systems engineering challenges",
-    description:
-      "Implement storage and hardware internals, graded on the metrics engineers actually argue about.",
+    title: `${PRODUCT_NAME}: ${PRODUCT_TAGLINE}`,
+    description: PRODUCT_DESCRIPTION,
     type: "website",
   },
 };

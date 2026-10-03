@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
 import { Button } from "@/components/ui/button";
+import { PRODUCT_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
@@ -18,17 +20,10 @@ function Wordmark() {
     <Link
       href="/"
       className="flex min-h-11 items-center gap-2 rounded-6"
-      aria-label="ByteArena home"
+      aria-label={`${PRODUCT_NAME} home`}
     >
-      <span
-        aria-hidden="true"
-        // Dark glyph on the accent, not white: white on #7170ff measures
-        // 3.84:1, below AA for text this small.
-        className="grid size-6 shrink-0 place-items-center rounded-6 bg-accent font-mono text-tiny font-bold text-canvas"
-      >
-        B
-      </span>
-      <span className="text-regular font-semibold text-ink">ByteArena</span>
+      <BrandMark className="text-accent" />
+      <span className="text-regular font-semibold text-ink">{PRODUCT_NAME}</span>
     </Link>
   );
 }

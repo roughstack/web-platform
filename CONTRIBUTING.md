@@ -1,6 +1,6 @@
-# Contributing to ByteArena
+# Contributing to Rough Stack
 
-Thank you for helping build ByteArena. Contributions should keep the platform
+Thank you for helping build Rough Stack. Contributions should keep the platform
 reproducible, reviewable, secure around untrusted code, and independent from
 private official-evaluation material.
 

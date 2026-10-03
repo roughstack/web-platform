@@ -1,6 +1,6 @@
 # Security policy
 
-ByteArena executes participant-controlled code. Reports involving sandbox
+Rough Stack executes participant-controlled code. Reports involving sandbox
 escape, path traversal, secret exposure, authentication bypass, result forgery,
 queue corruption, denial of service, or private-evaluation leakage must be
 handled privately.

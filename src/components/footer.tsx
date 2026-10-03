@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
+import { PRODUCT_NAME } from "@/lib/brand";
 
 const COLUMNS = [
   {
@@ -44,14 +46,9 @@ export function Footer() {
         <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
           <div className="max-w-xs">
             <div className="flex items-center gap-2">
-              <span
-                aria-hidden="true"
-                className="grid size-6 shrink-0 place-items-center rounded-6 bg-accent font-mono text-tiny font-bold text-canvas"
-              >
-                B
-              </span>
+              <BrandMark className="text-accent" />
               <span className="text-regular font-semibold text-ink">
-                ByteArena
+                {PRODUCT_NAME}
               </span>
             </div>
             <p className="mt-3 text-mini text-muted">

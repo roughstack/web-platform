@@ -1,11 +1,11 @@
-Product 3: ByteArena (System Internals Puzzle Evaluator)
+Rough Stack: a systems internals learning platform
 The Vision:
-The software engineering interview and learning ecosystem is saturated with tools for practicing algorithmic LeetCode problems or basic frontend components. However, there is no platform that allows senior engineers to actually write and execute code for low-level system design challenges—like balancing an LSM-tree, writing a naive wear-leveling algorithm for an SSD, or implementing a custom Write-Ahead Log. ByteArena bridges this gap.
+The software engineering interview and learning ecosystem is saturated with tools for practicing algorithmic problems or basic frontend components. Few platforms let engineers write and execute code for low-level systems challenges such as balancing an LSM tree, writing a wear-leveling policy for an SSD, or implementing a write-ahead log. Rough Stack is built for that gap.
 
 Product Description:
-ByteArena is an interactive, browser-based coding platform and secure evaluation engine tailored specifically for backend and systems engineering challenges. It abstracts complex hardware and database internals into programmable puzzles.
+Rough Stack is an interactive, browser-based coding platform and secure evaluation engine for backend and systems engineering challenges. It turns complex hardware and database internals into focused, programmable exercises.
 
-Users log into the Next.js frontend, select a challenge (e.g., "Implement a Garbage Collector for this 10x10 Flash Memory Matrix"), and write their solution in Go or Python using an embedded Monaco editor. When they hit "Execute," the true power of ByteArena takes over. The platform utilizes Fly.io's ephemeral Machines API to instantly boot a secure, isolated microVM (a "Sprite"). The user's code is injected into this VM, executed against a massive synthetic workload (simulating thousands of reads/writes), scored for performance (e.g., measuring Write Amplification), and then the VM is instantly destroyed.
+Users select a challenge, write a solution in the embedded editor, and run it against a deterministic workload. The production architecture uses isolated, ephemeral execution environments. A solution is injected into a fresh environment, exercised against realistic traffic, scored on behavior such as write amplification or tail latency, and then discarded.
 
 Core Differentiators & MVP Features:
 
@@ -18,6 +18,6 @@ The Adversarial Engine: The backend test runner doesn't just check for standard 
 Visual Performance Metrics: Returns not just a "Pass/Fail," but a detailed breakdown of the user's algorithmic efficiency (e.g., how many unnecessary block erases their FTL algorithm triggered).
 
 The Goal:
-To build a portfolio centerpiece that screams "Principal Engineer." ByteArena proves you can architect secure, distributed cloud orchestration (using Fly Machines as an API), build responsive full-stack web applications, and possess a deep, authoritative understanding of database and storage internals.
+Build a credible systems portfolio and a practical understanding of internals. Rough Stack demonstrates secure execution, distributed orchestration, responsive product engineering, and the tradeoffs inside databases, storage engines, and operating systems.
 
 Are these descriptions hitting the exact target you have in your head for the weekend project roadmap?

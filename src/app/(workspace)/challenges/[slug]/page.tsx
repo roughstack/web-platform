@@ -76,7 +76,10 @@ export async function generateMetadata({
   const challenge = await getOrMaterializeChallenge(slug);
 
   if (!challenge) return { title: "Challenge not found" };
-  return { title: `${challenge.title} · ByteArena`, description: challenge.summary };
+  return {
+    title: challenge.title,
+    description: challenge.summary,
+  };
 }
 
 export default async function ChallengePage({

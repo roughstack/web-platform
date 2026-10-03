@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 
 /**
  * The outline colour used by x-ray mode. Pure magenta is chosen because it does not
- * occur anywhere in the ByteArena palette, so every pixel matching it in a screenshot
+ * occur anywhere in the Rough Stack palette, so every pixel matching it in a screenshot
  * is guaranteed to be an element boundary rather than real content.
  */
 export const XRAY_COLOR = { r: 255, g: 0, b: 255 };

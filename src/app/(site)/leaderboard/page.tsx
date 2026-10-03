@@ -5,10 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { DifficultyBadge } from "@/components/ui/badge";
 import { Check, Trophy } from "lucide-react";
 import type { Metadata } from "next";
+import { PRODUCT_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Leaderboard · ByteArena",
-  description: "Top scores across all ByteArena challenges.",
+  title: "Leaderboard",
+  description: `Top scores across all ${PRODUCT_NAME} challenges.`,
 };
 
 export const dynamic = "force-dynamic";
