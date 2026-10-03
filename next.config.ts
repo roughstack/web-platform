@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Keep framework-generated AI instruction files out of the working tree.
+  agentRules: false,
+
   // Prisma's client loads native query engine binaries at runtime. Bundling it would
   // break those resolutions, so it stays external to the server build.
   serverExternalPackages: ["@prisma/client", "@prisma/adapter-pg"],
