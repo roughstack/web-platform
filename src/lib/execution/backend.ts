@@ -282,7 +282,7 @@ export class StubBackend implements ExecutionBackend {
 
 /**
  * getExecutionBackend returns the configured backend based on environment.
- * - EXECUTION_MODE=local → LocalDockerBackend (requires Sprite image)
+ * - EXECUTION_MODE=local → LocalDockerBackend (requires execution runtime image)
  * - EXECUTION_MODE=stub  → StubBackend (synthetic, for development)
  * - unset                → StubBackend
  */
@@ -292,7 +292,10 @@ export function getExecutionBackend(): ExecutionBackend {
   if (cachedBackend) return cachedBackend;
 
   const mode = process.env.EXECUTION_MODE ?? "stub";
-  const image = process.env.SPRITE_IMAGE ?? "bytearena-sprite:latest";
+  const image =
+    process.env.EXECUTION_RUNTIME_IMAGE ??
+    process.env.SPRITE_IMAGE ??
+    "roughstack-execution-runtime:latest";
 
   if (mode === "local") {
     cachedBackend = new LocalDockerBackend({ image });

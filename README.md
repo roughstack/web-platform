@@ -72,7 +72,7 @@ simulator tests directly on the host.
 ```bash
 npm ci
 cp .env.example .env.local
-docker build -t bytearena-sprite:latest ./sprite
+docker build -t roughstack-execution-runtime:latest ./sprite
 npm run docker:up
 npm run db:push
 npm run db:seed

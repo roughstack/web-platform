@@ -1,18 +1,18 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: bytearena-postgres
+    container_name: roughstack-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: bytearena
-      POSTGRES_PASSWORD: bytearena_dev
-      POSTGRES_DB: bytearena
+      POSTGRES_USER: roughstack
+      POSTGRES_PASSWORD: roughstack_dev
+      POSTGRES_DB: roughstack
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bytearena -d bytearena"]
+      test: ["CMD-SHELL", "pg_isready -U roughstack -d roughstack"]
       interval: 3s
       timeout: 3s
       retries: 20
@@ -21,13 +21,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: bytearena-web
+    container_name: roughstack-web
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://bytearena:bytearena_dev@postgres:5432/bytearena
+      DATABASE_URL: postgresql://roughstack:roughstack_dev@postgres:5432/roughstack
       NEXTAUTH_URL: http://localhost:3100
       NODE_ENV: development
       WATCHPACK_POLLING: "true"
@@ -44,7 +44,7 @@ services:
       # the host bind mount above. node_modules in particular must stay Linux-native.
       - /app/node_modules
       - /app/.next
-      # Lets the app shell out to the host Docker daemon to run Sprite containers
+      # Lets the app shell out to the host Docker daemon to run execution containers
       # when EXECUTION_MODE=local.
       - /var/run/docker.sock:/var/run/docker.sock
 
