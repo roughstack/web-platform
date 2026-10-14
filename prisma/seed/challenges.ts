@@ -96,7 +96,7 @@ export const CHALLENGES = [
         input: "slots = [4, -1, -1, 7, -1]",
         output: "[[3, 1]]",
         explain:
-          "Three live values means they belong in slots 0, 1 and 2. Slot 0 already holds one, and slots 1 and 2 are empty. Value 7 at slot 3 is the only one out of place, so one move is enough.",
+          "Two live values belong in slots 0 and 1. Slot 0 already holds one, and slot 1 is empty. Move value 7 from slot 3 to slot 1; one move is enough.",
       },
       {
         kind: "callout",
