@@ -90,5 +90,10 @@ function DeadSlotMark() {
 function describe(slots: readonly number[], prefix?: number): string {
   const live = slots.filter((v) => v !== EMPTY_SLOT).length;
   const base = `An array of ${slots.length} slots, ${live} of them holding live data`;
-  return prefix === undefined ? `${base}.` : `${base}, which should end up in the first ${prefix}.`;
+  if (prefix === undefined) return `${base}.`;
+  const packed = slots.slice(0, prefix).every((value) => value !== EMPTY_SLOT)
+    && slots.slice(prefix).every((value) => value === EMPTY_SLOT);
+  return packed
+    ? `${base}, packed into the first ${prefix} slots.`
+    : `${base}, which should end up in the first ${prefix} slots.`;
 }

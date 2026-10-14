@@ -87,6 +87,16 @@ export const CHALLENGES = [
           "Five live values scattered across twelve slots. The line marks where they need to end up: slots 0 to 4.",
       },
       {
+        kind: "figure",
+        label: "FIG 2",
+        illustration: {
+          id: "ssd.slotStrip",
+          props: { slots: [4, 7, 2, 9, 5, -1, -1, -1, -1, -1, -1, -1], prefix: 5, highlight: [1, 2, 4] },
+        },
+        caption:
+          "Move the three values outside the prefix into its three holes. Each value moves once; all free slots end up together at the back.",
+      },
+      {
         kind: "prose",
         md: "Return the **moves** that get there. A move copies the value in one slot into an empty one, leaving the source empty. Moves are applied in the order you give them.\n\nThe catch is that a move is not free. Every one of them is real work, and the whole challenge is doing as few as possible.",
       },
@@ -214,7 +224,7 @@ export const CHALLENGES = [
           "stats.blocks = [\n  {index:0, valid:7, invalid:1, free:0, eraseCount:3, isOverProvision:false},\n  {index:1, valid:2, invalid:6, free:0, eraseCount:4, isOverProvision:false},\n  {index:2, valid:8, invalid:0, free:0, eraseCount:2, isOverProvision:false},\n  {index:3, valid:1, invalid:7, free:0, eraseCount:5, isOverProvision:false},\n  {index:4, valid:4, invalid:3, free:1, eraseCount:3, isOverProvision:false},\n  {index:5, valid:0, invalid:0, free:8, eraseCount:6, isOverProvision:true},\n]\npagesPerBlock = 8",
         output: "3",
         explain:
-          "Block 3 has the most dead pages (7), so erasing it frees the most space for the least migration. Only one live page must be copied. Block 1 is also mostly dead but holds two live pages, so it costs twice as much to reclaim for the same gain. Greedy picks block 3 here, and greedy is right on this snapshot.\n\nThe hard part is that the snapshot changes. If block 3's single live page is about to be overwritten by the next write, waiting one more reclaim would have freed it for nothing. You would have paid one migration to save a page that was about to die on its own. Greedy cannot see that coming. A policy that tracks *why* a block is full of dead pages (hot data churning) can sometimes do better by reclaiming a block whose dead pages are dead for good, not just dead for now.",
+          "Block 3 has the most dead pages (7), so erasing it frees the most space for the least migration. Only one live page must be copied. Block 1 is also mostly dead, but it holds two live pages: it costs more to migrate and frees fewer slots. Greedy picks block 3 here, and greedy is right on this snapshot.\n\nThe hard part is that the snapshot changes. If block 3's single live page is about to be overwritten by the next write, waiting one more reclaim would have freed it for nothing. You would have paid one migration to save a page that was about to die on its own. Greedy cannot see that coming. A policy that tracks *why* a block is full of dead pages (hot data churning) can sometimes do better by reclaiming a block whose dead pages are dead for good, not just dead for now.",
       },
       {
         kind: "figure",
@@ -331,14 +341,14 @@ export const CHALLENGES = [
     blocks: [
       {
         kind: "prose",
-        md: "Everything from the previous rung still applies. One fact is added, and it changes the shape of a good answer completely: **a flash block wears out**. After some tens of thousands of erases it stops holding charge reliably, and a device is dead when enough of its blocks are.",
+        md: "Everything from the previous rung still applies. One fact is added, and it changes the shape of a good answer completely: **a flash block wears out**. Erase endurance is finite, so repeatedly reclaiming the same block can shorten device life even when write amplification looks good.",
       },
       {
         kind: "figure",
         label: "FIG 1",
         illustration: { id: "ssd.wearHistogram", props: { eraseCounts: UNEVEN_WEAR } },
         caption:
-          "This policy optimises only for write amplification. Block 5 is being erased four times as often as any other, so the device will fail there while every other block is barely used.",
+          "This policy optimises only for write amplification. Block 5 has 17 erases; the next highest has 5. One block is wearing more than three times as fast as the others.",
       },
       {
         kind: "callout",
@@ -357,7 +367,7 @@ export const CHALLENGES = [
           "stats.blocks = [\n  {index:0, valid:7, invalid:1, free:0, eraseCount:3, isOverProvision:false},\n  {index:1, valid:2, invalid:6, free:0, eraseCount:4, isOverProvision:false},\n  {index:2, valid:8, invalid:0, free:0, eraseCount:2, isOverProvision:false},\n  {index:3, valid:1, invalid:7, free:0, eraseCount:17, isOverProvision:false},\n  {index:4, valid:4, invalid:3, free:1, eraseCount:3, isOverProvision:false},\n  {index:5, valid:0, invalid:0, free:8, eraseCount:6, isOverProvision:true},\n]\npagesPerBlock = 8",
         output: "1",
         explain:
-          "Greedy looks at invalid pages alone and picks block 3 (7 dead, 1 live). But block 3 has already been erased 17 times, far more than any other block, because its hot data keeps dying and being rewritten. Reclaiming it again accelerates it towards failure.\n\nBlock 1 is the wear-aware choice: 6 dead pages (almost as good for write amplification), 2 live pages (one extra migration), and an erase count of 4, which is near the device average. Spreading this erase to block 1 keeps the histogram flat. The cost is one extra migration write now; the saving is a block that does not burn out early.\n\nThis is the whole rung in one decision: the cheapest block *right now* is often the one you are already killing.",
+          "Greedy looks at invalid pages alone and picks block 3 (7 dead, 1 live). But block 3 has already been erased 17 times, far more than any other block, because its hot data keeps dying and being rewritten. Reclaiming it again adds wear to the current worst block.\n\nBlock 1 is a wear-aware choice: 6 dead pages, 2 live pages (one extra migration), and an erase count of 4. Reclaiming it avoids adding to block 3's already high count. The cost is one extra migration write now; whether that trade is worthwhile depends on future writes.\n\nThis is the whole rung in one decision: the cheapest block *right now* is often the one you are already wearing down.",
       },
       {
         kind: "steps",
