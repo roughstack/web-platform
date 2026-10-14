@@ -37,6 +37,7 @@ test("phone layout gives the problem and editor their own readable views", async
   await page.getByRole("button", { name: "Code & results" }).click();
   await expect(diagram).toBeHidden();
   await expect(page.locator(".monaco-editor")).toBeVisible();
+  await page.getByRole("button", { name: "Focus mode" }).click();
 
   await page.getByRole("button", { name: "Problem", exact: true }).click();
   await expect(diagram).toBeVisible();

@@ -226,7 +226,10 @@ export function Arena({
               <IconButton
                 label={focusMode ? "Exit focus mode" : "Focus mode"}
                 active={focusMode}
-                onClick={() => setFocusMode((on) => !on)}
+                onClick={() => {
+                  setFocusMode((on) => !on);
+                  setMobilePane("code");
+                }}
               >
                 {focusMode ? (
                   <Minimize2 className="size-3.5" />
@@ -280,10 +283,23 @@ export function Arena({
       />
 
       <div className="flex shrink-0 gap-1 border-b border-edge bg-canvas px-3 py-1.5 md:hidden" aria-label="Workspace view">
-        <button type="button" aria-pressed={mobilePane === "problem"} onClick={() => setMobilePane("problem")} className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "problem" ? "bg-raised text-ink" : "text-muted")}>
+        <button
+          type="button"
+          aria-pressed={mobilePane === "problem"}
+          onClick={() => {
+            setFocusMode(false);
+            setMobilePane("problem");
+          }}
+          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "problem" ? "bg-raised text-ink" : "text-muted")}
+        >
           Problem
         </button>
-        <button type="button" aria-pressed={mobilePane === "code"} onClick={() => setMobilePane("code")} className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "code" ? "bg-raised text-ink" : "text-muted")}>
+        <button
+          type="button"
+          aria-pressed={mobilePane === "code"}
+          onClick={() => setMobilePane("code")}
+          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "code" ? "bg-raised text-ink" : "text-muted")}
+        >
           Code &amp; results
         </button>
       </div>
