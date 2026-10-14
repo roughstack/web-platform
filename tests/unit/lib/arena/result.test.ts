@@ -74,6 +74,15 @@ describe("Arena Result v1", () => {
     expect(parseArenaResult(result).seed).toBe("18446744073709551615");
   });
 
+  it("accepts a named fault profile without relaxing the run envelope", () => {
+    const parsed = JSON.parse(result) as { run: Record<string, unknown> };
+    parsed.run.fault_profile = "torn-tail";
+    expect(parseArenaResult(JSON.stringify(parsed)).run.fault_profile).toBe("torn-tail");
+
+    parsed.run.unexpected = "ignored by nobody";
+    expect(() => parseArenaResult(JSON.stringify(parsed))).toThrow();
+  });
+
   it("matches arena identity, version, and the complete metric contract", () => {
     expect(() => assertResultMatchesManifest(parseArenaResult(result), manifest)).not.toThrow();
   });
