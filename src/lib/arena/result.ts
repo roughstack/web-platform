@@ -38,6 +38,7 @@ export const arenaResultV1Schema = z
     run: z
       .object({
         workload_id: identifierSchema,
+        fault_profile: identifierSchema.optional(),
         duration_ns: nonnegativeCounterSchema,
         peak_memory_bytes: nonnegativeCounterSchema,
       })
