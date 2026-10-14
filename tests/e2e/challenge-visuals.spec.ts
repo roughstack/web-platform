@@ -22,6 +22,9 @@ for (const slug of [...SSD_SLUGS, ...EXTERNAL_SLUGS]) {
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator('[role="img"][aria-label]').first()).toBeVisible();
     await expect(page.getByText("Diagram data is unavailable.")).toHaveCount(0);
+    if (slug === "cache-pressure-easy") {
+      expect(await page.locator('[role="img"][aria-label]').first().getAttribute("aria-label")).not.toContain("..");
+    }
   });
 }
 

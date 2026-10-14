@@ -36,6 +36,10 @@ function string(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function withoutFinalPunctuation(value: string): string {
+  return value.replace(/[.!?]+$/, "");
+}
+
 function tone(value: unknown): Tone {
   return typeof value === "string" && value in TONE_STYLES ? value as Tone : "neutral";
 }
@@ -71,8 +75,10 @@ export function SnapshotDiagram({ title, rows: rawRows }: { title?: string; rows
   }) : [];
   if (rows.length < 2 || rows.some((row) => row.cells.length === 0)) return fallback();
 
+  const description = rows.map((row) => `${row.label}: ${row.cells.map((cell) => `${cell.label}${cell.detail ? ` ${cell.detail}` : ""}`).join(", ")}${row.note ? `. ${withoutFinalPunctuation(row.note)}` : ""}`).join(". ");
+
   return (
-    <div role="img" aria-label={`${title ?? "State changes"}. ${rows.map((row) => `${row.label}: ${row.cells.map((cell) => `${cell.label}${cell.detail ? ` ${cell.detail}` : ""}`).join(", ")}${row.note ? `. ${row.note}` : ""}`).join(". ")}`} className="space-y-3">
+    <div role="img" aria-label={`${title ?? "State changes"}. ${description}.`} className="space-y-3">
       <DiagramHeading title={title ?? "State changes"} detail="read top to bottom" />
       {rows.map((row, index) => (
         <div key={`${row.label}-${index}`} className="grid gap-2 border-t border-edge pt-2.5 sm:grid-cols-[6.5rem_1fr] sm:items-center">
@@ -199,8 +205,10 @@ export function RangeDiagram({ title, min, max, rows: rawRows, markers: rawMarke
   if (end <= start || rows.length < 2 || rows.some((row) => row.start < start || row.end > end || row.end <= row.start)) return fallback();
   const percent = (value: number) => `${(value - start) / (end - start) * 100}%`;
 
+  const description = rows.map((row) => `${row.label} spans ${row.start} to ${row.end}${row.note ? `. ${withoutFinalPunctuation(row.note)}` : ""}`).join(". ");
+
   return (
-    <div role="img" aria-label={`${title ?? "Shared axis"}. ${rows.map((row) => `${row.label} spans ${row.start} to ${row.end}${row.note ? `. ${row.note}` : ""}`).join(". ")}. ${markers.map((marker) => `${marker.label} at ${marker.at}`).join(". ")}`} className="space-y-2.5">
+    <div role="img" aria-label={`${title ?? "Shared axis"}. ${description}. ${markers.map((marker) => `${marker.label} at ${marker.at}`).join(". ")}`} className="space-y-2.5">
       <DiagramHeading title={title ?? "Shared axis"} detail={`${start} → ${end}`} />
       {rows.map((row, index) => (
         <div key={`${row.label}-${index}`} className="grid gap-1.5 sm:grid-cols-[5.5rem_1fr] sm:items-center">
