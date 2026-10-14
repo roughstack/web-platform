@@ -35,6 +35,26 @@ describe("arena educational statements", () => {
     }))).toThrow();
   });
 
+  it("rejects concept diagrams that would otherwise render blank or misleading data", () => {
+    const statement = (id: string, props: unknown) => JSON.stringify({
+      version: 1,
+      blocks: [{ kind: "figure", illustration: { id, props } }],
+    });
+
+    expect(() => parseArenaStatement(statement("systems.snapshot", { title: "Missing states", rows: [] }))).toThrow();
+    expect(() => parseArenaStatement(statement("systems.budget", {
+      title: "Overfilled", capacity: 4,
+      snapshots: [
+        { label: "first", segments: [{ label: "used", value: 5 }] },
+        { label: "second", segments: [{ label: "used", value: 1 }] },
+      ],
+    }))).toThrow();
+    expect(() => parseArenaStatement(statement("systems.ranges", {
+      title: "Outside axis", min: 0, max: 10,
+      rows: [{ label: "A", start: 0, end: 5 }, { label: "B", start: 8, end: 12 }],
+    }))).toThrow();
+  });
+
   it("falls back only when statement.json is absent", async () => {
     const root = await mkdtemp(path.join(tmpdir(), "bytearena-statement-"));
     await expect(loadArenaStatement(root)).resolves.toBeNull();
