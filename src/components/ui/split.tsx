@@ -34,6 +34,8 @@ export interface SplitProps {
    * re-laying out behind the scenes.
    */
   readonly collapse?: "first" | "second";
+  /** On narrow screens, show only this pane and let it fill the workspace. */
+  readonly mobileVisiblePane?: "first" | "second";
   readonly className?: string;
   readonly label?: string;
 }
@@ -50,6 +52,7 @@ export function Split({
   maxSize = 80,
   storageKey,
   collapse,
+  mobileVisiblePane,
   className,
   label,
 }: SplitProps) {
@@ -152,9 +155,17 @@ export function Split({
   return (
     <div
       ref={containerRef}
-      className={cn("flex min-h-0 min-w-0", horizontal ? "flex-row" : "flex-col", className)}
+      className={cn("flex min-h-0 min-w-0", horizontal ? "flex-row" : "flex-col", mobileVisiblePane && "max-md:flex-col", className)}
     >
-      <div className="min-h-0 min-w-0 overflow-hidden" style={{ flexBasis: `${size}%` }}>
+      <div
+        className={cn(
+          "min-h-0 min-w-0 overflow-hidden",
+          mobileVisiblePane && "md:basis-[var(--split-size)]",
+          mobileVisiblePane === "first" && "max-md:flex-1",
+          mobileVisiblePane === "second" && "max-md:hidden",
+        )}
+        style={mobileVisiblePane ? { "--split-size": `${size}%` } as React.CSSProperties : { flexBasis: `${size}%` }}
+      >
         {first}
       </div>
 
@@ -178,6 +189,7 @@ export function Split({
         }}
         className={cn(
           "group relative shrink-0 touch-none outline-none",
+          mobileVisiblePane && "max-md:hidden",
           // The hit area is deliberately wider than the visible line: a 1px
           // target is a usability bug even when it looks right. 24px is the
           // WCAG 2.5.8 minimum, and the right bar for a divider — the 44px
@@ -199,7 +211,7 @@ export function Split({
         />
       </div>
 
-      <div className="min-h-0 min-w-0 flex-1 overflow-hidden">{second}</div>
+      <div className={cn("min-h-0 min-w-0 flex-1 overflow-hidden", mobileVisiblePane === "first" && "max-md:hidden")}>{second}</div>
     </div>
   );
 }

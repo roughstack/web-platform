@@ -81,6 +81,7 @@ export function Arena({
   const [language, setLanguage] = useState<LanguageId>(languages[0] ?? "GO");
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [leftTab, setLeftTab] = useState<LeftTab>("description");
+  const [mobilePane, setMobilePane] = useState<"problem" | "code">("problem");
   const [fontIndex, setFontIndex] = useState(DEFAULT_FONT_INDEX);
   const [focusMode, setFocusMode] = useState(false);
   const [consoleOpen, setConsoleOpen] = useState(true);
@@ -278,6 +279,15 @@ export function Arena({
         onSubmit={submit}
       />
 
+      <div className="flex shrink-0 gap-1 border-b border-edge bg-canvas px-3 py-1.5 md:hidden" aria-label="Workspace view">
+        <button type="button" aria-pressed={mobilePane === "problem"} onClick={() => setMobilePane("problem")} className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "problem" ? "bg-raised text-ink" : "text-muted")}>
+          Problem
+        </button>
+        <button type="button" aria-pressed={mobilePane === "code"} onClick={() => setMobilePane("code")} className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "code" ? "bg-raised text-ink" : "text-muted")}>
+          Code &amp; results
+        </button>
+      </div>
+
       <Split
         direction="horizontal"
         storageKey={`${slug}.main`}
@@ -285,6 +295,7 @@ export function Arena({
         minSize={22}
         maxSize={65}
         collapse={focusMode ? "first" : undefined}
+        mobileVisiblePane={mobilePane === "problem" ? "first" : "second"}
         label="Resize the problem and editor panes"
         className="min-h-0 flex-1"
         first={
