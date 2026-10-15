@@ -19,14 +19,13 @@ test("dashboard shows submission history after a submission", async ({
   await page.goto("/dashboard");
   await page.waitForLoadState("networkidle");
 
-  await expect(page.getByText("Best scores")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your challenges" })).toBeVisible();
   await expect(page.getByText("Recent submissions")).toBeVisible();
 
-  // The challenge title appears in both the best-score card and the
-  // submissions table, so scope to the best-scores section.
+  // The title appears in both the challenge card and the submissions table.
   await expect(
     page
-      .getByText("Best scores")
+      .getByRole("heading", { name: "Your challenges" })
       .locator("..")
       .getByText("Victim Selection"),
   ).toBeVisible();
