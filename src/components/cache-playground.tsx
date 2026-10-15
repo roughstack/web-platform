@@ -59,8 +59,11 @@ export function CachePlayground() {
           <span>Cache state</span>
           <span>0{step + 1} / 03</span>
         </div>
+        <div className="relative mt-2 h-1 overflow-hidden rounded-full bg-[#b9cbea]" aria-hidden="true">
+          <span className="block h-full rounded-full bg-accent transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${((step + 1) / TRACE.length) * 100}%` }} />
+        </div>
 
-        <div className="relative mt-4 grid grid-cols-2 gap-3" aria-label="Cache entries, oldest to newest">
+        <div key={step} className="signal-step relative mt-4 grid grid-cols-2 gap-3" aria-label="Cache entries, oldest to newest">
           {current.entries.map((entry) => (
             <div key={entry.key} className="rounded-12 border-2 border-[#17324a] bg-panel p-2.5 shadow-[4px_4px_0_#17324a] sm:p-3">
               <div className="flex items-center justify-between">
