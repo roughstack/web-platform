@@ -52,8 +52,8 @@ export function Footer() {
               </span>
             </div>
             <p className="mt-3 text-mini text-muted">
-              Systems engineering challenges, executed against real workloads
-              and graded on the metrics engineers actually argue about.
+              See a system, build its internals, then run your code against a
+              real workload. Practice feedback is for learning, not ranking.
             </p>
           </div>
 

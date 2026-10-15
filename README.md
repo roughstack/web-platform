@@ -1,13 +1,14 @@
 # Rough Stack
 
-An interactive coding platform and secure evaluation engine for **systems engineering**
-challenges. Not another algorithm quiz site: you implement real storage and hardware
-internals, and your solution is graded on the metrics engineers actually argue about.
+An interactive coding platform for **systems engineering** challenges. You implement
+storage and systems internals, run them against deterministic workloads, and inspect
+the resulting behavior. Generated challenges currently provide practice feedback;
+their zero-valued scores are not a ranking system.
 
-The first challenge asks you to write the data-movement policy for a simulated NAND
-flash device. Your code is scored on write amplification, erase count, and wear evenness
-against a synthetic workload of thousands of operations, then attacked with injected
-hardware faults to see whether the logic actually holds up.
+The original SSD challenges ask you to write policies for a simulated NAND flash
+device. Those challenges measure write amplification, erase count, and wear evenness
+against synthetic workloads and injected faults. The newer Go practice challenges
+cover caching, queues, scheduling, logs, and related systems concepts.
 
 The current open-source runtime executes submissions through a local Docker
 backend. A synthetic stub is available for UI development. Durable judging,
