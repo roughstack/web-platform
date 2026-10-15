@@ -36,11 +36,11 @@ interface TimelineDiagramProps {
 }
 
 const TONES: Readonly<Record<Tone, string>> = {
-  accent: "border-accent/50 bg-accent/15",
-  signal: "border-signal/45 bg-signal/10",
-  warning: "border-warning/45 bg-warning/10",
-  danger: "border-danger/45 bg-danger/10",
-  neutral: "border-edge-strong bg-raised/40",
+  accent: "border-accent/50 bg-[#dce5ff]",
+  signal: "border-signal/50 bg-[#c8f3e0]",
+  warning: "border-warning/50 bg-[#ffe3a4]",
+  danger: "border-danger/50 bg-[#ffd7cd]",
+  neutral: "border-edge-strong bg-panel",
 };
 
 function toneClass(tone: unknown): string {
