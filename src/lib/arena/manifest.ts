@@ -61,6 +61,9 @@ export const arenaManifestV1Schema = z
       .object({
         language: identifierSchema,
         entrypoint: relativePathSchema,
+        // Learner-facing scaffold. The entrypoint stays the file replaced in
+        // the copied execution workspace, which may hold a public baseline.
+        starter: relativePathSchema.optional(),
         interface: z.string().min(1),
       })
       .strict(),
@@ -140,6 +143,9 @@ export async function loadArenaManifest(manifestPath: string): Promise<LoadedAre
 
   await Promise.all([
     assertArenaFile(arenaRoot, manifest.submission.entrypoint),
+    ...(manifest.submission.starter
+      ? [assertArenaFile(arenaRoot, manifest.submission.starter)]
+      : []),
     assertArenaFile(arenaRoot, manifest.scoring.config),
   ]);
 

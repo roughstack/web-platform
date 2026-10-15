@@ -77,6 +77,18 @@ describe("Arena Specification v1", () => {
     );
   });
 
+  it("validates an optional learner-facing starter separately from the execution entrypoint", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "roughstack-starter-"));
+    const source = manifest.replace("  entrypoint: starter/cache.go\n", "  entrypoint: starter/cache.go\n  starter: learner/cache.go\n");
+    const arenaRoot = await writeArena(root, "cache-pressure-easy", source);
+    await expect(loadArenaManifest(path.join(arenaRoot, "arena.yaml"))).rejects.toThrow();
+    await mkdir(path.join(arenaRoot, "learner"));
+    await writeFile(path.join(arenaRoot, "learner/cache.go"), "package starter\n");
+    const loaded = await loadArenaManifest(path.join(arenaRoot, "arena.yaml"));
+    expect(loaded.manifest.submission.starter).toBe("learner/cache.go");
+    expect(() => parseArenaManifest(source.replace("learner/cache.go", "../outside.go"))).toThrow(/arena root/);
+  });
+
   it("loads referenced files and returns a stable digest", async () => {
     const root = await mkdtemp(path.join(os.tmpdir(), "bytearena-manifest-"));
     const arenaRoot = await writeArena(root, "cache-pressure-easy");
