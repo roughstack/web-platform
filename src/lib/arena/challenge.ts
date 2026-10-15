@@ -104,9 +104,24 @@ export async function loadArenaChallengeSource(
     );
   }
 
+  if (
+    entry.manifest.metadata.visibility === "public" &&
+    entry.manifest.metadata.mode === "practice" &&
+    (!entry.manifest.submission.starter ||
+      entry.manifest.submission.starter === entry.manifest.submission.entrypoint)
+  ) {
+    throw new Error(`Public practice arena ${id} requires a separate learner starter`);
+  }
+
   const [readme, starterCode, statement] = await Promise.all([
     readFile(path.join(loaded.arenaRoot, "README.md"), "utf8"),
-    readFile(path.join(loaded.arenaRoot, entry.manifest.submission.starter ?? entry.manifest.submission.entrypoint), "utf8"),
+    readFile(
+      path.join(
+        loaded.arenaRoot,
+        entry.manifest.submission.starter ?? entry.manifest.submission.entrypoint,
+      ),
+      "utf8",
+    ),
     loadArenaStatement(loaded.arenaRoot),
   ]);
 

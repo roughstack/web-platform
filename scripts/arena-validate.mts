@@ -22,6 +22,14 @@ if (manifests.length === 0) {
 
 for (const loaded of manifests) {
   const { id, version } = loaded.manifest.metadata;
+  if (
+    loaded.manifest.metadata.visibility === "public" &&
+    loaded.manifest.metadata.mode === "practice" &&
+    (!loaded.manifest.submission.starter ||
+      loaded.manifest.submission.starter === loaded.manifest.submission.entrypoint)
+  ) {
+    throw new Error(`Public practice arena ${id} requires a separate learner starter`);
+  }
   const statement = await loadArenaStatement(loaded.arenaRoot);
   console.log(`valid ${id}@${version} sha256:${loaded.digest}`);
   if (statement) console.log(`  statement: ${statement.length} blocks`);
