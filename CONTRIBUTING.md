@@ -1,6 +1,6 @@
-# Contributing to Rough Stack
+# Contributing to Roughstack
 
-Thank you for helping build Rough Stack. Contributions should keep the platform
+Thank you for helping build Roughstack. Contributions should keep the platform
 reproducible, reviewable, secure around untrusted code, and independent from
 private official-evaluation material.
 
