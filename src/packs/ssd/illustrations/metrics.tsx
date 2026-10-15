@@ -36,7 +36,7 @@ export function WriteAmpBar({ hostWrites, gcWrites, reference, className }: Writ
       </div>
 
       <div
-        className="relative h-2.5 overflow-hidden rounded-full bg-white/[0.06]"
+        className="relative h-2.5 overflow-hidden rounded-full bg-edge"
         role="img"
         aria-label={`${hostWrites} writes the workload asked for, plus ${gcWrites} spent moving data, an amplification of ${amplification.toFixed(2)} times.`}
       >
@@ -158,7 +158,7 @@ export function EfficiencyDial({ moves, optimal, className }: EfficiencyDialProp
       </div>
 
       <div
-        className="h-2.5 overflow-hidden rounded-full bg-white/[0.06]"
+        className="h-2.5 overflow-hidden rounded-full bg-edge"
         role="img"
         aria-label={
           perfect

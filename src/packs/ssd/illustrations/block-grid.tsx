@@ -107,7 +107,7 @@ function Block({
               "aspect-square rounded-[1px]",
               state === "valid" && "bg-accent/70",
               state === "invalid" && "bg-danger/45",
-              state === "free" && "bg-white/[0.06]",
+              state === "free" && "bg-edge",
             )}
           />
         ))}
@@ -120,7 +120,7 @@ function Legend() {
   const entries = [
     { label: "live", className: "bg-accent/70" },
     { label: "dead", className: "bg-danger/45" },
-    { label: "free", className: "bg-white/[0.06]" },
+    { label: "free", className: "bg-edge" },
   ];
 
   return (
