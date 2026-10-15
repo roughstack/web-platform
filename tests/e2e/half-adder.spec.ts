@@ -43,6 +43,6 @@ test("half-adder signal does not animate under reduced motion", async ({ page })
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await page.getByRole("button", { name: /^Input A,/ }).click();
-  const signal = page.locator(".circuit-signal");
+  const signal = page.locator(".circuit-path").first();
   expect(await signal.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
 });

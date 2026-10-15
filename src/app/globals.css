@@ -44,6 +44,7 @@
 
   /* ---- Type ------------------------------------------------------------ */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
 
   --font-weight-normal: 400;
@@ -375,13 +376,13 @@
   background: var(--color-quiet);
 }
 
-@keyframes circuit-signal {
-  from { transform: scaleX(0); transform-origin: left; opacity: 0.25; }
-  to { transform: scaleX(1); transform-origin: left; opacity: 1; }
+@keyframes circuit-path {
+  from { stroke-dasharray: 1; stroke-dashoffset: 1; }
+  to { stroke-dasharray: 1; stroke-dashoffset: 0; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .circuit-signal { animation: circuit-signal 280ms ease-out both; }
+  .circuit-path { animation: circuit-path 280ms ease-out both; }
 }
 
 @media (prefers-reduced-motion: reduce) {

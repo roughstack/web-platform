@@ -156,6 +156,17 @@ claim that logic-gate or neural-network challenges are already published.
 - Type has two jobs: generous sans-serif invites exploration and carries
   explanations; compact monospace labels inputs, gates, truth values, code,
   and measurements. Avoid forcing long copy into a terminal aesthetic.
+- The reading site now gives editorial headlines their own geometric display
+  face, Space Grotesk. Inter remains the quiet reading voice and JetBrains Mono
+  the instrument voice. This three-role system creates contrast without turning
+  an entire lesson into code or a magazine cover.
+- IBM's THINK history suggests the power of a single confident idea; Tamiko
+  Thiel's account of the Connection Machine suggests an even stronger test:
+  form should reveal what the machine is doing, not merely expose generic
+  circuit ornament. Our original circuit, domain map, and typographic rhythm
+  follow that principle, not either source's visual assets or layout. See
+  https://www.ibm.com/history/think and
+  https://www.tamikothiel.com/theory/cm_txts/index.html.
 - The path from bit to system is an editorial map, not an invented course
   catalogue. The public library distinguishes runnable challenges from future
   frontiers. Cards answer “what do I control?” and “what will I observe?” in

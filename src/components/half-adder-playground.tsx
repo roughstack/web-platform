@@ -59,7 +59,14 @@ export function HalfAdderPlayground() {
             <span aria-hidden="true" className="font-mono text-lg text-[#c7ff65]">→</span>
             <span className="font-mono text-[11px] font-semibold tracking-wider text-[#b6c9f2] uppercase">Outputs</span>
             <div className="flex items-center gap-2 font-mono text-2xl font-bold"><span className={a ? "text-[#c7ff65]" : "text-[#b6c9f2]"}>{a}</span><span className="text-[#8298c4]">+</span><span className={b ? "text-[#c7ff65]" : "text-[#b6c9f2]"}>{b}</span></div>
-            <div key={signal} aria-hidden="true" className="circuit-signal h-[2px] w-9 bg-[#69dafa] sm:w-14" />
+            <svg key={signal} aria-hidden="true" viewBox="0 0 60 96" className="h-20 w-9 overflow-visible sm:w-14">
+              <path d="M0 48H18V22H60M18 48V74H60" fill="none" stroke="#536789" strokeWidth="2" />
+              <path pathLength="1" d="M0 48H18V22H60" fill="none" stroke={sum ? "#69dafa" : "#7083a5"} strokeWidth={sum ? "3" : "2"} className="circuit-path" />
+              <path pathLength="1" d="M0 48H18V74H60" fill="none" stroke={carry ? "#ff977e" : "#7083a5"} strokeWidth={carry ? "3" : "2"} className="circuit-path" />
+              <circle cx="18" cy="48" r="3" fill="#c7ff65" />
+              <circle cx="60" cy="22" r="3" fill={sum ? "#69dafa" : "#7083a5"} />
+              <circle cx="60" cy="74" r="3" fill={carry ? "#ff977e" : "#7083a5"} />
+            </svg>
             <div className="grid gap-2">
               <div className="flex items-center justify-between gap-2 rounded-lg border border-[#566898] bg-[#1c2b4e] px-2.5 py-1.5">
                 <span className="font-mono text-[10px] text-[#b6c9f2]">XOR / SUM</span>
