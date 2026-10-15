@@ -90,7 +90,7 @@ export function CodeEditor({
         value={value}
         onChange={handleChange}
         onMount={handleMount}
-        theme="vs-dark"
+        theme="vs-light"
         options={{
           fontSize,
           fontFamily: "var(--font-jetbrains), ui-monospace, monospace",

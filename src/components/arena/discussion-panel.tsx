@@ -180,7 +180,7 @@ export function DiscussionPanel({ slug }: { slug: string }) {
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-micro text-muted">{reply.author}</span>
                   {reply.isMine && (
-                    <span className="rounded-4 bg-white/[0.06] px-1.5 text-micro text-quiet">you</span>
+                    <span className="rounded-4 bg-accent-tint px-1.5 text-micro text-link">you</span>
                   )}
                   <time
                     dateTime={reply.createdAt}

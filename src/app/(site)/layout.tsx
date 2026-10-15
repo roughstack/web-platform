@@ -16,7 +16,7 @@ export default function SiteLayout({
     <div className="flex min-h-screen flex-col">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-100 focus:rounded-8 focus:bg-inverse focus:px-4 focus:py-2 focus:text-mini focus:text-canvas"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-100 focus:rounded-8 focus:bg-accent focus:px-4 focus:py-2 focus:text-mini focus:text-white"
       >
         Skip to content
       </a>

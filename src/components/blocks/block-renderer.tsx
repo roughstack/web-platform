@@ -107,11 +107,11 @@ function Prose({ md }: { md: string }) {
 }
 
 const CALLOUT_STYLES: Readonly<
-  Record<CalloutTone, { border: string; icon: typeof Info; iconColor: string; label: string }>
+  Record<CalloutTone, { surface: string; icon: typeof Info; iconColor: string; label: string }>
 > = {
-  note: { border: "border-edge", icon: Info, iconColor: "text-muted", label: "Note" },
-  warn: { border: "border-warning/30", icon: AlertTriangle, iconColor: "text-warning", label: "Careful" },
-  insight: { border: "border-accent/30", icon: Lightbulb, iconColor: "text-accent", label: "Insight" },
+  note: { surface: "border-[#c8ddeb] bg-[#eff7fc]", icon: Info, iconColor: "text-link", label: "Note" },
+  warn: { surface: "border-[#ecd6a6] bg-[#fff7e7]", icon: AlertTriangle, iconColor: "text-warning", label: "Careful" },
+  insight: { surface: "border-[#b9dfcb] bg-[#edf9f1]", icon: Lightbulb, iconColor: "text-signal", label: "Insight" },
 };
 
 function Callout({
@@ -127,7 +127,7 @@ function Callout({
   const Icon = style.icon;
 
   return (
-    <aside className={cn("rounded-12 border bg-tint px-4 py-3", style.border)}>
+    <aside className={cn("rounded-12 border px-4 py-3.5", style.surface)}>
       <div className="mb-1.5 flex items-center gap-2">
         <Icon className={cn("size-3.5 shrink-0", style.iconColor)} aria-hidden />
         <span className="text-micro font-medium uppercase tracking-wide text-muted">
@@ -155,12 +155,12 @@ function Figure({
 
   return (
     <figure className="space-y-2.5">
-      <div className="rounded-12 border border-edge bg-tint p-4">
+      <div className="rounded-16 border border-[#d2e3eb] bg-[#f1f8fb] p-4 sm:p-5">
         {createElement(drawing, illustration.props ?? {})}
       </div>
       {(label || caption) && (
         <figcaption className="flex gap-2 text-mini text-quiet">
-          {label && <span className="shrink-0 font-mono text-micro text-muted">{label}</span>}
+          {label && <span className="shrink-0 font-mono text-micro font-semibold text-link">{label}</span>}
           {caption && <span>{caption}</span>}
         </figcaption>
       )}
@@ -178,7 +178,7 @@ function Example({
   explain?: string;
 }) {
   return (
-    <div className="space-y-2.5 rounded-12 border border-edge bg-tint p-4">
+    <div className="space-y-2.5 rounded-12 border border-edge bg-[#f5f8f3] p-4">
       <ExampleRow label="Input" value={input} />
       <ExampleRow label="Output" value={output} />
       {explain && (
@@ -197,7 +197,7 @@ function ExampleRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
       <span className="text-micro uppercase tracking-wide text-quiet">{label}</span>
-      <pre className="overflow-x-auto rounded-8 bg-canvas-deep px-3 py-2 font-mono text-mini text-ink">
+      <pre className="overflow-x-auto rounded-8 border border-edge bg-panel px-3 py-2 font-mono text-mini text-ink">
         <code>{value}</code>
       </pre>
     </div>
@@ -223,7 +223,7 @@ function CodeBlock({
           {language && <span className="font-mono text-micro text-quiet">{language}</span>}
         </div>
       )}
-      <pre className="overflow-x-auto rounded-12 border border-edge bg-canvas-deep px-4 py-3 font-mono text-mini leading-relaxed text-ink">
+      <pre className="overflow-x-auto rounded-12 border border-edge bg-[#f4f7ff] px-4 py-3 font-mono text-mini leading-relaxed text-ink">
         <code>{code}</code>
       </pre>
     </div>
@@ -266,7 +266,7 @@ function InterfaceBlock({ context }: { context: BlockContext }) {
         </span>
         <span className="font-mono text-micro text-quiet">{language.label}</span>
       </div>
-      <pre className="overflow-x-auto rounded-12 border border-edge bg-canvas-deep px-4 py-3 font-mono text-mini leading-relaxed text-ink">
+      <pre className="overflow-x-auto rounded-12 border border-edge bg-[#f4f7ff] px-4 py-3 font-mono text-mini leading-relaxed text-ink">
         <code>{snippet}</code>
       </pre>
     </div>

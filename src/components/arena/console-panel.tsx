@@ -174,6 +174,12 @@ function ResultView({
 
       <TaskVisuals task={task} result={result} />
 
+      {task.startsWith("arena:") && (
+        <p className="rounded-8 border border-accent/20 bg-accent-tint px-3 py-2 text-mini text-body">
+          Practice run. Use the verdict and measurements to improve your solution; this challenge is not ranked yet.
+        </p>
+      )}
+
       {metrics.length > 0 && <MetricTable metrics={metrics} values={result.metrics} />}
 
       {result.adversarial && <AdversarialList adversarial={result.adversarial} />}

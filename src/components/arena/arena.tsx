@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { BlockRenderer } from "@/components/blocks/block-renderer";
+import { ChallengeArtwork } from "@/components/challenge-artwork";
 import { Button } from "@/components/ui/button";
 import { IconButton, Panel, PanelBody, PanelHeader, Tabs } from "@/components/ui/panel";
 import { Split } from "@/components/ui/split";
@@ -269,10 +270,11 @@ export function Arena({
     // The workspace layout owns the viewport, so the arena simply fills it.
     // It used to subtract a navbar height that the workspace no longer renders,
     // which quietly cost a whole toolbar's worth of vertical space.
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden bg-canvas">
       <ArenaToolbar
         title={title}
         difficulty={difficulty}
+        practice={task.startsWith("arena:")}
         slug={slug}
         ladder={ladder}
         languages={languages}
@@ -290,7 +292,7 @@ export function Arena({
             setFocusMode(false);
             setMobilePane("problem");
           }}
-          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "problem" ? "bg-raised text-ink" : "text-muted")}
+          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "problem" ? "bg-panel text-link shadow-sm" : "text-muted")}
         >
           Problem
         </button>
@@ -298,7 +300,7 @@ export function Arena({
           type="button"
           aria-pressed={mobilePane === "code"}
           onClick={() => setMobilePane("code")}
-          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "code" ? "bg-raised text-ink" : "text-muted")}
+          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "code" ? "bg-panel text-link shadow-sm" : "text-muted")}
         >
           Code &amp; results
         </button>
@@ -327,6 +329,18 @@ export function Arena({
             <PanelBody>
               {leftTab === "description" && (
                 <div className="px-5 py-5">
+                  <div className="mb-7 overflow-hidden rounded-16 border border-edge bg-[#f4f8ff]">
+                    <div className="flex min-h-29 items-center justify-between gap-3 pl-5">
+                      <div className="min-w-0 py-4">
+                        <p className="font-mono text-tiny font-semibold tracking-[.14em] text-link uppercase">Concept sketch</p>
+                        <p className="mt-1 text-title-1 font-semibold text-ink">{title}</p>
+                        <p className="mt-1 text-mini text-muted">See the idea. Then test your own implementation.</p>
+                      </div>
+                      <div className="h-29 w-33 shrink-0 overflow-hidden sm:w-40">
+                        <ChallengeArtwork slug={slug} />
+                      </div>
+                    </div>
+                  </div>
                   <BlockRenderer blocks={blocks} context={{ language, task }} />
                 </div>
               )}
@@ -350,6 +364,7 @@ export function Arena({
 function ArenaToolbar({
   title,
   difficulty,
+  practice,
   slug,
   ladder,
   languages,
@@ -360,6 +375,7 @@ function ArenaToolbar({
 }: {
   title: string;
   difficulty: ArenaProps["difficulty"];
+  practice: boolean;
   slug: string;
   ladder: readonly LadderRung[];
   languages: readonly LanguageId[];
@@ -369,7 +385,7 @@ function ArenaToolbar({
   onSubmit: () => void;
 }) {
   return (
-    <header className="flex min-h-14 shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-edge bg-canvas px-3 py-1.5 lg:h-11 lg:min-h-0 lg:flex-nowrap lg:py-0">
+    <header className="flex min-h-14 shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-edge bg-panel px-3 py-1.5 lg:h-13 lg:min-h-0 lg:flex-nowrap lg:py-0">
       <Link
         href="/challenges"
         className="inline-flex size-11 items-center justify-center gap-1 rounded-6 text-mini text-quiet transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent lg:size-auto lg:justify-start lg:px-1.5 lg:py-1"
@@ -389,6 +405,9 @@ function ArenaToolbar({
       >
         {difficulty.toLowerCase()}
       </span>
+      {practice ? (
+        <span className="hidden shrink-0 rounded-full bg-accent-tint px-2 py-0.5 text-micro font-medium text-link sm:inline">Practice</span>
+      ) : null}
 
       {ladder.length > 1 && <LadderSwitcher ladder={ladder} current={slug} />}
 
@@ -455,7 +474,7 @@ function LadderSwitcher({
                 "inline-flex min-h-11 min-w-11 items-center justify-center rounded-4 px-3 text-micro capitalize transition-colors lg:min-h-0 lg:min-w-0 lg:px-2 lg:py-1",
                 "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
                 active
-                  ? cn("bg-white/[0.09] font-medium", DIFFICULTY_STYLES[rung.difficulty])
+                  ? cn("bg-panel font-medium shadow-sm", DIFFICULTY_STYLES[rung.difficulty])
                   : "text-quiet hover:text-body",
               )}
             >
