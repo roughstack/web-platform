@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
-import { PRODUCT_NAME } from "@/lib/brand";
+import { ORGANIZATION_NAME, PRODUCT_NAME } from "@/lib/brand";
 
 const COLUMNS = [
   {
@@ -97,7 +97,7 @@ export function Footer() {
           <p className="text-micro text-quiet">
             Learn by implementing and measuring real system behavior.
           </p>
-          <p className="text-micro text-quiet">Open-source systems practice</p>
+          <p className="text-micro text-quiet">An open-source project by {ORGANIZATION_NAME}</p>
         </div>
       </div>
     </footer>
