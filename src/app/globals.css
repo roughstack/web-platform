@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
-/* A light systems field guide: warm reading floor, crisp instruments, and
- * saturated action. Color is semantic; diagrams also name every state. */
+/* A light systems field guide with live signals, crisp instruments, and
+ * calm reading surfaces. Color is semantic; diagrams also name every state. */
 @theme {
-  --color-canvas: #f8faf6;
-  --color-canvas-deep: #fff3da;
+  --color-canvas: #f7faf8;
+  --color-canvas-deep: #fff2dc;
   --color-panel: #ffffff;
-  --color-tint: #f0f5f1;
-  --color-surface: #e8efea;
-  --color-raised: #e5ece8;
-  --color-raised-high: #dce7e1;
+  --color-tint: #eff6f3;
+  --color-surface: #e7f0eb;
+  --color-raised: #e4eee9;
+  --color-raised-high: #d8e9e0;
 
   --color-frame: #e5ebe5;
   --color-edge: #d7e1da;
@@ -21,11 +21,16 @@
   --color-muted: #52646c;
   --color-quiet: #586a70;
 
-  --color-accent: #3456d8;
-  --color-accent-hover: #2946bb;
-  --color-link: #2645b4;
-  --color-accent-tint: #e8edff;
-  --color-brand: #3456d8;
+  --color-accent: #2447e7;
+  --color-accent-hover: #1739c9;
+  --color-link: #1c3cc0;
+  --color-accent-tint: #e5ebff;
+  --color-brand: #2447e7;
+  --color-spark: #ff784f;
+  --color-spark-ink: #913f24;
+  --color-voltage: #e6fa69;
+  --color-circuit: #0b977e;
+  --color-ice: #c9efff;
 
   --color-signal: #087b55;
   --color-danger: #ad3046;

@@ -10,18 +10,18 @@ type Family =
   | "link" | "lsm" | "stream" | "compaction" | "victim" | "wear";
 
 const FAMILIES: Record<Family, { surface: string; primary: string; secondary: string }> = {
-  cache: { surface: "#dcf6e8", primary: "#2d9b70", secondary: "#ffc95d" },
-  chunk: { surface: "#e9e8ff", primary: "#6865d9", secondary: "#a4e0d0" },
-  scheduler: { surface: "#fff0d7", primary: "#d28b29", secondary: "#789fe8" },
-  queue: { surface: "#e1f2ff", primary: "#3b81c9", secondary: "#f5b664" },
-  gate: { surface: "#e4f7e9", primary: "#48a66a", secondary: "#e7ad3c" },
-  journal: { surface: "#fce9e4", primary: "#d86f59", secondary: "#6b91d8" },
-  link: { surface: "#e5edff", primary: "#5676df", secondary: "#f4a57c" },
-  lsm: { surface: "#edebff", primary: "#7664cf", secondary: "#65b9a6" },
-  stream: { surface: "#e1f5f1", primary: "#36a995", secondary: "#f1b84d" },
-  compaction: { surface: "#dff1ff", primary: "#438bc4", secondary: "#e7ae53" },
-  victim: { surface: "#ffedde", primary: "#d77f50", secondary: "#80afd3" },
-  wear: { surface: "#f8e9f2", primary: "#c574a4", secondary: "#79b7a0" },
+  cache: { surface: "#baf2d5", primary: "#147d5b", secondary: "#f7bd35" },
+  chunk: { surface: "#d9d4ff", primary: "#5345cb", secondary: "#8bedd0" },
+  scheduler: { surface: "#ffe3a4", primary: "#b35b18", secondary: "#6c8bff" },
+  queue: { surface: "#c9e9ff", primary: "#2869d2", secondary: "#ff9f52" },
+  gate: { surface: "#ccf5db", primary: "#187f58", secondary: "#ffae3d" },
+  journal: { surface: "#ffd3c5", primary: "#cc4d34", secondary: "#6d8be3" },
+  link: { surface: "#d7ddff", primary: "#405edf", secondary: "#ff986c" },
+  lsm: { surface: "#e4d8ff", primary: "#6a4ac8", secondary: "#5cc4aa" },
+  stream: { surface: "#c5f0ea", primary: "#147f87", secondary: "#edaa24" },
+  compaction: { surface: "#c9ebff", primary: "#1a70ad", secondary: "#ffbb3c" },
+  victim: { surface: "#ffddbe", primary: "#c45e28", secondary: "#54a7d3" },
+  wear: { surface: "#f5d5e7", primary: "#ac498a", secondary: "#5eb9a0" },
 };
 
 export function challengeFamily(slug: string): Family {
@@ -42,7 +42,7 @@ export function challengeFamily(slug: string): Family {
 export function ChallengeArtwork({ slug, className }: { slug: string; className?: string }) {
   const family = challengeFamily(slug);
   const { surface, primary, secondary } = FAMILIES[family];
-  const ink = "#253b42";
+  const ink = "#172730";
 
   return (
     <svg
@@ -52,8 +52,17 @@ export function ChallengeArtwork({ slug, className }: { slug: string; className?
       className={cn("h-full w-full", className)}
       style={{ backgroundColor: surface }}
     >
-      <circle cx="208" cy="22" r="42" fill="#ffffff" opacity="0.42" />
-      <circle cx="22" cy="118" r="35" fill="#ffffff" opacity="0.36" />
+      <g stroke={ink} strokeWidth=".5" opacity=".11">
+        {[24, 48, 72, 96, 120, 144, 168, 192, 216].map((x) => (
+          <path key={`v-${x}`} d={`M${x} 0v136`} />
+        ))}
+        {[24, 48, 72, 96, 120].map((y) => (
+          <path key={`h-${y}`} d={`M0 ${y}h240`} />
+        ))}
+      </g>
+      <path d="M13 27V14h14M213 108v14h14" fill="none" stroke={ink} strokeWidth="1.3" opacity=".4" />
+      <circle cx="211" cy="21" r="4" fill={secondary} stroke={ink} strokeWidth="1.4" />
+      <text x="14" y="124" fill={ink} opacity=".66" fontFamily="monospace" fontSize="8" fontWeight="700" letterSpacing="1.5">{family.toUpperCase()}</text>
       {family === "cache" && (
         <g stroke={ink} strokeWidth="2">
           <path d="M45 96h145" strokeDasharray="4 5" opacity=".45" />
