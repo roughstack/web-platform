@@ -15,8 +15,8 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 const DIFFERENTIATORS = [
   {
     icon: Zap,
-    title: "Ephemeral execution",
-    body: "Each run boots a throwaway microVM in a few hundred milliseconds, executes your code, and is destroyed. No shared runners, no leftover state.",
+    title: "Code you can run",
+    body: "Write a subsystem, submit it to the simulator, and see what it did. The current local runner uses containers for compiled solutions and reports the outcome back in the workspace.",
   },
   {
     icon: HardDrive,
@@ -150,7 +150,7 @@ export default function Home() {
         <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
           <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
             <div>
-              <Eyebrow>Ephemeral execution · isolated microVMs</Eyebrow>
+              <Eyebrow>Build the internals · run the experiment</Eyebrow>
 
               <h1 className="headline-fade mt-5 text-title-5 text-balance sm:text-title-7 lg:text-title-8">
                 Systems problems that actually run.
@@ -263,9 +263,9 @@ export default function Home() {
               How a run works
             </h2>
             <p className="mt-4 max-w-2xl text-regular text-muted">
-              Your code never touches a shared machine. It is injected into a
-              fresh microVM, driven through a deterministic workload, and the VM
-              is destroyed before the results reach your screen.
+              Your implementation runs against a deterministic workload. The
+              local execution path uses a container for the solution and returns
+              a verdict with measurements you can inspect in the workspace.
             </p>
           </ScrollReveal>
 
