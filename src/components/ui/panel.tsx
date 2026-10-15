@@ -22,7 +22,7 @@ export interface PanelProps {
 /** A framed region that fills its slot and scrolls its own content. */
 export function Panel({ children, className }: PanelProps) {
   return (
-    <section className={cn("flex min-h-0 min-w-0 flex-col bg-canvas", className)}>
+    <section className={cn("flex min-h-0 min-w-0 flex-col bg-panel", className)}>
       {children}
     </section>
   );
@@ -33,7 +33,7 @@ export function PanelHeader({ children, className }: PanelProps) {
   return (
     <header
       className={cn(
-        "flex h-9 shrink-0 items-center gap-1 border-b border-edge bg-canvas px-2",
+        "flex h-9 shrink-0 items-center gap-1 border-b border-edge bg-tint px-2",
         className,
       )}
     >
@@ -111,8 +111,8 @@ export function Tabs<T extends string>({
               "inline-flex h-11 items-center gap-1.5 rounded-6 px-2.5 text-mini transition-colors lg:h-7",
               "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
               selected
-                ? "bg-white/[0.07] font-medium text-ink"
-                : "text-quiet hover:bg-white/[0.04] hover:text-body",
+                ? "bg-panel font-medium text-link shadow-sm"
+                : "text-quiet hover:bg-raised hover:text-body",
             )}
           >
             {tab.icon}
@@ -121,7 +121,7 @@ export function Tabs<T extends string>({
               <span
                 className={cn(
                   "rounded-full px-1.5 font-mono text-micro tabular-nums",
-                  selected ? "bg-white/10 text-muted" : "text-quiet",
+                  selected ? "bg-accent-tint text-link" : "text-quiet",
                 )}
               >
                 {tab.badge}
@@ -154,8 +154,8 @@ export function IconButton({ label, active, className, children, ...rest }: Icon
         "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
         "disabled:pointer-events-none disabled:opacity-40",
         active
-          ? "bg-white/[0.09] text-ink"
-          : "text-quiet hover:bg-white/[0.06] hover:text-ink",
+          ? "bg-accent-tint text-link"
+          : "text-quiet hover:bg-raised hover:text-ink",
         className,
       )}
       {...rest}
@@ -206,7 +206,7 @@ export function Segmented<T extends string>({
             className={cn(
               "inline-flex min-h-11 min-w-11 items-center justify-center rounded-4 px-3 text-micro transition-colors lg:min-h-0 lg:min-w-0 lg:px-2 lg:py-1",
               "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent",
-              selected ? "bg-white/[0.09] font-medium text-ink" : "text-quiet hover:text-body",
+              selected ? "bg-panel font-medium text-link shadow-sm" : "text-quiet hover:text-body",
             )}
           >
             {option.label}

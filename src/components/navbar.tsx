@@ -42,7 +42,7 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/8 bg-[#0b0b0b]/80 backdrop-blur-[20px]">
+    <header className="sticky top-0 z-50 border-b border-edge bg-panel/90 backdrop-blur-[20px]">
       <nav
         className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
         aria-label="Main"
@@ -60,7 +60,7 @@ export function Navbar() {
                   className={cn(
                     "inline-flex h-8 items-center rounded-6 px-3 text-small font-medium",
                     "transition-colors duration-100 ease-out-quad",
-                    active ? "text-ink" : "text-muted hover:text-ink",
+                    active ? "bg-accent-tint text-link" : "text-muted hover:bg-tint hover:text-ink",
                   )}
                 >
                   {link.label}
@@ -85,7 +85,7 @@ export function Navbar() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="inline-flex size-11 items-center justify-center rounded-8 text-muted hover:bg-white/5 hover:text-ink md:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-8 text-muted hover:bg-raised hover:text-ink md:hidden"
           >
             {open ? (
               <X className="size-5" aria-hidden="true" />
@@ -99,7 +99,7 @@ export function Navbar() {
       {open && (
         <div
           id="mobile-nav"
-          className="border-t border-white/8 bg-canvas px-4 pt-2 pb-4 md:hidden"
+          className="border-t border-edge bg-panel px-4 pt-2 pb-4 md:hidden"
         >
           <ul className="flex flex-col">
             {LINKS.map((link) => (
@@ -107,7 +107,7 @@ export function Navbar() {
                 <Link
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-11 items-center rounded-8 px-2 text-regular text-body hover:bg-white/5 hover:text-ink"
+                  className="flex min-h-11 items-center rounded-8 px-2 text-regular text-body hover:bg-raised hover:text-ink"
                 >
                   {link.label}
                 </Link>

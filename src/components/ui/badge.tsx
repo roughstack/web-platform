@@ -5,7 +5,7 @@ export type BadgeVariant =
   "neutral" | "accent" | "signal" | "warning" | "danger";
 
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
-  neutral: "bg-white/5 text-muted border-white/10",
+  neutral: "bg-surface text-muted border-edge",
   accent: "bg-accent-tint text-link border-accent/25",
   signal: "bg-signal/10 text-signal border-signal/25",
   warning: "bg-warning/10 text-warning border-warning/25",
