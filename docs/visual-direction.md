@@ -81,6 +81,11 @@ every diagram also uses text, position, and form. Saturated color should be
 concentrated around a decision or transition, leaving long explanations and
 the code editor calm.
 
+Typography uses two voices. The sans serif carries headlines, explanations,
+and navigation. Monospace marks commands, measurements, trace steps, figure
+captions, and compact technical labels. It is an instrument, not the default
+reading face; a problem statement must remain comfortable at paragraph length.
+
 The homepage's first visual should answer a learner action. A three-step cache
 demonstrator is the first test: choose a trace step and see which entry becomes
 newest or leaves the cache. Use real controls, visible output, keyboard focus,
