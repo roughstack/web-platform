@@ -292,7 +292,7 @@ export function Arena({
             setFocusMode(false);
             setMobilePane("problem");
           }}
-          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "problem" ? "bg-panel text-link shadow-sm" : "text-muted")}
+          className={cn("min-h-11 flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "problem" ? "bg-panel text-link shadow-sm" : "text-muted")}
         >
           Problem
         </button>
@@ -300,7 +300,7 @@ export function Arena({
           type="button"
           aria-pressed={mobilePane === "code"}
           onClick={() => setMobilePane("code")}
-          className={cn("flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "code" ? "bg-panel text-link shadow-sm" : "text-muted")}
+          className={cn("min-h-11 flex-1 rounded-6 px-3 py-1.5 text-mini font-medium", mobilePane === "code" ? "bg-panel text-link shadow-sm" : "text-muted")}
         >
           Code &amp; results
         </button>
