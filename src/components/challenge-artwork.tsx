@@ -62,7 +62,6 @@ export function ChallengeArtwork({ slug, className }: { slug: string; className?
       </g>
       <path d="M13 27V14h14M213 108v14h14" fill="none" stroke={ink} strokeWidth="1.3" opacity=".4" />
       <circle cx="211" cy="21" r="4" fill={secondary} stroke={ink} strokeWidth="1.4" />
-      <text x="14" y="124" fill={ink} opacity=".66" fontFamily="monospace" fontSize="8" fontWeight="700" letterSpacing="1.5">{family.toUpperCase()}</text>
       {family === "cache" && (
         <g stroke={ink} strokeWidth="2">
           <path d="M45 96h145" strokeDasharray="4 5" opacity=".45" />
