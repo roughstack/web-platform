@@ -3,6 +3,7 @@ import { ArrowRight, Braces, ChartNoAxesCombined, Cpu, MousePointer2, Play } fro
 
 import { ChallengeArtwork } from "@/components/challenge-artwork";
 import { CachePlayground } from "@/components/cache-playground";
+import { HalfAdderPlayground } from "@/components/half-adder-playground";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
@@ -60,51 +61,48 @@ const STEPS = [
 export default function Home() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-edge bg-[#eaf0ff]">
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#2447e7_0%,#2447e7_38%,#ff784f_38%,#ff784f_66%,#0b977e_66%)]" />
-        <div aria-hidden="true" className="grid-backdrop pointer-events-none absolute inset-0 opacity-35" />
-        <div aria-hidden="true" className="pointer-events-none absolute -top-32 -right-28 size-[440px] rounded-full bg-[#b1ddff]/70 blur-3xl" />
-        <div aria-hidden="true" className="pointer-events-none absolute bottom-0 -left-20 size-72 rounded-full bg-voltage/60 blur-3xl" />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 py-18 sm:px-6 sm:py-24 lg:grid-cols-[1.02fr_.98fr] lg:gap-12 lg:py-28">
+      <section className="relative overflow-hidden border-b border-[#d4dcf4] bg-[#f1f5ff]">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-2 bg-[linear-gradient(90deg,#3154f4_0%,#3154f4_38%,#c7ff65_38%,#c7ff65_67%,#ff785d_67%)]" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-16 size-[420px] rounded-full bg-[#b9c8ff]/50 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 -left-28 size-[400px] rounded-full bg-[#d9ff96]/50 blur-3xl" />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-6 sm:py-22 lg:grid-cols-[.87fr_1.13fr] lg:gap-14 lg:py-24">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-[#a9bdfa] bg-panel px-3 py-1.5 font-mono text-micro font-bold tracking-[.08em] text-link uppercase">
               <Cpu className="size-3.5" aria-hidden="true" />
-              Systems lab / open for experiments
+              Computer science, from the inside
             </p>
-            <h1 className="mt-6 max-w-[11ch] text-[clamp(3.15rem,6vw,5.7rem)] leading-[1.02] font-bold tracking-[-0.055em] text-ink">
-              The fun is <span className="relative text-link">inside<span aria-hidden="true" className="absolute right-0 bottom-[.02em] left-0 -z-10 h-[.16em] -rotate-1 bg-voltage" /></span> the system.
+            <h1 className="mt-6 max-w-[11ch] text-[clamp(3.35rem,6.7vw,6.4rem)] leading-[.96] font-bold tracking-[-0.065em] text-[#111b36]">
+              Go <span className="text-[#3154f4]">inside</span> the machine<span className="text-[#ff785d]">.</span>
             </h1>
             <p className="mt-6 max-w-xl text-large text-body">
-              Build the cache, scheduler, log, or storage policy yourself. See the mechanism, run your code, and discover why a small decision matters.
+              Flip a bit. Watch the logic change. Then write the caches, schedulers, and storage systems that make software work.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg"><Link href="/challenges">Explore challenges <ArrowRight className="size-4" aria-hidden="true" /></Link></Button>
-              <Button asChild size="lg" variant="secondary"><Link href="#how-it-works">How it works</Link></Button>
+              <Button asChild size="lg" className="bg-[#3154f4] hover:bg-[#213ecc]"><Link href="/challenges">Explore challenges <ArrowRight className="size-4" aria-hidden="true" /></Link></Button>
+              <Button asChild size="lg" variant="secondary"><Link href="#from-bit-to-system">Follow the signal</Link></Button>
             </div>
-            <p className="mt-7 flex items-center gap-2 font-mono text-micro font-semibold tracking-[.05em] text-muted uppercase">
-              <Play className="size-4 text-circuit" aria-hidden="true" />
-              Input → state → output → understanding
+            <p className="mt-7 flex items-center gap-2 font-mono text-micro font-semibold tracking-[.05em] text-link uppercase">
+              <Play className="size-4" aria-hidden="true" />
+              Try the two switches first →
             </p>
           </div>
-          <CachePlayground />
+          <HalfAdderPlayground />
         </div>
       </section>
 
-      <section className="border-b border-edge bg-panel">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-5 py-5 sm:px-6">
-          <p className="text-small font-semibold text-ink">What you will find here</p>
-          <div className="flex flex-wrap gap-x-7 gap-y-2 text-small text-muted">
-            <span>Visual explanations</span><span>Runnable code</span><span>Concrete feedback</span>
-          </div>
+      <section id="from-bit-to-system" className="scroll-mt-20 border-b border-[#d4dcf4] bg-[#c7ff65]">
+        <div className="mx-auto grid max-w-6xl gap-5 px-5 py-7 sm:px-6 md:grid-cols-[.65fr_1.35fr] md:items-center">
+          <p className="font-mono text-xs font-black tracking-[.12em] text-[#172715] uppercase">A bit is just the beginning / 001 → ∞</p>
+          <p className="text-lg font-semibold leading-snug text-[#172715]">The same habit of mind scales: change an input, predict the system, and test what actually happens.</p>
         </div>
       </section>
 
       <section className="border-b border-edge bg-canvas">
         <div className="mx-auto max-w-6xl px-5 py-20 sm:px-6 sm:py-25">
           <ScrollReveal>
-            <p className="font-mono text-micro font-semibold tracking-[.15em] text-link uppercase">Choose a rabbit hole</p>
-            <h2 className="mt-3 max-w-[16ch] text-title-5 leading-tight sm:text-title-7">Every system has a story worth opening.</h2>
-            <p className="mt-4 max-w-2xl text-regular text-muted">Pick a concept that makes you curious. Each challenge moves from a small visual idea to a real implementation and an observable result.</p>
+            <p className="font-mono text-micro font-semibold tracking-[.15em] text-link uppercase">Choose a subsystem</p>
+            <h2 className="mt-3 max-w-[16ch] text-title-5 leading-tight sm:text-title-7">What happens after the bit?</h2>
+            <p className="mt-4 max-w-2xl text-regular text-muted">A circuit is a start, not a promise of a gate-building challenge yet. These are the systems you can actually implement today.</p>
           </ScrollReveal>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {TOPICS.map((topic, index) => (
@@ -123,6 +121,18 @@ export default function Home() {
               </ScrollReveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="border-b border-edge bg-[#e4edff]">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:px-6 lg:grid-cols-2 lg:py-20">
+          <div>
+            <p className="font-mono text-micro font-bold tracking-[.15em] text-link uppercase">Next experiment / memory</p>
+            <h2 className="mt-3 max-w-[13ch] text-title-5 leading-tight sm:text-title-7">A cache is a set of choices.</h2>
+            <p className="mt-4 max-w-lg text-regular text-body">The circuit shows a rule. A cache adds history. Try a few accesses here, then implement a real policy in the challenge.</p>
+            <Link href="/challenges/cache-pressure-easy" className="mt-6 inline-flex items-center gap-2 font-semibold text-link underline-offset-4 hover:underline">Build the cache policy <ArrowRight className="size-4" aria-hidden="true" /></Link>
+          </div>
+          <CachePlayground />
         </div>
       </section>
 
