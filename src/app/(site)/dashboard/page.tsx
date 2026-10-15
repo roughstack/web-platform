@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { DifficultyBadge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, Clock, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import { ChallengeArtwork } from "@/components/challenge-artwork";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -128,18 +129,24 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
-      <header className="mb-8">
-        <h1 className="text-title-4 sm:text-title-5">Dashboard</h1>
+      <header className="mb-12 grid gap-8 border-b border-edge pb-10 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div>
+        <h1 className="font-display text-5xl tracking-[-.04em] sm:text-6xl">Dashboard</h1>
         <p className="mt-3 max-w-xl text-regular text-muted">
           {sessionToken
-            ? "Your submission history for this session. Sign in to keep it across devices."
+            ? "Your work, one experiment at a time. History is saved for this browser session."
             : "No session yet. Solve a challenge to start building your history."}
         </p>
+        </div>
+        <dl className="flex gap-7 rounded-2xl bg-[#e4eafb] px-6 py-5">
+          <div><dt className="text-sm text-body">Challenges passed</dt><dd className="mt-2 font-mono text-4xl font-semibold text-link">{bestPerChallenge.filter((challenge) => challenge.passed).length}</dd></div>
+          <div><dt className="text-sm text-body">With results</dt><dd className="mt-2 font-mono text-4xl font-semibold text-ink">{bestPerChallenge.length}</dd></div>
+        </dl>
       </header>
 
       {bestPerChallenge.length > 0 && (
         <section className="mb-10">
-          <h2 className="mb-3 text-micro font-medium tracking-wider text-quiet uppercase">
+          <h2 className="mb-5 font-display text-2xl tracking-tight">
             Your challenges
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -147,8 +154,12 @@ export default async function DashboardPage() {
               <Link
                 key={c.slug}
                 href={`/challenges/${c.slug}`}
-                className="group rounded-12 border border-edge bg-tint p-4 transition-colors duration-150 ease-out-quad hover:border-edge-bright hover:bg-raised"
+                className="group relative overflow-hidden rounded-2xl border border-edge bg-white p-5 transition-colors hover:border-accent"
               >
+                <div className="mb-4 flex items-center gap-4">
+                  <div className="w-24 shrink-0 overflow-hidden rounded-xl"><ChallengeArtwork slug={c.slug} className="aspect-[240/136]" /></div>
+                  <p className="text-sm text-muted">{c.passed ? "Ready for another experiment?" : "An idea worth another try."}</p>
+                </div>
                 <div className="flex items-center justify-between">
                   <div className="min-w-0">
                     <h3 className="truncate text-title-1">{c.title}</h3>
@@ -184,23 +195,23 @@ export default async function DashboardPage() {
       )}
 
       <section>
-        <h2 className="mb-3 text-micro font-medium tracking-wider text-quiet uppercase">
+        <h2 className="mb-5 font-display text-2xl tracking-tight">
           Recent submissions
         </h2>
         {submissions.length === 0 ? (
-          <div className="rounded-12 border border-edge bg-tint p-10 text-center">
-            <p className="text-mini text-muted">
-              No submissions yet.{" "}
-              <Link href="/challenges" className="text-link hover:underline">
-                Browse challenges →
-              </Link>
-            </p>
+          <div className="grid overflow-hidden rounded-3xl bg-[#e4eafb] sm:grid-cols-[.85fr_1.15fr]">
+            <div className="flex items-center p-8"><ChallengeArtwork slug="cache-pressure-easy" className="aspect-[240/136] rounded-2xl" /></div>
+            <div className="p-7 sm:py-12 sm:pr-10">
+              <h3 className="max-w-[15ch] font-display text-3xl leading-tight tracking-tight">A small start can go a long way.</h3>
+              <p className="mt-4 text-base leading-relaxed text-body">No submissions yet. Try Cache Pressure: choose what stays in memory, run your code, and learn from the result.</p>
+              <Link href="/challenges/cache-pressure-easy" className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-6 text-sm font-semibold text-white hover:bg-accent-hover">Start Cache Pressure</Link>
+            </div>
           </div>
         ) : (
           <div className="overflow-x-auto rounded-12 border border-edge">
             <table className="w-full min-w-[34rem] text-mini">
-              <thead className="bg-raised/40">
-                <tr className="text-left text-micro tracking-wider text-quiet uppercase">
+              <thead className="bg-[#e4eafb]">
+                <tr className="text-left text-sm text-body">
                   <th className="px-4 py-2.5 font-medium">Challenge</th>
                   <th className="px-4 py-2.5 font-medium">Status</th>
                   <th className="px-4 py-2.5 font-medium">Score</th>
