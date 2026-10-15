@@ -41,7 +41,10 @@ export function challengeFamily(slug: string): Family {
 
 export function ChallengeArtwork({ slug, className }: { slug: string; className?: string }) {
   const family = challengeFamily(slug);
-  const { surface, primary, secondary } = FAMILIES[family];
+  const weightedCache = family === "cache" && slug.endsWith("-medium");
+  const { surface, primary, secondary } = weightedCache
+    ? { surface: "#e4dcff", primary: "#6847c7", secondary: "#f4ce57" }
+    : FAMILIES[family];
   const ink = "#172730";
 
   return (
@@ -62,7 +65,17 @@ export function ChallengeArtwork({ slug, className }: { slug: string; className?
       </g>
       <path d="M13 27V14h14M213 108v14h14" fill="none" stroke={ink} strokeWidth="1.3" opacity=".4" />
       <circle cx="211" cy="21" r="4" fill={secondary} stroke={ink} strokeWidth="1.4" />
-      {family === "cache" && (
+      {weightedCache && (
+        <g stroke={ink} strokeWidth="2">
+          <path d="M35 98h165" strokeDasharray="4 5" opacity=".45" />
+          <rect x="36" y="63" width="33" height="33" rx="7" fill="#fff" />
+          <rect x="78" y="47" width="57" height="49" rx="9" fill={primary} />
+          <rect x="144" y="72" width="46" height="24" rx="7" fill={secondary} />
+          <circle cx="177" cy="40" r="19" fill="#fff" />
+          <path d="M177 29v12l8 5M44 44c17-17 33-20 52-15m-6-5 6 5-7 4" fill="none" strokeLinecap="round" />
+        </g>
+      )}
+      {family === "cache" && !weightedCache && (
         <g stroke={ink} strokeWidth="2">
           <path d="M45 96h145" strokeDasharray="4 5" opacity=".45" />
           <rect x="46" y="47" width="59" height="47" rx="10" fill="#fff" />
