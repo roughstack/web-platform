@@ -2,9 +2,7 @@ import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Small muted line that sits above a headline. The accent dot is the entire
- * colour budget for most bands, so a band with an eyebrow rarely needs any
- * other accent.
+ * A small topic marker to orient the reader before the headline.
  */
 export function Eyebrow({
   children,
@@ -32,9 +30,7 @@ export function Eyebrow({
 }
 
 /**
- * Numbered caption for a diagram, e.g. `FIG 1.2`. Linear labels its marketing
- * illustrations this way; on a systems-engineering product it reads as
- * documentation rather than advertising, which is the intended tone.
+ * Numbered caption for a diagram, e.g. `FIG 1.2`.
  */
 export function FigureLabel({
   children,
@@ -64,7 +60,7 @@ export function Kbd({
     <kbd
       className={cn(
         "inline-flex h-5 min-w-5 items-center justify-center rounded-4 px-1.5",
-        "border-t border-white/15 bg-raised font-mono text-tiny text-body",
+        "border border-edge-strong bg-panel font-mono text-tiny text-body",
         className,
       )}
       {...props}

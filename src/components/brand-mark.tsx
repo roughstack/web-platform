@@ -15,7 +15,7 @@ export function BrandMark({ className }: BrandMarkProps) {
       <path
         d="M6 7.25h10.5M7.5 12h10.5M5.5 16.75H16"
         fill="none"
-        stroke="#0b0b0b"
+        stroke="#ffffff"
         strokeWidth="2.25"
         strokeLinecap="round"
       />

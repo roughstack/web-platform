@@ -1,76 +1,52 @@
 @import "tailwindcss";
 
-/*
- * Rough Stack design tokens, based on the Linear system.
- *
- * Neutrals, type scale, weights, radii, motion and layout are Linear's own
- * shipped values, read out of their stylesheets rather than eyeballed.
- *
- * Two deliberate departures, both forced by constraints Linear does not share:
- *
- *   1. --color-quiet is #7c8087, not Linear's #62666d. Theirs measures 3.45:1
- *      on the canvas and our layout auditor fails the build below 4.5:1.
- *   2. Mono is JetBrains Mono, not Berkeley Mono, which is commercially
- *      licensed.
- *
- * Contrast ratios against --color-canvas are noted inline. Colours marked
- * "fill only" do not clear AA as text and must never be used on a label.
- */
+/* A light systems field guide: warm reading floor, crisp instruments, and
+ * saturated action. Color is semantic; diagrams also name every state. */
 @theme {
-  /* ---- Floors ---------------------------------------------------------- */
-  --color-canvas: #08090a;
-  --color-canvas-deep: #010102; /* hero and footer floor */
+  --color-canvas: #f8faf6;
+  --color-canvas-deep: #fff3da;
+  --color-panel: #ffffff;
+  --color-tint: #f0f5f1;
+  --color-surface: #e8efea;
+  --color-raised: #e5ece8;
+  --color-raised-high: #dce7e1;
 
-  /* ---- Surfaces. Elevation is lightness, never shadow. ------------------ */
-  --color-panel: #0f1011; /* framed screenshots, code */
-  --color-tint: #141516; /* cards one step above canvas */
-  --color-surface: #1c1c1f; /* inputs, menus */
-  --color-raised: #232326; /* keys, chips */
-  --color-raised-high: #28282c; /* hover on raised */
+  --color-frame: #e5ebe5;
+  --color-edge: #d7e1da;
+  --color-edge-strong: #b9c9be;
+  --color-edge-bright: #91a99a;
 
-  /* ---- Hairlines ------------------------------------------------------- */
-  --color-frame: #151616; /* barely-there panel edge */
-  --color-edge: #23252a;
-  --color-edge-strong: #34343a;
-  --color-edge-bright: #3e3e44;
+  --color-ink: #172730;
+  --color-body: #334750;
+  --color-muted: #52646c;
+  --color-quiet: #586a70;
 
-  /* ---- Foreground ------------------------------------------------------ */
-  --color-ink: #f7f8f8; /* 18.7:1 — headlines, labels */
-  --color-body: #d0d6e0; /* 13.6:1 — running text */
-  --color-muted: #8a8f98; /*  6.1:1 — secondary copy, eyebrows */
-  --color-quiet: #7c8087; /*  5.0:1 — fine print */
+  --color-accent: #3456d8;
+  --color-accent-hover: #2946bb;
+  --color-link: #2645b4;
+  --color-accent-tint: #e8edff;
+  --color-brand: #3456d8;
 
-  /* ---- Accent. Rationed: links, one badge, one glow per band. ---------- */
-  --color-accent: #7170ff; /*  5.2:1 — fill only, fails AA on raised */
-  --color-accent-hover: #828fff;
-  --color-link: #828fff; /*  7.0:1 — accent as text */
-  --color-accent-tint: #18182f; /* badge and selection fills */
-  --color-brand: #5e6ad2; /*  4.2:1 — fill only */
+  --color-signal: #087b55;
+  --color-danger: #ad3046;
+  --color-warning: #89580e;
+  --color-inverse: #ffffff;
 
-  /* ---- Semantic -------------------------------------------------------- */
-  --color-signal: #34e5a0; /* 12.2:1 — passed, executing */
-  --color-danger: #ff6b6b; /*  6.9:1 — failed */
-  --color-warning: #ffc46b; /* 11.0:1 */
-  --color-inverse: #ffffff; /* the only pure white — primary button fill */
-
-  /* ---- Difficulty scale ------------------------------------------------ */
-  --color-tier-1: #34e5a0;
-  --color-tier-2: #7ecbff;
-  --color-tier-3: #ffc46b;
-  --color-tier-4: #ff6b6b;
+  --color-tier-1: #087b55;
+  --color-tier-2: #27639b;
+  --color-tier-3: #89580e;
+  --color-tier-4: #ad3046;
 
   /* ---- Type ------------------------------------------------------------ */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
 
-  /* Linear's off-standard weights. 500/600/700 read wrong against theirs. */
   --font-weight-normal: 400;
-  --font-weight-medium: 510;
-  --font-weight-semibold: 590;
-  --font-weight-bold: 680;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 650;
+  --font-weight-bold: 750;
 
-  /* Body scale. The negative tracking on running text is not optional; it is
-   * most of why the original reads tighter than imitations of it. */
+  /* Open body text and assertive editorial headings. */
   --text-tiny: 0.625rem;
   --text-tiny--line-height: 1.5;
   --text-tiny--letter-spacing: -0.015em;
@@ -90,7 +66,7 @@
   --text-large--line-height: 1.6;
   --text-large--letter-spacing: 0em;
 
-  /* Title scale. All intended at weight 590. */
+  /* Title scale. */
   --text-title-1: 1.0625rem;
   --text-title-1--line-height: 1.4;
   --text-title-1--letter-spacing: -0.012em;
@@ -155,22 +131,19 @@
    */
   html {
     background-color: var(--color-canvas);
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
     background-color: var(--color-canvas);
     color: var(--color-body);
     font-family: var(--font-sans);
-    /* cv01 gives the single-storey 'a'; ss03 cleans the letterforms. Without
-     * both, the type does not read as Linear no matter what the weights say. */
-    font-feature-settings: "cv01", "ss03";
     font-variation-settings: "opsz" auto;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
-  /* Headings carry ink and the semibold stop; body text stays one step down. */
+  /* Headings anchor the page; body text stays one step quieter. */
   h1,
   h2,
   h3,
@@ -178,18 +151,14 @@
   h5,
   h6 {
     color: var(--color-ink);
-    font-weight: 590;
+    font-weight: 700;
   }
 }
 
 /*
  * Long-form copy: the prose inside a problem statement's content blocks.
  *
- * This replaces @tailwindcss/typography, which was referenced throughout the
- * app via `prose prose-invert prose-*:` classes but had never actually been
- * installed — so all of that markup rendered with browser defaults. A bespoke
- * block is preferable here anyway: the plugin ships its own type scale and
- * would have to be fought back to these tokens value by value.
+ * A bespoke reading rhythm keeps problem statements consistent with the site.
  *
  * In `@layer components` so a utility on the element still wins.
  */
@@ -223,7 +192,7 @@
   .prose-ba h3,
   .prose-ba h4 {
     color: var(--color-ink);
-    font-weight: 590;
+    font-weight: 700;
     letter-spacing: -0.012em;
   }
 
@@ -280,7 +249,7 @@
 
   .prose-ba strong {
     color: var(--color-ink);
-    font-weight: 590;
+    font-weight: 650;
   }
 
   .prose-ba em {
@@ -313,7 +282,7 @@
   }
 
   .prose-ba pre {
-    background: var(--color-canvas);
+    background: var(--color-panel);
     border: 1px solid var(--color-edge);
     border-radius: var(--radius-8);
     overflow-x: auto;
@@ -354,7 +323,7 @@
   .prose-ba th {
     color: var(--color-ink);
     font-size: var(--text-micro);
-    font-weight: 510;
+    font-weight: 650;
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
@@ -415,7 +384,7 @@
   background-size: 64px 64px;
 }
 
-/* Linear's hero glow is fog, not a spotlight — opacity stays under 0.08. */
+/* Soft ambient color, never behind essential labels. */
 @utility glow-fog {
   background: radial-gradient(
     circle,

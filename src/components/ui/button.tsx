@@ -12,23 +12,18 @@ export type ButtonVariant =
   "primary" | "secondary" | "ghost" | "brand" | "danger";
 export type ButtonSize = "sm" | "md" | "lg";
 
-/*
- * The primary button is a white fill. It is the brightest thing on any page,
- * which is what rations it: one, at most two, per band. Everything else is
- * glass or bare text so that the eye has a single place to land.
- */
+/* Saturated blue marks the primary action on the light reading surface. */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: "bg-inverse text-canvas hover:bg-inverse/90 active:bg-inverse/80",
+  primary: "bg-accent text-white hover:bg-accent-hover active:bg-link",
   secondary:
-    "bg-white/5 text-ink border border-white/10 hover:bg-white/10 hover:border-white/15",
-  ghost: "text-muted hover:bg-white/5 hover:text-ink",
-  brand: "bg-brand text-white hover:bg-accent",
-  danger: "bg-danger/12 text-danger border border-danger/25 hover:bg-danger/20",
+    "bg-panel text-ink border border-edge-strong hover:bg-accent-tint hover:border-accent/35",
+  ghost: "text-muted hover:bg-raised hover:text-ink",
+  brand: "bg-brand text-white hover:bg-accent-hover",
+  danger: "bg-danger/10 text-danger border border-danger/25 hover:bg-danger/15",
 };
 
 /*
- * Linear's control height is 36px, but that is a mouse-pointer geometry. The
- * ladder starts at the 44px touch minimum and only steps down at `lg`, since
+ * The control ladder starts at the 44px touch minimum and only steps down at `lg`, since
  * tablets are touch devices too and 768px still needs the larger target.
  */
 const SIZE_CLASSES: Record<ButtonSize, string> = {

@@ -1,17 +1,13 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-/*
- * Elevation in this system is lightness, not shadow. A surface reads as
- * "higher" because it is a step lighter than its floor and carries a hairline,
- * so these variants are ordered by brightness rather than by shadow depth.
- */
+/* White cards lift gently from the paper floor; tinted cards organize detail. */
 export type CardVariant = "tint" | "panel" | "glass";
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  tint: "bg-tint border-edge",
+  tint: "bg-panel border-edge",
   panel: "bg-panel border-edge",
-  glass: "bg-white/[0.035] border-white/10",
+  glass: "bg-accent-tint border-accent/20",
 };
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -32,7 +28,7 @@ export function Card({
         "rounded-12 border",
         VARIANT_CLASSES[variant],
         interactive &&
-          "transition-colors duration-150 ease-out-quad hover:border-edge-bright hover:bg-raised",
+          "transition-colors duration-150 ease-out-quad hover:border-accent/40 hover:bg-accent-tint",
         className,
       )}
       {...props}
@@ -42,8 +38,7 @@ export function Card({
 
 /**
  * The frame that wraps a screenshot, a grid visualisation or a code panel.
- * Larger radius and a darker floor than a card, so the contents read as the
- * artwork and the frame recedes.
+ * A restrained white frame keeps diagrams and code examples in focus.
  */
 export function Frame({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
