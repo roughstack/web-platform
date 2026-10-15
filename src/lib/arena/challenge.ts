@@ -106,7 +106,7 @@ export async function loadArenaChallengeSource(
 
   const [readme, starterCode, statement] = await Promise.all([
     readFile(path.join(loaded.arenaRoot, "README.md"), "utf8"),
-    readFile(path.join(loaded.arenaRoot, entry.manifest.submission.entrypoint), "utf8"),
+    readFile(path.join(loaded.arenaRoot, entry.manifest.submission.starter ?? entry.manifest.submission.entrypoint), "utf8"),
     loadArenaStatement(loaded.arenaRoot),
   ]);
 
