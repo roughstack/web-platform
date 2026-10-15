@@ -5,18 +5,18 @@ import { cn } from "@/lib/utils";
 type Tone = "accent" | "signal" | "warning" | "danger" | "neutral";
 
 const TONE_STYLES: Record<Tone, string> = {
-  accent: "border-accent/45 bg-accent/15 text-ink",
-  signal: "border-signal/45 bg-signal/15 text-ink",
-  warning: "border-warning/45 bg-warning/15 text-ink",
-  danger: "border-danger/45 bg-danger/15 text-ink",
-  neutral: "border-edge-strong bg-raised/50 text-body",
+  accent: "border-accent/50 bg-[#dce5ff] text-ink",
+  signal: "border-signal/50 bg-[#c8f3e0] text-ink",
+  warning: "border-warning/50 bg-[#ffe3a4] text-ink",
+  danger: "border-danger/50 bg-[#ffd7cd] text-ink",
+  neutral: "border-edge-strong bg-panel text-body",
 };
 
 const BAR_STYLES: Record<Tone, string> = {
-  accent: "bg-accent/75",
-  signal: "bg-signal/75",
-  warning: "bg-warning/75",
-  danger: "bg-danger/75",
+  accent: "bg-accent",
+  signal: "bg-circuit",
+  warning: "bg-[#e6b248]",
+  danger: "bg-[#e06073]",
   neutral: "bg-edge-strong",
 };
 
@@ -60,7 +60,7 @@ function fallback() {
 function DiagramHeading({ title, detail }: { title?: string; detail?: string }) {
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-      <span className="text-micro font-semibold uppercase tracking-[0.12em] text-muted">{title}</span>
+      <span className="font-mono text-micro font-semibold uppercase tracking-[0.1em] text-muted">{title}</span>
       {detail && <span className="font-mono text-tiny text-quiet">{detail}</span>}
     </div>
   );
