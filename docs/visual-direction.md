@@ -109,3 +109,21 @@ not resemble any of those products directly.
    the challenge library and arena entry point.
 4. Build and test desktop, phone, reduced motion, navigation, and all challenge
    diagrams. Inspect the running preview before treating the pass as complete.
+
+### Interaction grammar
+
+The workspace is an instrument, not a decorative dashboard. Controls rise a
+little on hover and settle when pressed; they never move without an action.
+Submission has a readable sequence: send, queue, execute, then verdict. The
+console gives each stage a distinct text label and color without implying that
+queued work is already running. A passed run is green, a failed check is red,
+and neither verdict relies on color alone. A scaffold that fails build checks
+before the workload starts has no measurements; its panel says so rather than
+presenting an invented score.
+
+The first learning demo illustrates the same rule. Selecting a cache operation
+changes its entries and advances a short progress rail. The transition is brief
+and stops entirely for reduced-motion preferences. We do not use looping
+animations on lesson art, editor chrome, or reading text. Monospace is reserved
+for commands, pipeline steps, status, and measurements; the explanations keep
+their easier-to-read sans-serif voice.

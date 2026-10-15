@@ -280,7 +280,7 @@ export function Arena({
         languages={languages}
         language={language}
         onLanguageChange={setLanguage}
-        busy={busy}
+        state={state}
         onSubmit={submit}
       />
 
@@ -370,7 +370,7 @@ function ArenaToolbar({
   languages,
   language,
   onLanguageChange,
-  busy,
+  state,
   onSubmit,
 }: {
   title: string;
@@ -381,9 +381,10 @@ function ArenaToolbar({
   languages: readonly LanguageId[];
   language: LanguageId;
   onLanguageChange: (id: LanguageId) => void;
-  busy: boolean;
+  state: SubmissionState;
   onSubmit: () => void;
 }) {
+  const busy = state === "submitting" || state === "queued" || state === "running";
   return (
     <header className="flex min-h-14 shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-edge bg-panel px-3 py-1.5 lg:h-13 lg:min-h-0 lg:flex-nowrap lg:py-0">
       <Link
@@ -428,10 +429,10 @@ function ArenaToolbar({
           ))}
         </select>
 
-        <Button onClick={onSubmit} disabled={busy} loading={busy} size="sm" className="shrink-0">
-          {busy ? "Running…" : (
+        <Button onClick={onSubmit} disabled={busy} loading={busy} size="sm" className="shrink-0 font-mono font-bold" title="Submit solution (⌘/Ctrl + Enter)">
+          {busy ? (state === "running" ? "Running…" : "Queueing…") : (
             <>
-              <Play className="size-3.5" aria-hidden />
+              <Play className="size-3.5 fill-current" aria-hidden />
               Submit
             </>
           )}

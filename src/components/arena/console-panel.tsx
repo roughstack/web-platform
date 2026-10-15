@@ -85,15 +85,15 @@ function StatusPill({
 }) {
   if (state === "submitting" || state === "queued" || state === "running") {
     return (
-      <span className="inline-flex items-center gap-1.5 pr-1 text-micro text-muted">
-        <Loader2 className="size-3 animate-spin" aria-hidden />
-        {state === "running" ? "Running" : "Queued"}
+      <span role="status" className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-accent-tint px-2 py-0.5 font-mono text-micro font-semibold text-link">
+        <Loader2 className="size-3 motion-safe:animate-spin" aria-hidden />
+        {state === "running" ? "Running" : state === "queued" ? "Queued" : "Submitting"}
       </span>
     );
   }
 
   if (state === "error") {
-    return <span className="pr-1 text-micro font-medium text-danger">Error</span>;
+    return <span role="status" className="rounded-full bg-danger/10 px-2 py-0.5 font-mono text-micro font-semibold text-danger">Error</span>;
   }
 
   if (state === "done" && result) {
@@ -101,9 +101,10 @@ function StatusPill({
     return (
       <span
         className={cn(
-          "inline-flex items-center gap-1.5 pr-1 text-micro font-medium",
-          passed ? "text-signal" : "text-danger",
+          "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-micro font-semibold",
+          passed ? "bg-signal/10 text-signal" : "bg-danger/10 text-danger",
         )}
+        role="status"
       >
         {passed ? <Check className="size-3.5" aria-hidden /> : <X className="size-3.5" aria-hidden />}
         {passed ? "Passed" : "Failed"}
@@ -131,12 +132,24 @@ function ResultView({
 }) {
   if (state === "idle") {
     return (
-      <div className="flex h-full min-h-24 flex-col items-center justify-center gap-1.5 text-center">
-        <p className="text-mini text-quiet">Submit to run your solution against the workload.</p>
+      <div className="mx-auto flex h-full min-h-24 max-w-md flex-col justify-center gap-3">
+        <div className="flex items-center gap-2 font-mono text-micro font-semibold tracking-[.07em] text-link uppercase">
+          <span className="size-2 rounded-full bg-accent" aria-hidden="true" />
+          Ready to run
+        </div>
+        <p className="text-mini text-body">Submit your solution to see how it behaves under the workload.</p>
+        <div className="grid grid-cols-3 gap-1.5" aria-label="Run pipeline: compile, exercise, measure">
+          {(["Compile", "Exercise", "Measure"] as const).map((stage, index) => (
+            <div key={stage} className="rounded-6 border border-edge bg-tint px-2 py-2 text-center font-mono text-micro text-body">
+              <span className="mr-1 text-link">0{index + 1}</span>{stage}
+            </div>
+          ))}
+        </div>
         <p className="text-micro text-quiet">
           <kbd className="rounded-4 border border-edge bg-tint px-1.5 py-0.5 font-mono">⌘</kbd>
           {" + "}
           <kbd className="rounded-4 border border-edge bg-tint px-1.5 py-0.5 font-mono">↵</kbd>
+          <span className="ml-2">also runs your code</span>
         </p>
       </div>
     );
@@ -144,9 +157,17 @@ function ResultView({
 
   if (state === "submitting" || state === "queued" || state === "running") {
     return (
-      <div className="flex h-full min-h-24 items-center justify-center gap-2 text-mini text-muted">
-        <Loader2 className="size-4 animate-spin" aria-hidden />
-        {state === "running" ? "Replaying the workload…" : "Waiting for a machine…"}
+      <div className="mx-auto flex h-full min-h-24 max-w-md flex-col justify-center gap-3" role="status">
+        <div className="flex items-center gap-2 text-mini font-medium text-ink">
+          <Loader2 className="size-4 text-accent motion-safe:animate-spin" aria-hidden />
+          {state === "running" ? "Building and exercising your solution…" : state === "queued" ? "Waiting for a machine…" : "Sending your solution…"}
+        </div>
+        <div className="grid grid-cols-3 gap-1.5" aria-hidden="true">
+          {(["submitting", "queued", "running"] as const).map((stage, index) => (
+            <div key={stage} className={cn("h-1.5 rounded-full transition-colors duration-200", ["submitting", "queued", "running"].indexOf(state) >= index ? "bg-accent" : "bg-edge")} />
+          ))}
+        </div>
+        <p className="font-mono text-micro text-quiet">Submit / queue / execute</p>
       </div>
     );
   }
@@ -162,21 +183,43 @@ function ResultView({
     );
   }
 
+  const hasMeasurements = Object.keys(result.metrics).length > 0;
   return (
     <div className="space-y-5">
+      <div className={cn("rounded-10 border px-3.5 py-3", result.status === "passed" ? "border-signal/25 bg-signal/[0.07]" : "border-danger/25 bg-danger/[0.06]")}>
+        <p className={cn("flex items-center gap-2 font-mono text-mini font-bold", result.status === "passed" ? "text-signal" : "text-danger")}>
+          {result.status === "passed" ? <Check className="size-4" aria-hidden /> : <X className="size-4" aria-hidden />}
+          {result.status === "passed" ? "Workload passed" : !hasMeasurements ? "Run stopped before measurement" : "Workload needs another pass"}
+        </p>
+        <p className="mt-1 text-mini text-body">{result.status === "passed" ? "Your implementation met this run’s checks. Inspect the measurements below." : !hasMeasurements ? "Review the build or check output below, then try again." : "Inspect the feedback, revise your code, and run it again."}</p>
+      </div>
       {result.message && result.status !== "passed" && (
-        <div className="rounded-8 border border-danger/30 bg-danger/[0.06] px-3.5 py-3">
-          <p className="whitespace-pre-wrap font-mono text-micro leading-relaxed text-body">
-            {result.message}
-          </p>
-        </div>
+        !hasMeasurements ? (
+          <div className="rounded-8 border border-danger/25 bg-panel px-3.5 py-3">
+            <p className="text-mini font-medium text-ink">
+              {result.message.includes("TODO:")
+                ? "The starter still has an unfinished TODO. Complete it, then run again."
+                : "The build or check step returned diagnostic output."}
+            </p>
+            <details className="mt-2 text-mini text-body">
+              <summary className="cursor-pointer font-mono text-micro font-semibold text-link underline-offset-4 hover:underline">View full diagnostic output</summary>
+              <pre className="mt-2 max-h-56 overflow-auto whitespace-pre-wrap break-words rounded-6 bg-tint p-3 font-mono text-micro leading-relaxed text-body">{result.message}</pre>
+            </details>
+          </div>
+        ) : (
+          <div className="rounded-8 border border-danger/30 bg-danger/[0.06] px-3.5 py-3">
+            <p className="whitespace-pre-wrap font-mono text-micro leading-relaxed text-body">{result.message}</p>
+          </div>
+        )
       )}
 
       <TaskVisuals task={task} result={result} />
 
       {task.startsWith("arena:") && (
         <p className="rounded-8 border border-accent/20 bg-accent-tint px-3 py-2 text-mini text-body">
-          Practice run. Use the verdict and measurements to improve your solution; this challenge is not ranked yet.
+          {hasMeasurements
+            ? "Practice run. Use the verdict and measurements to improve your solution; this challenge is not ranked yet."
+            : "Practice run. Measurements appear after the checks complete; this challenge is not ranked yet."}
         </p>
       )}
 

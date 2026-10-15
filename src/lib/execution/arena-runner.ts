@@ -61,7 +61,7 @@ export async function executeArenaSubmission(
           ? "Build timed out"
           : build.outputExceeded
             ? "Build output exceeded 1 MiB"
-            : "The submission did not compile",
+            : "Build checks did not pass",
         build.stderr || build.stdout,
       );
     }
