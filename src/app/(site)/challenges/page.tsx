@@ -13,7 +13,7 @@ import { Eyebrow } from "@/components/ui/label";
 export const metadata = {
   title: "Challenges",
   description:
-    "Hands-on systems engineering challenges. Implement real firmware, scored on real metrics.",
+    "Hands-on systems engineering challenges with runnable feedback and measurable behavior.",
 };
 
 export const dynamic = "force-dynamic";
@@ -133,10 +133,11 @@ export default async function ChallengesPage() {
           <div>
             <h2 className="text-title-1">How scoring works</h2>
             <p className="mt-2 text-mini text-muted">
-              Solutions are graded on a deterministic, seeded workload so every
-              submission faces identical traffic. Metrics are compared against a
-              reference solution and a clairvoyant lower bound. Your score is a
-              weighted ratio. Beat the reference to score above 100.
+              Each submission receives a verdict and workload measurements.
+              The original flash-storage challenges have ranked scores. The
+              newer systems challenges are practice exercises: their public
+              metrics are useful feedback, but they are not calibrated for a
+              leaderboard yet.
             </p>
           </div>
         </div>

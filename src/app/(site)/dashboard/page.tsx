@@ -23,6 +23,7 @@ interface SubmissionRow {
     title: string;
     difficulty: string;
     category: string;
+    pack: string;
   };
   result: {
     passed: boolean;
@@ -39,6 +40,7 @@ export default async function DashboardPage() {
     slug: string;
     difficulty: string;
     category: string;
+    pack: string;
     bestScore: number;
     attempts: number;
     passed: boolean;
@@ -60,6 +62,7 @@ export default async function DashboardPage() {
             title: true,
             difficulty: true,
             category: true,
+            pack: true,
           },
         },
         result: {
@@ -88,6 +91,7 @@ export default async function DashboardPage() {
         challengeTitle: string;
         difficulty: string;
         category: string;
+        pack: string;
         bestScore: number;
         attempts: bigint;
         passed: boolean;
@@ -98,6 +102,7 @@ export default async function DashboardPage() {
         c.title AS "challengeTitle",
         c.difficulty::text AS "difficulty",
         c.category,
+        c.pack,
         MAX(r.score) AS "bestScore",
         COUNT(*) AS "attempts",
         BOOL_OR(r.passed) AS "passed"
@@ -106,7 +111,7 @@ export default async function DashboardPage() {
       JOIN "Challenge" c ON c.id = s."challengeId"
       WHERE s."sessionId" = ${sessionToken}
         AND c."isPublished" = true
-      GROUP BY c.slug, c.title, c.difficulty, c.category
+      GROUP BY c.slug, c.title, c.difficulty, c.category, c.pack
       ORDER BY "bestScore" DESC
     `;
     bestPerChallenge = bestRows.map((r) => ({
@@ -114,6 +119,7 @@ export default async function DashboardPage() {
       slug: r.challengeSlug,
       difficulty: r.difficulty,
       category: r.category,
+      pack: r.pack,
       bestScore: r.bestScore,
       attempts: Number(r.attempts),
       passed: r.passed,
@@ -134,7 +140,7 @@ export default async function DashboardPage() {
       {bestPerChallenge.length > 0 && (
         <section className="mb-10">
           <h2 className="mb-3 text-micro font-medium tracking-wider text-quiet uppercase">
-            Best scores
+            Your challenges
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {bestPerChallenge.map((c) => (
@@ -152,10 +158,14 @@ export default async function DashboardPage() {
                     </div>
                   </div>
                   <div className="ml-3 shrink-0 text-right">
-                    <p className="font-mono text-title-2 tabular-nums text-ink">
-                      {c.bestScore}
-                    </p>
-                    <p className="font-mono text-tiny text-quiet">/ 100</p>
+                    {c.pack === "arena" ? (
+                      <p className="text-mini font-medium text-link">Practice</p>
+                    ) : (
+                      <>
+                        <p className="font-mono text-title-2 tabular-nums text-ink">{c.bestScore}</p>
+                        <p className="font-mono text-tiny text-quiet">/ 100</p>
+                      </>
+                    )}
                   </div>
                 </div>
                 <div className="mt-3 flex items-center justify-between text-micro text-quiet">
@@ -221,7 +231,9 @@ export default async function DashboardPage() {
                       />
                     </td>
                     <td className="px-4 py-3 font-mono tabular-nums text-body">
-                      {s.result ? s.result.score : "Not scored"}
+                      {s.challenge.pack === "arena"
+                        ? "Practice"
+                        : s.result ? s.result.score : "Not scored"}
                     </td>
                     <td className="px-4 py-3 text-quiet">
                       <time dateTime={s.createdAt.toISOString()}>

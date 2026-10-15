@@ -59,6 +59,7 @@ export default async function LeaderboardPage() {
     JOIN "Challenge" c ON c.id = s."challengeId"
     WHERE s."sessionId" IS NOT NULL
       AND c."isPublished" = true
+      AND c.pack <> 'arena'
     GROUP BY s."sessionId", c.slug, c.title, c.difficulty, c.category
     ORDER BY "bestScore" DESC, "submittedAt" ASC
     LIMIT 50
@@ -86,7 +87,8 @@ export default async function LeaderboardPage() {
         <div>
           <h1 className="text-title-4 sm:text-title-5">Leaderboard</h1>
           <p className="mt-2 text-regular text-muted">
-            Best scores per session across all challenges.{" "}
+            Ranked flash-storage challenges only. Practice challenges are
+            excluded until their scores are calibrated.{" "}
             {sessionToken
               ? "Your row is highlighted."
               : "Solve a challenge to appear."}

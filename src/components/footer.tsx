@@ -30,8 +30,8 @@ const COLUMNS = [
     heading: "Runtime",
     links: [
       {
-        href: "https://fly.io/docs/machines/",
-        label: "Fly Machines",
+        href: "https://github.com/roughstack/execution-runtime",
+        label: "Execution runtime",
         external: true,
       },
       { href: "https://go.dev/", label: "Go", external: true },
@@ -95,15 +95,9 @@ export function Footer() {
 
         <div className="mt-10 flex flex-col gap-3 border-t border-edge pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-micro text-quiet">
-            Every submission runs in an isolated microVM.
+            Learn by implementing and measuring real system behavior.
           </p>
-          <p className="flex items-center gap-2 text-micro text-quiet">
-            <span
-              aria-hidden="true"
-              className="size-1.5 rounded-full bg-signal"
-            />
-            Runtime operational
-          </p>
+          <p className="text-micro text-quiet">Open-source systems practice</p>
         </div>
       </div>
     </footer>
