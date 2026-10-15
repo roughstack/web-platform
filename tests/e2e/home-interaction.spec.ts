@@ -30,3 +30,13 @@ test("cache trace controls remain usable at narrow phone width", async ({ page }
   await expect(page.getByText("C arrives. B leaves.")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+test("cache state transition respects reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "02 get A" }).click();
+  const entries = page.getByLabel("Cache entries, oldest to newest");
+  await expect(entries).toContainText("Boldest");
+  expect(await entries.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
+});
