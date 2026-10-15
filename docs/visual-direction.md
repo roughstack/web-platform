@@ -127,3 +127,50 @@ and stops entirely for reduced-motion preferences. We do not use looping
 animations on lesson art, editor chrome, or reading text. Monospace is reserved
 for commands, pipeline steps, status, and measurements; the explanations keep
 their easier-to-read sans-serif voice.
+
+## Bold direction: computation you can touch
+
+The previous light-circuit pass is preserved by the annotated Git tag
+`visual-baseline-before-bold-cs-2026-10-16`. This chapter is deliberately a
+larger step. A grid or chip silhouette says “software,” but it does not let a
+curious visitor feel a computer *doing* something. Our visual DNA is a visible
+cause and effect: choose an input, watch a transformation, predict an output,
+then build the mechanism yourself.
+
+Brilliant's strength is the small decision that makes an idea click. Our
+subject and implementation are different. We start with a real half-adder:
+two switches, XOR for sum, AND for carry, and an immediate truth table. A
+learner can touch the primitive before they read about caches, storage,
+scheduling, and networks. The interface should never turn these into a false
+claim that logic-gate or neural-network challenges are already published.
+
+### Visual system
+
+- A light overall canvas remains. High-energy cobalt, electric lime, coral,
+  and ice blue gather around *active computation* and focal actions. Dark ink
+  makes the interactive circuit feel like an instrument, not a site-wide dark
+  mode. Quiet reading surfaces remain quiet.
+- Lines are signals, not wallpaper. In the circuit, route color indicates 0 or
+  1 and output nodes change immediately. A short pulse follows input changes;
+  nothing loops without a learner action. Reduced motion removes the pulse.
+- Type has two jobs: generous sans-serif invites exploration and carries
+  explanations; compact monospace labels inputs, gates, truth values, code,
+  and measurements. Avoid forcing long copy into a terminal aesthetic.
+- The path from bit to system is an editorial map, not an invented course
+  catalogue. The public library distinguishes runnable challenges from future
+  frontiers. Cards answer “what do I control?” and “what will I observe?” in
+  short human-edited copy, while the full statement remains authoritative.
+
+### Work sequence and acceptance
+
+1. Build and test the half-adder with real binary behavior, keyboard controls,
+   text equivalents, and no mandatory motion.
+2. Recompose the home page around that instrument and a clear route into the
+   challenge library. The first viewport should say “computer science from
+   the inside” in both copy and interaction.
+3. Make the library scannable by domain and editorial question, preserving
+   every existing challenge URL, language, difficulty, and practice/ranked
+   status. Do not imply unpublished topics can be run.
+4. Verify phone, tablet, desktop, keyboard, reduced-motion, contrast, and real
+   challenge navigation. Keep changes in independent commits so the tagged
+   state and each iteration remain easy to compare.
