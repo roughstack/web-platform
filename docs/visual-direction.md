@@ -1,5 +1,8 @@
 # Visual direction: a systems field guide with a working lab
 
+> Historical exploration. The active specification is [the design system](design-system.md).
+> In particular, the dense dark half-adder hero below has been superseded.
+
 Roughstack teaches by making invisible systems visible. The interface should
 feel curious, lucid, and alive, while the code editor and measurements remain
 trustworthy instruments. This is a light-first product, not a dark developer
