@@ -28,6 +28,15 @@ for (const slug of [...SSD_SLUGS, ...EXTERNAL_SLUGS]) {
   });
 }
 
+for (const slug of EXTERNAL_SLUGS) {
+  test(`practice editor starts with an unfinished scaffold for ${slug}`, async ({ page }) => {
+    test.skip(!process.env.BYTEARENA_ARENA_ROOTS,
+      "External challenge checkout is not configured");
+    await page.goto(`/challenges/${slug}`);
+    await expect(page.locator(".monaco-editor .view-lines")).toContainText("TODO");
+  });
+}
+
 test("phone layout gives the problem and editor their own readable views", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/challenges/compaction");
