@@ -3,7 +3,8 @@ import { prisma } from "@/lib/db";
 import { getSessionToken } from "@/lib/variants";
 import { Badge } from "@/components/ui/badge";
 import { DifficultyBadge } from "@/components/ui/badge";
-import { Check, Trophy } from "lucide-react";
+import { Check } from "lucide-react";
+import { ChallengeArtwork } from "@/components/challenge-artwork";
 import type { Metadata } from "next";
 import { PRODUCT_NAME } from "@/lib/brand";
 
@@ -80,12 +81,9 @@ export default async function LeaderboardPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
-      <header className="mb-10 flex items-start gap-3">
-        <span className="grid size-9 shrink-0 place-items-center rounded-8 border border-edge bg-raised text-accent-hover">
-          <Trophy className="size-4" aria-hidden="true" />
-        </span>
+      <header className="mb-10 grid items-end gap-8 border-b border-edge pb-10 sm:grid-cols-[1fr_auto]">
         <div>
-          <h1 className="text-title-4 sm:text-title-5">Leaderboard</h1>
+          <h1 className="font-display text-5xl tracking-[-.04em] sm:text-6xl">Leaderboard</h1>
           <p className="mt-2 text-regular text-muted">
             Ranked flash-storage challenges only. Practice challenges are
             excluded until their scores are calibrated.{" "}
@@ -94,22 +92,26 @@ export default async function LeaderboardPage() {
               : "Solve a challenge to appear."}
           </p>
         </div>
+        <div className="rounded-2xl bg-[#f4ce57] px-7 py-5">
+          <p className="font-mono text-4xl font-semibold text-ink">{entries.length}</p>
+          <p className="mt-2 text-sm text-ink">Ranked results</p>
+        </div>
       </header>
 
       {entries.length === 0 ? (
-        <div className="rounded-12 border border-edge bg-tint p-10 text-center">
-          <p className="text-mini text-muted">
-            No submissions yet.{" "}
-            <Link href="/challenges" className="text-link hover:underline">
-              Be the first →
-            </Link>
-          </p>
+        <div className="grid items-center gap-6 rounded-3xl bg-[#fff0c2] p-7 sm:grid-cols-[1fr_1.2fr] sm:p-10">
+          <ChallengeArtwork slug="compaction" className="aspect-[240/136] rounded-2xl" />
+          <div>
+            <h2 className="font-display text-3xl leading-tight tracking-tight">Make the first move.</h2>
+            <p className="mt-3 text-base leading-relaxed text-body">No ranked submissions yet. Build a compaction policy, test it, and set the first score.</p>
+            <Link href="/challenges/compaction" className="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-6 text-sm font-semibold text-white hover:bg-accent-hover">Open Compaction</Link>
+          </div>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-12 border border-edge">
+        <div className="overflow-x-auto rounded-2xl border border-edge bg-white">
           <table className="w-full min-w-[30rem] text-mini">
-            <thead className="bg-raised/40">
-              <tr className="text-left text-micro tracking-wider text-quiet uppercase">
+            <thead className="bg-[#e4eafb]">
+              <tr className="text-left text-sm text-body">
                 <th className="px-4 py-2.5 font-medium">#</th>
                 <th className="px-4 py-2.5 font-medium">Challenge</th>
                 <th className="px-4 py-2.5 font-medium">Score</th>
@@ -132,7 +134,7 @@ export default async function LeaderboardPage() {
                     <span
                       className={
                         e.rank <= 3
-                          ? "font-mono text-mini font-semibold tabular-nums text-ink"
+                          ? "inline-grid size-9 place-items-center rounded-full bg-[#f4ce57] font-mono text-mini font-semibold tabular-nums text-ink"
                           : "font-mono text-mini tabular-nums text-quiet"
                       }
                     >
@@ -160,7 +162,7 @@ export default async function LeaderboardPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-mono text-mini font-semibold tabular-nums text-ink">
+                    <span className="font-mono text-lg font-semibold tabular-nums text-ink">
                       {e.score}
                     </span>
                     <span className="font-mono text-tiny text-quiet">
@@ -173,6 +175,9 @@ export default async function LeaderboardPage() {
                         aria-label="Passed"
                       />
                     )}
+                    <div aria-hidden="true" className="mt-2 h-1.5 w-20 overflow-hidden rounded-full bg-[#e4eafb]">
+                      <div className="h-full rounded-full bg-accent" style={{ width: `${Math.max(0, Math.min(100, e.score))}%` }} />
+                    </div>
                   </td>
                   <td className="hidden px-4 py-3 text-quiet sm:table-cell">
                     <time dateTime={e.submittedAt.toISOString()}>
