@@ -5,7 +5,7 @@
 
 ## Context
 
-Rough Stack needs to support multiple independently evolving systems arenas without
+Roughstack needs to support multiple independently evolving systems arenas without
 turning the web application and judge into a collection of arena-specific branches.
 Official evaluation also needs hidden workloads and reference material that must
 never enter a public build.
@@ -16,7 +16,7 @@ evaluation material to leak into a public image or artifact.
 
 ## Decision
 
-Rough Stack uses three repository boundaries:
+Roughstack uses three repository boundaries:
 
 1. `bytearena` is the public platform repository. It owns contracts, discovery,
    validation, scoring primitives, the web/control plane, judge worker, execution
@@ -30,8 +30,8 @@ Rough Stack uses three repository boundaries:
 The dependency direction is one-way:
 
 ```text
-bytearena-arenas  ──uses──> versioned Rough Stack contracts and SDK
-bytearena-official ─uses──> versioned Rough Stack contracts and public arena identity
+bytearena-arenas  ──uses──> versioned Roughstack contracts and SDK
+bytearena-official ─uses──> versioned Roughstack contracts and public arena identity
 bytearena          ─loads──> immutable arena bundles through public contracts
 ```
 

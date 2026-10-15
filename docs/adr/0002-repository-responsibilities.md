@@ -15,7 +15,7 @@ deployments and gives public repositories names that do not describe their conte
 
 ## Decision
 
-Rough Stack uses four repositories with explicit responsibilities:
+Roughstack uses four repositories with explicit responsibilities:
 
 1. `roughstack/web-platform` contains the website, editor, accounts, discussions,
    submissions, database schema, control plane, and deployment configuration.

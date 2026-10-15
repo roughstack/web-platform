@@ -1,6 +1,6 @@
 # Production readiness roadmap
 
-Rough Stack has a coherent learning experience, a deterministic arena contract,
+Roughstack has a coherent learning experience, a deterministic arena contract,
 and a strong local development path. It is not ready to accept untrusted public
 traffic yet. The work below is ordered by dependency and launch risk.
 
@@ -182,6 +182,6 @@ This ordering borrows proven patterns without copying another product's surface:
 7. Build guided progression and feedback on top of trustworthy run data.
 8. Add community solutions, review, discovery, and authoring workflows.
 
-This sequence keeps the most expensive promise first: when Rough Stack says it
+This sequence keeps the most expensive promise first: when Roughstack says it
 ran a learner's code safely and measured it fairly, that claim must be true and
 reproducible.

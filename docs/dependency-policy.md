@@ -1,6 +1,6 @@
 # Dependency policy
 
-Rough Stack treats dependency maintenance as part of its security posture.
+Roughstack treats dependency maintenance as part of its security posture.
 
 ## Requirements
 
