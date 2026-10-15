@@ -46,8 +46,8 @@ export function Footer() {
         <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
           <div className="max-w-xs">
             <div className="flex items-center gap-2">
-              <BrandMark className="text-accent" />
-              <span className="text-regular font-semibold text-ink">
+              <BrandMark />
+              <span className="text-regular font-bold tracking-[-.04em] text-ink">
                 {PRODUCT_NAME}
               </span>
             </div>

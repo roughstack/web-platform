@@ -2,23 +2,31 @@ import { cn } from "@/lib/utils";
 
 interface BrandMarkProps {
   className?: string;
+  size?: number;
 }
 
-export function BrandMark({ className }: BrandMarkProps) {
+/** One routed signal across three layers, ending in an active node. */
+export function BrandMark({ className, size = 28 }: BrandMarkProps) {
   return (
     <svg
-      viewBox="0 0 24 24"
+      viewBox="0 0 64 64"
+      width={size}
+      height={size}
       aria-hidden="true"
-      className={cn("size-6 shrink-0", className)}
+      focusable="false"
+      className={cn("shrink-0", className)}
     >
-      <rect width="24" height="24" rx="6" fill="currentColor" />
+      <rect width="64" height="64" rx="17" fill="#2447e7" />
       <path
-        d="M6 7.25h10.5M7.5 12h10.5M5.5 16.75H16"
+        d="M18 17h27v15H20v15h26"
         fill="none"
         stroke="#ffffff"
-        strokeWidth="2.25"
+        strokeWidth="5.5"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
+      <circle cx="18" cy="17" r="5.5" fill="#e6fa69" />
+      <circle cx="46" cy="47" r="6.5" fill="#ff784f" stroke="#ffffff" strokeWidth="2" />
     </svg>
   );
 }

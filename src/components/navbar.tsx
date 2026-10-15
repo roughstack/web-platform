@@ -22,8 +22,8 @@ function Wordmark() {
       className="flex min-h-11 items-center gap-2 rounded-6"
       aria-label={`${PRODUCT_NAME} home`}
     >
-      <BrandMark className="text-accent" />
-      <span className="text-regular font-semibold text-ink">{PRODUCT_NAME}</span>
+      <BrandMark />
+      <span className="text-large font-bold tracking-[-.04em] text-ink">{PRODUCT_NAME}</span>
     </Link>
   );
 }
