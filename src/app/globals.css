@@ -44,7 +44,7 @@
 
   /* ---- Type ------------------------------------------------------------ */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-editorial), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
 
   --font-weight-normal: 400;
@@ -374,15 +374,6 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-quiet);
-}
-
-@keyframes circuit-path {
-  from { stroke-dasharray: 1; stroke-dashoffset: 1; }
-  to { stroke-dasharray: 1; stroke-dashoffset: 0; }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .circuit-path { animation: circuit-path 280ms ease-out both; }
 }
 
 @media (prefers-reduced-motion: reduce) {

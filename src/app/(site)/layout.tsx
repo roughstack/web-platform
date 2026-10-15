@@ -1,11 +1,11 @@
-import { Space_Grotesk } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
-const spaceGrotesk = Space_Grotesk({
+const editorial = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-space-grotesk",
+  variable: "--font-editorial",
 });
 
 /**
@@ -20,7 +20,7 @@ export default function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className={`${spaceGrotesk.variable} flex min-h-screen flex-col`}>
+    <div className={`${editorial.variable} flex min-h-screen flex-col`}>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-100 focus:rounded-8 focus:bg-accent focus:px-4 focus:py-2 focus:text-mini focus:text-white"
