@@ -1,4 +1,11 @@
-# Rough Stack
+# Roughstack web platform
+
+The visitor-facing app currently prototypes the name **Rivets**. The
+organization and repository names remain Roughstack. Set
+`NEXT_PUBLIC_PLATFORM_NAME` before building to try a different label; the
+navigation, footer, and metadata read it from one place in `src/lib/brand.ts`.
+The symbol is separate from that label. Its shared source is
+`src/components/brand-mark.tsx`, including the generated browser icon.
 
 An interactive coding platform for **systems engineering** challenges. You implement
 storage and systems internals, run them against deterministic workloads, and inspect
@@ -183,5 +190,5 @@ docs/
 
 ## License
 
-Rough Stack is licensed under the [Apache License 2.0](LICENSE). See
+Roughstack is licensed under the [Apache License 2.0](LICENSE). See
 [NOTICE](NOTICE) for attribution information.
