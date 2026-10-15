@@ -14,7 +14,7 @@ export type ButtonSize = "sm" | "md" | "lg";
 
 /* Saturated blue marks the primary action on the light reading surface. */
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-white hover:bg-accent-hover active:bg-link",
+  primary: "bg-accent text-white shadow-[0_3px_0_#142f9e] hover:bg-accent-hover hover:shadow-[0_5px_0_#142f9e] active:bg-link active:shadow-none",
   secondary:
     "bg-panel text-ink border border-edge-strong hover:bg-accent-tint hover:border-accent/35",
   ghost: "text-muted hover:bg-raised hover:text-ink",
@@ -57,7 +57,8 @@ export function Button({
 }: ButtonProps) {
   const classes = cn(
     "inline-flex items-center justify-center whitespace-nowrap rounded-8 font-medium",
-    "transition-colors duration-100 ease-out-quad",
+    "transition-[transform,box-shadow,background-color,border-color,color] duration-150 ease-out-quad motion-safe:enabled:hover:-translate-y-0.5 motion-safe:enabled:active:translate-y-[3px]",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
     "disabled:pointer-events-none disabled:opacity-50",
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
@@ -86,7 +87,7 @@ export function Button({
       {...props}
     >
       {loading && (
-        <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+        <Loader2 className="size-4 motion-safe:animate-spin" aria-hidden="true" />
       )}
       {children}
     </button>

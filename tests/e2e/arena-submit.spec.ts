@@ -63,7 +63,7 @@ test.describe("arena submission", () => {
     await page.goto("/challenges");
 
     const card = page.getByRole("link", {
-      name: /Difficulty: Easy Cache Cache Pressure/,
+      name: /Difficulty: Easy Cache Practice Cache Pressure/,
     });
     await expect(card).toBeVisible();
     await expect(card).not.toContainText("Cache Pressure — Easy");
@@ -79,18 +79,18 @@ test.describe("arena submission", () => {
     await expect(page.getByRole("tab", { name: "Discussion" })).toBeVisible();
     await expect(page.getByRole("tab", { name: "Submissions" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Submit" })).toBeVisible();
-    await expect(page.getByRole("img", { name: "A cache read path" })).toBeVisible();
+    await expect(page.getByLabel("Run pipeline: compile, exercise, measure")).toBeVisible();
+    await expect(page.getByRole("img", { name: /Oldest on the left · newest on the right/ })).toBeVisible();
     await expect(page.getByText("The invariant", { exact: true })).toBeVisible();
     await expect(page.getByText("What you implement", { exact: true })).toBeVisible();
     await expect(page.getByText("A good way in", { exact: true })).toHaveCount(0);
 
     await page.getByRole("button", { name: "Submit" }).click();
-    const metrics = page.locator("dl");
-    await expect(metrics).toBeVisible({ timeout: 120_000 });
-    await expect(metrics).toContainText("Backing reads");
-    await expect(metrics).toContainText("Peak accounted bytes");
-    await expect(
-      page.locator("section").filter({ has: metrics }).getByText("Passed", { exact: true }),
-    ).toBeVisible();
+    // The learner-facing scaffold is intentionally unfinished. Its first run
+    // must explain why it stopped, not invent a passed workload or metrics.
+    await expect(page.getByText("Run stopped before measurement")).toBeVisible({ timeout: 120_000 });
+    await expect(page.getByText("The starter still has an unfinished TODO. Complete it, then run again.")).toBeVisible();
+    await page.getByText("View full diagnostic output").click();
+    await expect(page.getByText(/TODO: enforce the exact byte budget and LRU eviction/)).toBeVisible();
   });
 });
