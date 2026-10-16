@@ -42,7 +42,6 @@ export function StorageTheatre({ recovery = false }: { recovery?: boolean }) {
           <g transform="translate(335 287) rotate(-8 80 70)">
             <rect x="8" y="10" width="157" height="125" rx="18" fill="#25144b" />
             <rect width="157" height="125" rx="18" fill="#b7ff45" />
-            <path className="recovery-restored" d="m49 59 19 19 40-42" fill="none" stroke="#38207c" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
             <foreignObject x="12" y="89" width="133" height="26">
               <div style={{ color: "#38207c", background: "#b7ff45", fontFamily: "monospace", fontSize: 15, textAlign: "center" }}>recovered</div>
             </foreignObject>
@@ -87,10 +86,6 @@ export function StorageTheatre({ recovery = false }: { recovery?: boolean }) {
           <path d="m95 42 25 14-25 15-25-15Z" />
           <path d="m70 56 25 15v13L70 70Z" fill="#bb2675" />
           <path d="m95 71 25-15v14L95 84Z" fill="#e5378c" />
-        </g>
-        <g className="storage-orbit" transform="translate(534 281)">
-          <circle r="35" fill="#b7ff45" />
-          <path d="m-15 0 10 10L16-11" fill="none" stroke="#282334" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
         </g>
         </>}
       </svg>

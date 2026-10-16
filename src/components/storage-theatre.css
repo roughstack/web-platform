@@ -10,17 +10,13 @@
 @keyframes storage-flow { to { stroke-dashoffset: -432; } }
 @keyframes storage-lift { 0%, 100% { transform: translateY(-5px); } 45% { transform: translateY(-20px); } }
 @keyframes storage-write { 0%, 100% { transform: translate(0, 0); } 65% { transform: translate(75px, 43px); } }
-@keyframes storage-breathe { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
 @keyframes recovery-interrupted { 0%, 20%, 90%, 100% { opacity: .25; } 35%, 65% { opacity: 1; } }
-@keyframes recovery-restored { 0%, 45% { opacity: .25; } 65%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: no-preference) {
   .recovery-interrupted { animation: recovery-interrupted 6s ease-in-out infinite; }
-  .recovery-restored { animation: recovery-restored 6s ease-in-out infinite; }
   .storage-stream { animation: storage-flow 4.5s linear infinite; }
   .storage-stream--blue { animation-delay: -1.5s; }
   .storage-stream--lime { animation-delay: -3s; }
   .storage-cell { animation: storage-lift 4.5s ease-in-out infinite; animation-delay: var(--beat); }
   .storage-write { animation: storage-write 4.5s ease-in-out infinite; }
-  .storage-orbit { animation: storage-breathe 4.5s ease-in-out infinite; }
   .storage-theatre[data-visible="false"] * { animation-play-state: paused; }
 }

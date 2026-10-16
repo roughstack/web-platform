@@ -18,3 +18,17 @@ test("the library remains readable on a narrow phone", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Memory has a cost." })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 });
+
+test("storage challenge artwork varies across and down its card rows", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/challenges");
+  const art = page.locator('section[aria-labelledby="pathway-storage"] li > a > div > div.relative > svg');
+  await expect(art).toHaveCount(6);
+  const backgrounds = await art.evaluateAll((elements) =>
+    elements.map((element) => getComputedStyle(element).backgroundColor),
+  );
+  for (let i = 0; i < backgrounds.length; i += 2) {
+    expect(backgrounds[i]).not.toBe(backgrounds[i + 1]);
+  }
+  expect(new Set([backgrounds[1], backgrounds[3], backgrounds[5]]).size).toBe(3);
+});
