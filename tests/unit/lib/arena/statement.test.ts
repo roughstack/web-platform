@@ -55,6 +55,19 @@ describe("arena educational statements", () => {
     }))).toThrow();
   });
 
+  it("accepts authored story figures but rejects unknown modes and surfaces", () => {
+    const figure = (id: string, props: unknown, presentation: string = "immersive") => JSON.stringify({
+      version: 1,
+      blocks: [{ kind: "figure", illustration: { id, props }, presentation }],
+    });
+
+    expect(parseArenaStatement(figure("systems.cache-story", { mode: "lru" }))).toHaveLength(1);
+    expect(parseArenaStatement(figure("systems.cache-story", { mode: "scan" }))).toHaveLength(1);
+    expect(parseArenaStatement(figure("systems.lost-ack-story", {}))).toHaveLength(1);
+    expect(() => parseArenaStatement(figure("systems.cache-story", { mode: "invented" }))).toThrow();
+    expect(() => parseArenaStatement(figure("systems.lost-ack-story", {}, "flashing"))).toThrow();
+  });
+
   it("falls back only when statement.json is absent", async () => {
     const root = await mkdtemp(path.join(tmpdir(), "bytearena-statement-"));
     await expect(loadArenaStatement(root)).resolves.toBeNull();

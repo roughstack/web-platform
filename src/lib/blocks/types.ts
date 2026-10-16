@@ -46,6 +46,8 @@ export type CoreBlock =
       readonly caption?: string;
       /** Short label such as "FIG 1.2". */
       readonly label?: string;
+      /** Lets an authored illustration own its full artwork surface. */
+      readonly presentation?: "immersive";
     }
   | {
       readonly kind: "example";

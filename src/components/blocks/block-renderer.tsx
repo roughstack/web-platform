@@ -70,7 +70,7 @@ function renderCore(block: CoreBlock, context: BlockContext) {
 
     case "figure":
       return (
-        <Figure illustration={block.illustration} caption={block.caption} label={block.label} />
+        <Figure illustration={block.illustration} caption={block.caption} label={block.label} presentation={block.presentation} />
       );
 
     case "example":
@@ -143,10 +143,12 @@ function Figure({
   illustration,
   caption,
   label,
+  presentation,
 }: {
   illustration: IllustrationSpec;
   caption?: string;
   label?: string;
+  presentation?: "immersive";
 }) {
   const drawing = getIllustration(illustration.id);
   if (!drawing) {
@@ -155,7 +157,11 @@ function Figure({
 
   return (
     <figure className="space-y-2.5">
-      <div className="rounded-16 border border-[#d2e3eb] bg-[#f1f8fb] p-4 sm:p-5">
+      <div className={cn(
+        presentation === "immersive"
+          ? "overflow-hidden rounded-[18px]"
+          : "rounded-16 border border-[#d2e3eb] bg-[#f1f8fb] p-4 sm:p-5",
+      )}>
         {createElement(drawing, illustration.props ?? {})}
       </div>
       {(label || caption) && (

@@ -1,3 +1,11 @@
+import { Bricolage_Grotesque } from "next/font/google";
+
+const editorial = Bricolage_Grotesque({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-editorial",
+});
+
 /**
  * Chrome for the arena: none.
  *
@@ -14,7 +22,7 @@ export default function WorkspaceLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div id="main" className="h-screen overflow-hidden">
+    <div id="main" className={`${editorial.variable} h-screen overflow-hidden`}>
       {children}
     </div>
   );
