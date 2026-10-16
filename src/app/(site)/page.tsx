@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ChallengeArtwork } from "@/components/challenge-artwork";
-import { CachePlayground } from "@/components/cache-playground";
-import { MemorySculpture } from "@/components/memory-sculpture";
+import { StorageTheatre } from "@/components/storage-theatre";
 import { Button } from "@/components/ui/button";
 
 const TOPICS = [
@@ -19,12 +18,11 @@ export default function Home() {
         <div className="hero-invitation relative z-10">
           <p className="mb-7 text-base text-[#b9a1ff]">For the incurably curious.</p>
           <h1 className="exhibition-headline">Go on.<br />Take it apart.</h1>
-          <p className="mt-7 max-w-[34ch] text-lg leading-relaxed text-[#d7cedf]">The best way to understand a system? Get your hands on it. Move the memory. Pull apart the layers. Follow the question.</p>
+          <p className="mt-7 max-w-[34ch] text-lg leading-relaxed text-[#d7cedf]">Beneath every click, a whole world is moving. Follow a byte. Unpick a machine. Build the thing you always wondered about.</p>
           <Button asChild size="lg" className="exhibition-action mt-8"><Link href="/challenges">Explore challenges <ArrowRight className="size-4" aria-hidden="true" /></Link></Button>
         </div>
-        <MemorySculpture />
+        <StorageTheatre />
         </div>
-        <div className="exhibition-index"><Link href="/challenges#pathway-memory">Memory</Link><Link href="/challenges#pathway-storage">Storage</Link><Link href="/challenges#pathway-coordination">Concurrency</Link><Link href="/challenges#pathway-data-in-motion">Networks</Link></div>
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
@@ -44,15 +42,15 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="how-it-works" className="scroll-mt-20 bg-[#b9a1ff]">
+      <section id="how-it-works" className="scroll-mt-20 bg-[#d8ff62]">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:gap-20 lg:py-24">
           <div>
-            <h2 className="max-w-[13ch] font-display text-5xl leading-[1.02] tracking-[-.04em] sm:text-6xl">Try a little.<br />Learn a lot.</h2>
-            <p className="mt-6 max-w-[36ch] text-lg leading-relaxed text-[#282334]">This cache has room for two items. Each access changes what it remembers. Predict what leaves, then try it.</p>
-            <p className="mt-4 max-w-[40ch] text-base leading-relaxed text-[#282334]">In a challenge, you write the rule yourself. The problem, editor, tests, and results stay together while you work.</p>
-            <Link href="/challenges/cache-pressure-easy" className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-[#282334] underline underline-offset-4">Build the cache policy <ArrowRight className="size-4" aria-hidden="true" /></Link>
+            <h2 className="max-w-[13ch] font-display text-5xl leading-[1.02] tracking-[-.04em] sm:text-6xl">The power dies.<br />Your file doesn’t.</h2>
+            <p className="mt-6 max-w-[36ch] text-lg leading-relaxed text-[#282334]">Half a write. One sudden blackout. How does a machine remember what it was doing?</p>
+            <p className="mt-4 max-w-[40ch] text-base leading-relaxed text-[#282334]">A journal leaves a trail before the data changes. Follow that trail, recover the interrupted work, then build the recovery logic yourself.</p>
+            <Link href="/challenges/journal-recovery-easy" className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-[#282334] underline underline-offset-4">Explore crash recovery <ArrowRight className="size-4" aria-hidden="true" /></Link>
           </div>
-          <CachePlayground />
+          <StorageTheatre recovery />
         </div>
       </section>
     </div>
