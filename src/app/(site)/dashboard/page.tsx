@@ -128,42 +128,47 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
-      <header className="mb-12 grid gap-8 border-b border-edge pb-10 sm:grid-cols-[1fr_auto] sm:items-end">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+      <header className="workbench-header">
         <div>
-        <h1 className="font-display text-5xl tracking-[-.04em] sm:text-6xl">Dashboard</h1>
+        <p className="mb-5 font-mono text-sm">Your personal workbench</p>
+        <h1 className="font-display text-5xl leading-none tracking-[-.055em] sm:text-7xl">Dashboard</h1>
         <p className="mt-3 max-w-xl text-regular text-muted">
           {sessionToken
             ? "Your work, one experiment at a time. History is saved for this browser session."
             : "No session yet. Solve a challenge to start building your history."}
         </p>
         </div>
-        <dl className="flex gap-7 rounded-2xl bg-[#e4eafb] px-6 py-5">
-          <div><dt className="text-sm text-body">Challenges passed</dt><dd className="mt-2 font-mono text-4xl font-semibold text-link">{bestPerChallenge.filter((challenge) => challenge.passed).length}</dd></div>
-          <div><dt className="text-sm text-body">With results</dt><dd className="mt-2 font-mono text-4xl font-semibold text-ink">{bestPerChallenge.length}</dd></div>
+        <dl>
+          <div><dt className="mb-2 text-sm text-[#43345e]">Challenges passed</dt><dd className="workbench-count">{bestPerChallenge.filter((challenge) => challenge.passed).length}<span className="ml-3 text-2xl tracking-normal">/ {bestPerChallenge.length}</span><span className="mt-3 block font-sans text-sm leading-normal tracking-normal text-[#43345e]">Of challenges with results</span></dd></div>
         </dl>
       </header>
+      <div className="workbench-next mb-12">
+        <div>
+          <p className="text-sm">Keep following the question.</p>
+          <h2 className="mt-1 font-display text-2xl text-white">What will you take apart next?</h2>
+        </div>
+        <Link href="/challenges" className="inline-flex min-h-12 items-center gap-3 rounded-full bg-[#a9e8cb] px-6 font-semibold text-[#282334] hover:bg-[#c4f5df]">Explore challenges <ArrowRight className="size-4" aria-hidden="true" /></Link>
+      </div>
 
       {bestPerChallenge.length > 0 && (
         <section className="mb-10">
-          <h2 className="mb-5 font-display text-2xl tracking-tight">
+          <h2 className="mb-6 font-display text-3xl tracking-tight">
             Your challenges
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="workbench-collection">
             {bestPerChallenge.map((c) => (
               <Link
                 key={c.slug}
                 href={`/challenges/${c.slug}`}
-                className="group relative overflow-hidden rounded-2xl border border-edge bg-white p-5 transition-colors hover:border-accent"
+                className="workbench-card group"
               >
-                <div className="mb-4 flex items-center gap-4">
-                  <div className="w-24 shrink-0 overflow-hidden rounded-xl"><ChallengeArtwork slug={c.slug} className="aspect-[240/136]" /></div>
-                  <p className="text-sm text-muted">{c.passed ? "Ready for another experiment?" : "An idea worth another try."}</p>
-                </div>
+                <div className="workbench-card-art"><ChallengeArtwork slug={c.slug} /></div>
+                <div className="flex flex-1 flex-col justify-end p-5">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0">
-                    <h3 className="truncate text-title-1">{c.title}</h3>
-                    <div className="mt-1 flex items-center gap-2">
+                    <h3 className="font-display text-xl leading-tight tracking-tight">{c.title}</h3>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
                       <DifficultyBadge difficulty={c.difficulty as never} />
                       <Badge variant="neutral">{c.category}</Badge>
                     </div>
@@ -187,6 +192,7 @@ export default async function DashboardPage() {
                     {c.passed ? "Passed" : "In progress"}
                     <ArrowRight className="size-3" aria-hidden="true" />
                   </span>
+                </div>
                 </div>
               </Link>
             ))}

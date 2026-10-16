@@ -54,7 +54,7 @@ const PATHWAYS = [
     number: "01",
     title: "Memory has a cost.",
     question: "What deserves to stay close when space runs out?",
-    tone: "bg-[#c7ff65]",
+    tone: "bg-[#a9e8cb]",
     slugs: ["cache-pressure-easy", "cache-pressure-medium"],
   },
   {
@@ -62,7 +62,7 @@ const PATHWAYS = [
     number: "02",
     title: "Data has to survive.",
     question: "What happens when writes stop, blocks wear out, or data moves?",
-    tone: "bg-[#ffc6b6]",
+    tone: "bg-[#ff916e]",
     slugs: ["compaction", "victim-selection", "wear-levelling", "journal-recovery-easy", "chunk-store-easy", "lsm-compactor-easy"],
   },
   {
@@ -70,7 +70,7 @@ const PATHWAYS = [
     number: "03",
     title: "Work needs a policy.",
     question: "Who goes next, and what happens when everyone arrives at once?",
-    tone: "bg-[#b6d9ff]",
+    tone: "bg-[#97c6ef]",
     slugs: ["deadline-scheduler-easy", "durable-queue-easy", "fair-gate-easy"],
   },
   {
@@ -78,7 +78,7 @@ const PATHWAYS = [
     number: "04",
     title: "Signals move through noise.",
     question: "Can you keep meaning intact across packets and event streams?",
-    tone: "bg-[#cbbdff]",
+    tone: "bg-[#b9a1ff]",
     slugs: ["lossy-link-easy", "stream-windows-easy"],
   },
 ] as const;
@@ -126,12 +126,10 @@ export default async function ChallengesPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12 sm:px-6 sm:py-17">
-      <header className="relative mb-14 overflow-hidden rounded-[2rem] border border-[#223565] bg-[#142347] px-6 py-9 text-white sm:px-10 sm:py-11">
-        <div aria-hidden="true" className="absolute right-[-6rem] top-[-8rem] size-[24rem] rounded-full border-[5rem] border-[#3154f4]/50" />
-        <div aria-hidden="true" className="absolute bottom-[-12rem] left-[25%] size-[20rem] rounded-full bg-[#3154f4]/35 blur-3xl" />
+      <header className="relative mb-14 overflow-hidden rounded-[2rem] bg-[#282334] px-6 py-9 text-white sm:px-10 sm:py-11">
         <div className="relative grid items-center gap-8 lg:grid-cols-[1.15fr_.85fr] lg:gap-10">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-[#a8c8ff]/35 bg-white/10 px-3 py-1.5 font-mono text-micro font-bold tracking-[.08em] text-[#c7ff65] uppercase"><Cpu className="size-3.5" aria-hidden="true" /> The system is yours to build</p>
+            <p className="text-base text-[#b9a1ff]">The system is yours to build</p>
             <h1 className="mt-4 max-w-[14ch] font-display text-[clamp(2.4rem,5vw,4.5rem)] leading-[1.03] font-bold tracking-[-.05em] text-white">
               Follow your curiosity down the stack.
             </h1>
@@ -144,7 +142,7 @@ export default async function ChallengesPage() {
             </div>
           </div>
           {firstExperiment && (
-            <Link href={`/challenges/${firstExperiment.slug}`} className="group overflow-hidden rounded-16 border border-[#a9bdfa] bg-panel shadow-[7px_7px_0_#c7ff65] transition-transform duration-200 motion-safe:hover:-translate-y-1">
+            <Link href={`/challenges/${firstExperiment.slug}`} className="group overflow-hidden rounded-16 bg-panel transition-transform duration-200 motion-safe:hover:-translate-y-1">
               <div className="flex items-center justify-between border-b border-edge px-4 py-2 font-mono text-tiny font-bold tracking-[.08em] text-body uppercase">
                 <span>Suggested first experiment</span>
                 <span className="text-link">01 / start</span>
@@ -183,7 +181,6 @@ export default async function ChallengesPage() {
                 <Card interactive className="flex h-full flex-col overflow-hidden rounded-20">
                   <div className="relative h-37 overflow-hidden border-b border-edge sm:h-43">
                     <ChallengeArtwork slug={c.slug} className="transition-transform duration-300 group-hover:scale-[1.04]" />
-                    <span aria-hidden="true" className="absolute right-3 bottom-3 size-2 rounded-full border border-ink bg-voltage shadow-[2px_2px_0_#172730]" />
                   </div>
                   <div className="flex flex-1 flex-col p-5 sm:p-6">
                     <div className="flex flex-wrap items-center gap-2">
