@@ -72,6 +72,8 @@ const conceptFigureProps = {
   "systems.frames": frameProps,
   "systems.ranges": rangeProps,
   "systems.exchange": exchangeProps,
+  "systems.cache-story": z.object({ mode: z.enum(["lru", "scan"]) }).strict(),
+  "systems.lost-ack-story": z.object({}).strict(),
 } as const;
 
 const figureBlock = z.object({
@@ -81,11 +83,13 @@ const figureBlock = z.object({
       "systems.flow", "systems.state", "systems.timeline",
       "systems.snapshot", "systems.budget", "systems.frames",
       "systems.ranges", "systems.exchange",
+      "systems.cache-story", "systems.lost-ack-story",
     ]),
     props: z.record(z.string(), z.unknown()).optional(),
   }).strict(),
   caption: z.string().trim().min(1).max(1_000).optional(),
   label: z.string().trim().min(1).max(40).optional(),
+  presentation: z.literal("immersive").optional(),
 }).strict().superRefine((figure, ctx) => {
   const schema = conceptFigureProps[figure.illustration.id as keyof typeof conceptFigureProps];
   if (schema && !schema.safeParse(figure.illustration.props).success) {
