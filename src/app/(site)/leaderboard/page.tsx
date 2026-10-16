@@ -80,11 +80,12 @@ export default async function LeaderboardPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
-      <header className="mb-10 grid items-end gap-8 border-b border-edge pb-10 sm:grid-cols-[1fr_auto]">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+      <header className="scoreboard-header grid items-end gap-8 sm:grid-cols-[1fr_auto]">
         <div>
-          <h1 className="font-display text-5xl tracking-[-.04em] sm:text-6xl">Leaderboard</h1>
-          <p className="mt-2 text-regular text-muted">
+          <p className="mb-5 font-mono text-sm">Measured, not guessed.</p>
+          <h1 className="font-display text-[clamp(2.4rem,6vw,5rem)] leading-none tracking-[-.055em]">Leaderboard</h1>
+          <p className="mt-5 max-w-xl text-regular">
             Ranked flash-storage challenges only. Practice challenges are
             excluded until their scores are calibrated.{" "}
             {sessionToken
@@ -92,14 +93,30 @@ export default async function LeaderboardPage() {
               : "Solve a challenge to appear."}
           </p>
         </div>
-        <div className="rounded-2xl bg-[#f4ce57] px-7 py-5">
-          <p className="font-mono text-4xl font-semibold text-ink">{entries.length}</p>
-          <p className="mt-2 text-sm text-ink">Ranked results</p>
+        <div className="border-l-4 border-[#ff784f] pl-6">
+          <span className="font-mono text-6xl tracking-[-.06em] text-[#ff9675]">{entries.length}</span>
+          <p className="mt-2 text-sm">Results on the board</p>
         </div>
       </header>
 
+      {entries.length > 0 && (
+        <section aria-label="Leading results" className="scoreboard-leaders">
+          {entries.slice(0, 3).map((entry) => (
+            <Link key={`${entry.sessionId}-${entry.challengeSlug}`} href={`/challenges/${entry.challengeSlug}`} className="scoreboard-leader">
+              <div className="flex items-start justify-between gap-3">
+                <span className="font-mono text-sm">Rank {entry.rank}</span>
+                <span className="font-mono text-sm">{entry.isCurrentUser ? "Your result" : "Best submission"}</span>
+              </div>
+              <p className="my-7"><span className="scoreboard-number">{entry.score}</span><span className="ml-2 font-mono text-sm">/ 100</span></p>
+              <h2 className="mt-auto font-display text-2xl leading-tight tracking-tight">{entry.challengeTitle}</h2>
+              <p className="mt-3 text-sm">{entry.passed ? "Passed" : "Not passed"} <span aria-hidden="true">/</span> {entry.difficulty.toLowerCase()}</p>
+            </Link>
+          ))}
+        </section>
+      )}
+
       {entries.length === 0 ? (
-        <div className="grid items-center gap-6 rounded-3xl bg-[#fff0c2] p-7 sm:grid-cols-[1fr_1.2fr] sm:p-10">
+        <div className="mt-6 grid items-center gap-6 rounded-3xl bg-[#a9e8cb] p-7 sm:grid-cols-[1fr_1.2fr] sm:p-10">
           <ChallengeArtwork slug="compaction" className="aspect-[240/136] rounded-2xl" />
           <div>
             <h2 className="font-display text-3xl leading-tight tracking-tight">Make the first move.</h2>
@@ -110,7 +127,7 @@ export default async function LeaderboardPage() {
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-edge bg-white">
           <table className="w-full min-w-[30rem] text-mini">
-            <thead className="bg-[#e4eafb]">
+            <thead className="bg-[#e7e0ee]">
               <tr className="text-left text-sm text-body">
                 <th className="px-4 py-2.5 font-medium">#</th>
                 <th className="px-4 py-2.5 font-medium">Challenge</th>
@@ -134,7 +151,7 @@ export default async function LeaderboardPage() {
                     <span
                       className={
                         e.rank <= 3
-                          ? "inline-grid size-9 place-items-center rounded-full bg-[#f4ce57] font-mono text-mini font-semibold tabular-nums text-ink"
+                          ? "inline-grid size-9 place-items-center rounded-full bg-[#b9a1ff] font-mono text-mini font-semibold tabular-nums text-ink"
                           : "font-mono text-mini tabular-nums text-quiet"
                       }
                     >

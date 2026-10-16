@@ -23,7 +23,7 @@ function Wordmark() {
       aria-label={`${PRODUCT_NAME} home`}
     >
       <BrandMark />
-      <span className="text-large font-bold tracking-[-.04em] text-ink">{PRODUCT_NAME}</span>
+      <span className="font-display text-2xl font-bold tracking-[-.04em] text-[#f2f0ed]">{PRODUCT_NAME}</span>
     </Link>
   );
 }
@@ -42,7 +42,7 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-edge bg-panel/90 backdrop-blur-[20px]">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#282334]">
       <nav
         className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
         aria-label="Main"
@@ -60,7 +60,7 @@ export function Navbar() {
                   className={cn(
                     "inline-flex h-8 items-center rounded-6 px-3 text-small font-medium",
                     "transition-colors duration-100 ease-out-quad",
-                    active ? "bg-accent-tint text-link" : "text-muted hover:bg-tint hover:text-ink",
+                    active ? "bg-[#b9a1ff] text-[#252231]" : "text-[#d6cedf] hover:bg-white/10 hover:text-white",
                   )}
                 >
                   {link.label}
@@ -75,7 +75,7 @@ export function Navbar() {
             asChild
             variant="primary"
             size="md"
-            className="hidden sm:inline-flex"
+            className="exhibition-action hidden sm:inline-flex"
           >
             <Link href="/challenges">Start solving</Link>
           </Button>
@@ -85,7 +85,7 @@ export function Navbar() {
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="inline-flex size-11 items-center justify-center rounded-8 text-muted hover:bg-raised hover:text-ink md:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-8 text-white hover:bg-white/10 md:hidden"
           >
             {open ? (
               <X className="size-5" aria-hidden="true" />

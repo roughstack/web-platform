@@ -13,19 +13,22 @@ const TOPICS = [
 
 export default function Home() {
   return (
-    <div className="bg-[#f8fafc]">
-      <section className="mx-auto grid max-w-6xl items-center gap-4 px-5 pt-12 pb-16 sm:px-8 sm:pt-20 lg:grid-cols-[.9fr_1.1fr] lg:gap-0 lg:pb-24">
+    <div>
+      <section className="exhibition-hero">
+        <div className="mx-auto grid max-w-7xl items-center gap-6 px-5 pt-12 pb-16 sm:px-8 sm:pt-16 lg:grid-cols-[1fr_1fr] lg:gap-0 lg:pb-20">
         <div className="relative z-10">
-          <h1 className="max-w-[10ch] font-display text-[clamp(2.65rem,6.6vw,6.2rem)] leading-[.98] font-bold tracking-[-.055em] text-[#172730]">Small ideas.<br />Extraordinary machines.</h1>
-          <p className="mt-7 max-w-[35ch] text-lg leading-relaxed text-body">Computer science comes alive when you build it. Open a system, write its missing piece, and see what happens.</p>
-          <Button asChild size="lg" className="mt-8 rounded-full"><Link href="/challenges">Explore challenges <ArrowRight className="size-4" aria-hidden="true" /></Link></Button>
-          <p className="mt-4 text-sm text-muted">Real code. Small experiments. Deeper understanding.</p>
+          <p className="mb-7 text-base text-[#b9a1ff]">For the incurably curious.</p>
+          <h1 className="exhibition-headline">Build what<br />makes it<br />work.</h1>
+          <p className="mt-7 max-w-[34ch] text-lg leading-relaxed text-[#d7cedf]">Behind every program is a system worth understanding. Take it apart. Write the missing piece. Make it yours.</p>
+          <Button asChild size="lg" className="exhibition-action mt-8"><Link href="/challenges">Explore challenges <ArrowRight className="size-4" aria-hidden="true" /></Link></Button>
         </div>
         <MemorySculpture />
+        </div>
+        <div className="exhibition-index"><span>Memory</span><span>Storage</span><span>Concurrency</span><span>Networks</span></div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-5 pb-20 sm:px-8 lg:pb-24">
-        <div className="flex flex-wrap items-end justify-between gap-4 border-t border-edge pt-9">
+      <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 className="max-w-[19ch] font-display text-4xl leading-[1.08] tracking-[-.035em] sm:text-5xl">There’s a good question inside every system.</h2>
           <Link href="/challenges" className="inline-flex min-h-11 items-center gap-2 font-semibold text-link hover:underline">All challenges <ArrowRight className="size-4" aria-hidden="true" /></Link>
         </div>
@@ -41,13 +44,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="how-it-works" className="scroll-mt-20 bg-[#e4eafb]">
+      <section id="how-it-works" className="scroll-mt-20 bg-[#b9a1ff]">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:gap-20 lg:py-24">
           <div>
             <h2 className="max-w-[13ch] font-display text-5xl leading-[1.02] tracking-[-.04em] sm:text-6xl">Try a little.<br />Learn a lot.</h2>
-            <p className="mt-6 max-w-[36ch] text-lg leading-relaxed text-body">This cache has room for two items. Each access changes what it remembers. Predict what leaves, then try it.</p>
-            <p className="mt-4 max-w-[40ch] text-base leading-relaxed text-muted">In a challenge, you write the rule yourself. The problem, editor, tests, and results stay together while you work.</p>
-            <Link href="/challenges/cache-pressure-easy" className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-link hover:underline">Build the cache policy <ArrowRight className="size-4" aria-hidden="true" /></Link>
+            <p className="mt-6 max-w-[36ch] text-lg leading-relaxed text-[#282334]">This cache has room for two items. Each access changes what it remembers. Predict what leaves, then try it.</p>
+            <p className="mt-4 max-w-[40ch] text-base leading-relaxed text-[#282334]">In a challenge, you write the rule yourself. The problem, editor, tests, and results stay together while you work.</p>
+            <Link href="/challenges/cache-pressure-easy" className="mt-6 inline-flex min-h-11 items-center gap-2 font-semibold text-[#282334] underline underline-offset-4">Build the cache policy <ArrowRight className="size-4" aria-hidden="true" /></Link>
           </div>
           <CachePlayground />
         </div>
