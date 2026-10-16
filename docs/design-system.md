@@ -8,6 +8,8 @@ supersedes: visual-direction.md
 
 # Rivets design system
 
+> The active art direction is now [Computing exhibition](design-exhibition.md). The earlier palette and compositions below are retained as design history; accessibility and truthful interaction requirements still apply.
+
 Read this before changing the public UI. The product teaches computer science
 through implementation. Its audience is curious enough to open a computer and
 ask how it works, but does not necessarily know the vocabulary yet. The first
