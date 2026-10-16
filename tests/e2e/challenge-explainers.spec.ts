@@ -25,6 +25,29 @@ test.describe("challenge explainers", () => {
     await expect(page.getByText("duplicate discarded")).toBeVisible();
   });
 
+  test("recovery stops before a torn journal tail", async ({ page }) => {
+    await page.goto("/challenges/journal-recovery-easy");
+    await expect(page.getByRole("img", { name: /LSN 3 ends halfway through its payload/ })).toBeVisible();
+    await expect(page.getByText("recovered prefix: LSN 1–2")).toBeVisible();
+    await expect(page.getByText("Apply LSN 1 and 2 only. Report a torn tail.")).toBeVisible();
+  });
+
+  test("an LSM selection includes both Level-1 overlaps", async ({ page }) => {
+    await page.goto("/challenges/lsm-compactor-easy");
+    await expect(page.getByRole("img", { name: /Both X and Y must be included/ })).toBeVisible();
+    await expect(page.getByText("selected union: 10–50")).toBeVisible();
+    await expect(page.getByText("include X + Y")).toBeVisible();
+  });
+
+  test("watermark 10 emits the first window and retains the second", async ({ page }) => {
+    await page.goto("/challenges/stream-windows-easy");
+    await expect(page.getByRole("img", { name: /Watermark 10 finalizes and emits the first aggregate/ })).toBeVisible();
+    await expect(page.getByText("emitted · state freed")).toBeVisible();
+    await expect(page.getByText("right window live")).toBeVisible();
+    await expect(page.getByText("count 1 · sum 4")).toBeVisible();
+    await expect(page.getByText("count 1 · sum 7")).toBeVisible();
+  });
+
   test("the finite story settles and can be replayed", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/challenges/cache-pressure-easy");

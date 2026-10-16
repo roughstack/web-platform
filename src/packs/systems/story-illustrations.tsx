@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-function useVisibleStory(lastStage: number, intervalMs: number) {
+export function useVisibleStory(lastStage: number, intervalMs: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -47,7 +47,7 @@ function useVisibleStory(lastStage: number, intervalMs: number) {
   };
 }
 
-function Replay({ onClick }: { onClick: () => void }) {
+export function Replay({ onClick }: { onClick: () => void }) {
   return (
     <button
       type="button"

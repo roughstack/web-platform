@@ -17,6 +17,11 @@ const ROUTES = [
   // External statements exercise the generic systems diagrams and the
   // materialization boundary rather than the seeded SSD pack.
   { path: "/challenges/cache-pressure-easy", name: "arena-public" },
+  ...(process.env.BYTEARENA_ARENA_ROOTS ? [
+    { path: "/challenges/journal-recovery-easy", name: "arena-journal" },
+    { path: "/challenges/lsm-compactor-easy", name: "arena-lsm" },
+    { path: "/challenges/stream-windows-easy", name: "arena-windows" },
+  ] : []),
   { path: "/dashboard", name: "dashboard" },
   { path: "/leaderboard", name: "leaderboard" },
 ];
