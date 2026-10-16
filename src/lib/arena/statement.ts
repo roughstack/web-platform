@@ -74,6 +74,9 @@ const conceptFigureProps = {
   "systems.exchange": exchangeProps,
   "systems.cache-story": z.object({ mode: z.enum(["lru", "scan"]) }).strict(),
   "systems.lost-ack-story": z.object({}).strict(),
+  "systems.journal-story": z.object({}).strict(),
+  "systems.lsm-story": z.object({}).strict(),
+  "systems.window-story": z.object({}).strict(),
 } as const;
 
 const figureBlock = z.object({
@@ -84,6 +87,7 @@ const figureBlock = z.object({
       "systems.snapshot", "systems.budget", "systems.frames",
       "systems.ranges", "systems.exchange",
       "systems.cache-story", "systems.lost-ack-story",
+      "systems.journal-story", "systems.lsm-story", "systems.window-story",
     ]),
     props: z.record(z.string(), z.unknown()).optional(),
   }).strict(),

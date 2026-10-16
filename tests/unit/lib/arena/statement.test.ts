@@ -64,8 +64,12 @@ describe("arena educational statements", () => {
     expect(parseArenaStatement(figure("systems.cache-story", { mode: "lru" }))).toHaveLength(1);
     expect(parseArenaStatement(figure("systems.cache-story", { mode: "scan" }))).toHaveLength(1);
     expect(parseArenaStatement(figure("systems.lost-ack-story", {}))).toHaveLength(1);
+    expect(parseArenaStatement(figure("systems.journal-story", {}))).toHaveLength(1);
+    expect(parseArenaStatement(figure("systems.lsm-story", {}))).toHaveLength(1);
+    expect(parseArenaStatement(figure("systems.window-story", {}))).toHaveLength(1);
     expect(() => parseArenaStatement(figure("systems.cache-story", { mode: "invented" }))).toThrow();
     expect(() => parseArenaStatement(figure("systems.lost-ack-story", {}, "flashing"))).toThrow();
+    expect(() => parseArenaStatement(figure("systems.window-story", { imaginary: true }))).toThrow();
   });
 
   it("falls back only when statement.json is absent", async () => {
