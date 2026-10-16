@@ -1,42 +1,17 @@
 import { expect, test } from "@playwright/test";
 
-test("cache trace explains how a read changes eviction", async ({ page }) => {
+test("recovery story replaces the elementary cache demo", async ({ page }) => {
   await page.goto("/");
-
-  const trace = page.getByRole("group", { name: "Replay cache operations" });
-  const entries = page.getByLabel("Cache entries, oldest to newest");
-
-  await expect(trace.getByRole("button", { name: "01 put A+B" })).toHaveAttribute("aria-pressed", "true");
-  await expect(entries).toContainText("Aoldest");
-  await expect(entries).toContainText("Bnewest");
-
-  await trace.getByRole("button", { name: "02 get A" }).click();
-  await expect(entries).toContainText("Boldest");
-  await expect(entries).toContainText("Anewest");
-  await expect(page.getByText("Reading A makes it newest.")).toBeVisible();
-
-  await trace.getByRole("button", { name: "03 put C" }).click();
-  await expect(entries).toContainText("Aoldest");
-  await expect(entries).toContainText("Cnewest");
-  await expect(page.getByText("evicted: B")).toBeVisible();
+  const story = page.locator("#how-it-works");
+  await expect(story.getByRole("heading")).toHaveText("The power dies.Your file doesn’t.");
+  await expect(story.getByRole("link", { name: "Explore crash recovery" })).toHaveAttribute("href", "/challenges/journal-recovery-easy");
+  await expect(story.getByRole("img")).toHaveAccessibleName(/journal keeps a record/);
+  await expect(story.getByRole("button")).toHaveCount(0);
 });
 
-test("cache trace controls remain usable at narrow phone width", async ({ page }) => {
+test("landing artwork fits a narrow phone", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto("/");
-
-  const trace = page.getByRole("group", { name: "Replay cache operations" });
-  await trace.getByRole("button", { name: "03 put C" }).click();
-  await expect(page.getByText("C arrives. B leaves.")).toBeVisible();
+  await page.locator("#how-it-works").scrollIntoViewIfNeeded();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
-});
-
-test("cache state transition respects reduced motion", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-
-  await page.getByRole("button", { name: "02 get A" }).click();
-  const entries = page.getByLabel("Cache entries, oldest to newest");
-  await expect(entries).toContainText("Boldest");
-  expect(await entries.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
 });
