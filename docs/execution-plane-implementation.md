@@ -1,8 +1,14 @@
 # Execution plane implementation
 
-This is the next production-readiness project after the learning UI. It is not
-permission to accept untrusted public submissions. The current request handler
-still runs work inside the web process with a local Docker or synthetic backend.
+This is an optional implementation plan for an instance that accepts untrusted
+public submissions, not a prerequisite for releasing the open-source project.
+The migration repair and versioned execution contracts in the current slice
+also improve reproducibility for local and self-hosted use. Do not start the
+queue, worker, or hosted sandbox work without a concrete deployment need and a
+written estimate of operational time, recurring cost, and simpler alternatives.
+This plan is not permission to accept untrusted public submissions. The current
+request handler still runs work inside the web process with a local Docker or
+synthetic backend.
 
 ## Goal and invariants
 

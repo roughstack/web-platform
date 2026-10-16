@@ -1,10 +1,30 @@
-# Production readiness roadmap
+# Project roadmap and optional hosted readiness
 
-Roughstack has a coherent learning experience, a deterministic arena contract,
-and a strong local development path. It is not ready to accept untrusted public
-traffic yet. The work below is ordered by dependency and launch risk.
+Roughstack is an open-source project, not a hosted product by default. Its first
+promise is that contributors can understand, run, test, and extend the learning
+experience without buying infrastructure or maintaining a public service.
+Hosting an instance that accepts untrusted public submissions is a separate
+decision. The hosted-readiness work below is not a prerequisite for releasing
+the project or for trusted local development.
 
-## Current product boundary
+## Default project priorities
+
+1. Make a clean checkout reproducible: documented setup, versioned migrations,
+   challenge packages that do not require an undocumented sibling checkout,
+   and CI that checks the same path contributors use.
+2. Keep challenge statements, reference solutions, test cases, and local run
+   results correct and reviewable. Label synthetic results as development-only.
+3. Document the trust boundary of local code execution. Never claim that a
+   local Docker runner safely accepts code from arbitrary internet users.
+4. Make contributions sustainable with clear repository ownership, small
+   reviewable changes, tests, and release notes.
+
+Before adding a paid service or a substantial workstream, record the concrete
+problem, the cheapest workable alternative, expected recurring cost and
+maintainer time, and a measurable criterion for adopting it. Prefer local or
+self-hosted components until an actual deployment need justifies more.
+
+## Current implementation boundary
 
 The browser experience is functional: visitors can browse challenges, read the
 educational material, edit code, submit a solution, inspect results, discuss an
@@ -25,7 +45,7 @@ The current server remains a development deployment:
 - The application has no production observability contract, incident signals,
   or service-level objectives.
 
-## P0: required before a public launch
+## Optional hosted track: required before accepting untrusted public submissions
 
 ### 1. Build the durable execution plane
 
@@ -115,7 +135,7 @@ Exit criteria:
 - Dependency, image, and secret scanning run in CI.
 - A release has a software bill of materials and signed artifacts.
 
-## P1: required for a strong learning product
+## Optional learning-experience improvements
 
 ### Guided progression
 
@@ -145,16 +165,18 @@ and explicit completion state. Complete keyboard and screen-reader audits for
 the editor, split panes, diagrams, tables, and result visualizations. Test reduced
 motion, zoom, narrow screens, and high-contrast modes.
 
-## P2: growth and ecosystem
+## Optional ecosystem ideas
 
 - Public profiles with opt-in visibility and verified achievements.
 - Organization classrooms, private cohorts, and assignment progress.
 - A documented arena authoring kit with local preview and contract validation.
 - Challenge versioning, deprecation, moderation, and an editorial review queue.
-- Product analytics based on explicit events and a documented retention policy.
-- Billing only after execution cost, abuse, refund, and quota models are known.
+- Privacy-conscious usage measurement only if it answers a demonstrated project
+  question; document retention before collecting events.
+- Billing is out of scope for the open-source project. Revisit only if a
+  separately operated hosted service is deliberately proposed.
 
-## Product patterns reviewed
+## Learning-platform patterns reviewed
 
 This ordering borrows proven patterns without copying another product's surface:
 
@@ -171,10 +193,12 @@ This ordering borrows proven patterns without copying another product's surface:
   show the value of grouped test cases, submission analysis, code replay, progress
   views, filters, profiles, security settings, and focus modes at scale.
 
-## Recommended implementation order
+## Order if the optional hosted track is chosen
 
 The [execution-plane implementation plan](execution-plane-implementation.md)
-tracks the first production-readiness project and its migration prerequisite.
+tracks one possible hosted-readiness path and its migration prerequisite. The
+migration repair and versioned execution contracts are useful independently;
+the queue, worker, and public sandbox are not the default next milestone.
 
 1. Define the immutable execution job and result provenance schema.
 2. Publish and verify arena bundles independently of the platform image.
