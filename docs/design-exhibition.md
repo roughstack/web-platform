@@ -45,6 +45,16 @@ Challenge art uses saturated flat grounds without wallpaper. Difficulty variants
 
 ## Motion and review
 
+### Landing: an object to investigate
+
+The palette and modular R at `design-exhibition-baseline-2026-10-16` are the approved checkpoint. The subsequent landing experiment adds personality through agency, not another theme change. Preserve the icon, challenge library, dashboard and leaderboard.
+
+The hero invites visitors to take apart a small memory model. A single entrance assembles the layers in under two seconds. Pointer movement changes the viewing angle slightly; inspecting a block raises it and shows its address. A labeled range control separates data from the address layer. Compaction moves the same objects while preserving their identity and order. The address inspector follows the selected object. These are conceptual visual controls, not code execution.
+
+All interactions have keyboard equivalents. Focus reveals the same information as a pointer. Touch users can tap blocks and use the slider without depending on hover. Reduced motion removes entrance, tilt, and spatial transitions without removing any state or information. No perpetual floating, automatic state changes, scroll hijacking, or animated wallpaper.
+
+The subject strip links to actual challenge pathways. Subject cards respond to hover/focus with a small illustration movement and directional affordance. Keep these quieter than the hero. Visual review must include the initial state, exploded state, selected block, compaction, small-screen touch layout and reduced-motion mode.
+
 Motion follows an action, not an endless ambient loop. Reduced motion removes spatial transitions. Keep focus indicators, touch targets and readable body text.
 
 Review the actual homepage, dashboard, leaderboard and two difficulty cards at desktop and phone sizes. Ask whether the page has a recognizable silhouette before reading any copy. Do not equate a passing build with aesthetic success. Keep data queries and execution logic outside this design iteration.
