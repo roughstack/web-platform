@@ -15,16 +15,16 @@ export default function Home() {
   return (
     <div>
       <section className="exhibition-hero">
-        <div className="mx-auto grid max-w-7xl items-center gap-6 px-5 pt-12 pb-16 sm:px-8 sm:pt-16 lg:grid-cols-[1fr_1fr] lg:gap-0 lg:pb-20">
-        <div className="relative z-10">
+        <div className="mx-auto grid max-w-7xl items-center gap-6 px-5 pt-8 pb-12 sm:px-8 sm:pt-10 lg:grid-cols-[1fr_1fr] lg:gap-0 lg:py-12">
+        <div className="hero-invitation relative z-10">
           <p className="mb-7 text-base text-[#b9a1ff]">For the incurably curious.</p>
-          <h1 className="exhibition-headline">Build what<br />makes it<br />work.</h1>
-          <p className="mt-7 max-w-[34ch] text-lg leading-relaxed text-[#d7cedf]">Behind every program is a system worth understanding. Take it apart. Write the missing piece. Make it yours.</p>
+          <h1 className="exhibition-headline">Go on.<br />Take it apart.</h1>
+          <p className="mt-7 max-w-[34ch] text-lg leading-relaxed text-[#d7cedf]">The best way to understand a system? Get your hands on it. Move the memory. Pull apart the layers. Follow the question.</p>
           <Button asChild size="lg" className="exhibition-action mt-8"><Link href="/challenges">Explore challenges <ArrowRight className="size-4" aria-hidden="true" /></Link></Button>
         </div>
         <MemorySculpture />
         </div>
-        <div className="exhibition-index"><span>Memory</span><span>Storage</span><span>Concurrency</span><span>Networks</span></div>
+        <div className="exhibition-index"><Link href="/challenges#pathway-memory">Memory</Link><Link href="/challenges#pathway-storage">Storage</Link><Link href="/challenges#pathway-coordination">Concurrency</Link><Link href="/challenges#pathway-data-in-motion">Networks</Link></div>
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
@@ -34,8 +34,8 @@ export default function Home() {
         </div>
         <div className="mt-10 grid gap-10 md:grid-cols-3 md:gap-7">
           {TOPICS.map((topic) => (
-            <Link key={topic.slug} href={`/challenges/${topic.slug}`} className="group block">
-              <div className="overflow-hidden rounded-[20px]"><ChallengeArtwork slug={topic.slug} className="aspect-[240/136]" /></div>
+            <Link key={topic.slug} href={`/challenges/${topic.slug}`} className="curiosity-card group block">
+              <div className="curiosity-art overflow-hidden rounded-[20px]"><ChallengeArtwork slug={topic.slug} className="aspect-[240/136]" /><span className="curiosity-open" aria-hidden="true"><ArrowRight className="size-5" /></span></div>
               <p className="mt-5 text-sm text-muted">{topic.label}</p>
               <h3 className="mt-2 font-display text-2xl leading-tight tracking-tight group-hover:text-link">{topic.title}</h3>
               <p className="mt-3 max-w-[35ch] text-base leading-relaxed text-muted">{topic.description}</p>
