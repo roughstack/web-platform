@@ -77,6 +77,10 @@ const conceptFigureProps = {
   "systems.journal-story": z.object({}).strict(),
   "systems.lsm-story": z.object({}).strict(),
   "systems.window-story": z.object({}).strict(),
+  "systems.chunk-story": z.object({}).strict(),
+  "systems.scheduler-story": z.object({}).strict(),
+  "systems.queue-story": z.object({}).strict(),
+  "systems.gate-story": z.object({}).strict(),
 } as const;
 
 const figureBlock = z.object({
@@ -88,6 +92,7 @@ const figureBlock = z.object({
       "systems.ranges", "systems.exchange",
       "systems.cache-story", "systems.lost-ack-story",
       "systems.journal-story", "systems.lsm-story", "systems.window-story",
+      "systems.chunk-story", "systems.scheduler-story", "systems.queue-story", "systems.gate-story",
     ]),
     props: z.record(z.string(), z.unknown()).optional(),
   }).strict(),
