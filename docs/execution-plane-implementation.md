@@ -18,11 +18,15 @@ results remain development-only and must never be presented as official scores.
 
 ## Change order
 
-1. **Repair the database migration baseline.** The only committed migration
+1. **Repair the database migration baseline.** The original migration
    predates the current `Difficulty` and `Language` enums, `Reply`, and several
-   `Challenge` and `Submission` fields. Prove an empty database and an upgraded
-   database reach the same schema before adding a job table. Preserve existing
-   submissions and results; do not reset a user's database to hide drift.
+   `Challenge` and `Submission` fields. The follow-up migration maps old
+   difficulty values (`BEGINNER` to `EASY`, `INTERMEDIATE` to `MEDIUM`, and
+   `ADVANCED`/`EXPERT` to `HARD`), converts legacy description and interface
+   text to blocks, and preserves submissions. Disposable Postgres tests passed
+   for both populated legacy rows and a database already at the `db push`
+   schema; CI now replays and compares migrations on every PR. Never reset a
+   user's database to hide drift.
 2. Define versioned job input and result-provenance contracts. Inputs snapshot
    the challenge settings and workload variant at acceptance time. Arena jobs
    pin an arena version and manifest digest. Hash the source without embedding
@@ -42,6 +46,10 @@ results remain development-only and must never be presented as official scores.
 
 ## Current slice
 
-The first implementation slice is the versioned input/provenance contract and
-tests. It is intentionally not wired into submission acceptance until the
-migration baseline is verified. No existing run changes behavior in this slice.
+The first implementation slice repairs migration parity and defines the
+versioned input/provenance contract with tests. It is intentionally not wired
+into submission acceptance yet. No existing run changes behavior in this slice.
+
+Databases created earlier with `prisma db push` but without entries in
+`_prisma_migrations` need an operator-reviewed baseline procedure before
+`prisma migrate deploy`; do not run the initial migration against those tables.

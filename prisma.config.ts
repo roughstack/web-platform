@@ -16,5 +16,8 @@ export default defineConfig({
     // do not touch the database, such as `prisma generate` during a type-check in CI,
     // do not fail merely because DATABASE_URL is absent.
     url: process.env.DATABASE_URL ?? "",
+    // Migration parity checks replay committed SQL into a disposable database.
+    // Never point this at a database that contains user or development data.
+    shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL,
   },
 });
