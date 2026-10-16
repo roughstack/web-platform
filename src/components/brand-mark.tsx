@@ -5,7 +5,7 @@ interface BrandMarkProps {
   size?: number;
 }
 
-/** One routed signal across three layers, ending in an active node. */
+/** A modular R: spine, open bowl, and a detached diagonal leg. */
 export function BrandMark({ className, size = 28 }: BrandMarkProps) {
   return (
     <svg
@@ -16,17 +16,10 @@ export function BrandMark({ className, size = 28 }: BrandMarkProps) {
       focusable="false"
       className={cn("shrink-0", className)}
     >
-      <rect width="64" height="64" rx="17" fill="#2447e7" />
-      <path
-        d="M18 17h27v15H20v15h26"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="18" cy="17" r="5.5" fill="#e6fa69" />
-      <circle cx="46" cy="47" r="6.5" fill="#ff784f" stroke="#ffffff" strokeWidth="2" />
+      <rect width="64" height="64" rx="14" fill="#282334" />
+      <path d="M12 12h11v40H12Z" fill="#ff784f" />
+      <path d="M28 12h12a14 14 0 0 1 0 28H28V29h11a3 3 0 0 0 0-6H28Z" fill="#b9a1ff" />
+      <path d="m29 43 12-3 13 12H39Z" fill="#a9e8cb" />
     </svg>
   );
 }

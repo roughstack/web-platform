@@ -10,18 +10,18 @@ type Family =
   | "link" | "lsm" | "stream" | "compaction" | "victim" | "wear";
 
 const FAMILIES: Record<Family, { surface: string; primary: string; secondary: string }> = {
-  cache: { surface: "#baf2d5", primary: "#147d5b", secondary: "#f7bd35" },
-  chunk: { surface: "#d9d4ff", primary: "#5345cb", secondary: "#8bedd0" },
-  scheduler: { surface: "#ffe3a4", primary: "#b35b18", secondary: "#6c8bff" },
-  queue: { surface: "#c9e9ff", primary: "#2869d2", secondary: "#ff9f52" },
-  gate: { surface: "#ccf5db", primary: "#187f58", secondary: "#ffae3d" },
-  journal: { surface: "#ffd3c5", primary: "#cc4d34", secondary: "#6d8be3" },
-  link: { surface: "#d7ddff", primary: "#405edf", secondary: "#ff986c" },
-  lsm: { surface: "#e4d8ff", primary: "#6a4ac8", secondary: "#5cc4aa" },
-  stream: { surface: "#c5f0ea", primary: "#147f87", secondary: "#edaa24" },
-  compaction: { surface: "#c9ebff", primary: "#1a70ad", secondary: "#ffbb3c" },
-  victim: { surface: "#ffddbe", primary: "#c45e28", secondary: "#54a7d3" },
-  wear: { surface: "#f5d5e7", primary: "#ac498a", secondary: "#5eb9a0" },
+  cache: { surface: "#a9e8cb", primary: "#282334", secondary: "#ff784f" },
+  chunk: { surface: "#b9a1ff", primary: "#282334", secondary: "#a9e8cb" },
+  scheduler: { surface: "#ffc35c", primary: "#282334", secondary: "#9b79ee" },
+  queue: { surface: "#97c6ef", primary: "#282334", secondary: "#ff784f" },
+  gate: { surface: "#a9e8cb", primary: "#282334", secondary: "#ff784f" },
+  journal: { surface: "#ff916e", primary: "#282334", secondary: "#9b79ee" },
+  link: { surface: "#b9a1ff", primary: "#282334", secondary: "#ff784f" },
+  lsm: { surface: "#b9a1ff", primary: "#282334", secondary: "#a9e8cb" },
+  stream: { surface: "#a9e8cb", primary: "#282334", secondary: "#ff784f" },
+  compaction: { surface: "#97c6ef", primary: "#282334", secondary: "#ff784f" },
+  victim: { surface: "#ff916e", primary: "#282334", secondary: "#a9e8cb" },
+  wear: { surface: "#efa0c9", primary: "#282334", secondary: "#b9a1ff" },
 };
 
 export function challengeFamily(slug: string): Family {
@@ -43,7 +43,7 @@ export function ChallengeArtwork({ slug, className }: { slug: string; className?
   const family = challengeFamily(slug);
   const weightedCache = family === "cache" && slug.endsWith("-medium");
   const { surface, primary, secondary } = weightedCache
-    ? { surface: "#e4dcff", primary: "#6847c7", secondary: "#f4ce57" }
+    ? { surface: "#b9a1ff", primary: "#282334", secondary: "#ff784f" }
     : FAMILIES[family];
   const ink = "#172730";
 
@@ -55,16 +55,6 @@ export function ChallengeArtwork({ slug, className }: { slug: string; className?
       className={cn("h-full w-full", className)}
       style={{ backgroundColor: surface }}
     >
-      <g stroke={ink} strokeWidth=".5" opacity=".11">
-        {[24, 48, 72, 96, 120, 144, 168, 192, 216].map((x) => (
-          <path key={`v-${x}`} d={`M${x} 0v136`} />
-        ))}
-        {[24, 48, 72, 96, 120].map((y) => (
-          <path key={`h-${y}`} d={`M0 ${y}h240`} />
-        ))}
-      </g>
-      <path d="M13 27V14h14M213 108v14h14" fill="none" stroke={ink} strokeWidth="1.3" opacity=".4" />
-      <circle cx="211" cy="21" r="4" fill={secondary} stroke={ink} strokeWidth="1.4" />
       {weightedCache && (
         <g stroke={ink} strokeWidth="2">
           <path d="M35 98h165" strokeDasharray="4 5" opacity=".45" />
