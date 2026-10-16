@@ -58,3 +58,11 @@ The subject strip links to actual challenge pathways. Subject cards respond to h
 Motion follows an action, not an endless ambient loop. Reduced motion removes spatial transitions. Keep focus indicators, touch targets and readable body text.
 
 Review the actual homepage, dashboard, leaderboard and two difficulty cards at desktop and phone sizes. Ask whether the page has a recognizable silhouette before reading any copy. Do not equate a passing build with aesthetic success. Keep data queries and execution logic outside this design iteration.
+
+### Revision: motion without a manual
+
+The manual memory sculpture was rejected. Landing artwork must feel alive before visitors touch it: no block inspectors, sliders, demonstration buttons, or subject-name strip. Preserve the modular logo. Keep the existing Bricolage headline, readable body typography, left-aligned copy, and open artwork composition.
+
+Use a conceptual storage cutaway, not a literal SSD schematic: violet layers (#7954ef), hot-pink writes (#ff4ba0), cyan routes (#53d9ff), lime cells (#b7ff45), against plum (#282334). Keep motion inside the illustration. Pause it offscreen and render a static reduced-motion alternative.
+
+Replace the elementary cache exercise with a distinct crash-recovery vignette: a durable journal, an interruption, a recovered file. Acid-lime section, violet illustration field. Introduce a question, explain the idea briefly, then link to the real challenge. Do not present conceptual artwork as an executable simulation.
