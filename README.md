@@ -77,22 +77,62 @@ tracks the migration from in-process execution to a durable, isolated worker.
 Requires Docker, Node.js 22, and npm. Go is required only when running the
 simulator tests directly on the host.
 
+For the newer public challenges, clone the independently maintained challenge
+repository beside this one. The current local runner reads those challenge
+packages from disk; a registry file alone cannot execute them. This is an
+explicit development setup, not yet a downloadable challenge-bundle release.
+
+```text
+roughstack/
+  challenges/
+  web-platform/
+```
+
+From a new `roughstack` directory:
+
 ```bash
+git clone https://github.com/roughstack/challenges.git
+git clone https://github.com/roughstack/web-platform.git
+cd web-platform
 npm ci
 cp .env.example .env.local
+BYTEARENA_ARENA_ROOTS=../challenges/challenges npm run arena:validate -- --all
 docker build -t roughstack-execution-runtime:latest ./sprite
 npm run docker:up
 npm run db:push
 npm run db:seed
 ```
 
-The app is served at `http://localhost:3100`.
+Open `http://localhost:3100/challenges/cache-pressure-easy`. The editor must
+show an incomplete scaffold, not the passing public baseline. Complete it and
+submit to see a real local run. `EXECUTION_MODE=local` in `.env.local` is required;
+`stub` emits synthetic UI-development results and must not be used to verify a
+challenge. The Docker Compose file mounts `../challenges` read-only into the web
+container, so a differently placed checkout needs an adjusted mount and
+`BYTEARENA_ARENA_ROOTS` path.
+
+To run the automated baseline-versus-scaffold check against the running stack:
+
+```bash
+ROUGHSTACK_REAL_ARENA_E2E=1 npx playwright test tests/e2e/contributor-loop.spec.ts
+```
+
+This check runs submitted code in Docker and asserts that the public baseline
+passes while the learner scaffold fails with a useful diagnostic. It is opt-in
+because it requires the separate challenge checkout, Docker access, and a live
+database. Use it only on a trusted local machine; the current Docker-backed
+development server is not a public untrusted-code service. The extracted
+`execution-runtime` repository owns SDK and protocol development. This local
+setup still builds its compatibility image from `web-platform/sprite`; moving
+that image to a versioned runtime release is separate work.
 
 ```bash
 npm run docker:logs            # tail the web container
-npm run docker:reset           # wipe volumes and rebuild from scratch
-npm run docker:down            # stop everything
+npm run docker:down            # stop everything without deleting data
 ```
+
+`npm run docker:reset` deletes the local Compose database volume; do not use it
+to troubleshoot an existing checkout without backing up data first.
 
 ---
 
