@@ -5,6 +5,7 @@ import { BudgetDiagram, ExchangeDiagram, FrameDiagram, RangeDiagram, SnapshotDia
 import { FlowDiagram, StateDiagram, TimelineDiagram } from "./illustrations";
 import { JournalRecoveryStory, LsmOverlapStory, StreamWatermarkStory } from "./recovery-time-stories";
 import { CacheStory, LostAckStory } from "./story-illustrations";
+import { ChunkReadStory, SchedulerStory, QueueLeaseStory, TokenGateStory } from "./work-stories";
 
 registerIllustration("systems.flow", FlowDiagram);
 registerIllustration("systems.state", StateDiagram);
@@ -19,3 +20,7 @@ registerIllustration("systems.lost-ack-story", LostAckStory);
 registerIllustration("systems.journal-story", JournalRecoveryStory);
 registerIllustration("systems.lsm-story", LsmOverlapStory);
 registerIllustration("systems.window-story", StreamWatermarkStory);
+registerIllustration("systems.chunk-story", ChunkReadStory);
+registerIllustration("systems.scheduler-story", SchedulerStory);
+registerIllustration("systems.queue-story", QueueLeaseStory);
+registerIllustration("systems.gate-story", TokenGateStory);

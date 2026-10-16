@@ -83,3 +83,21 @@ windows: [0,10)  | [10,20)              watermark = 10
 The axes are conceptual but use the exact published numbers. Do not interpolate
 a fake performance result. In an editor split, keep critical labels legible
 without relying on viewport breakpoints.
+
+## Work and resources batch
+
+These four diagrams share ink typography but not a layout metaphor. Each one
+answers a single question with the exact numbers in its public example. A
+labelled final frame must remain useful without motion or color perception.
+
+| Story | Surface | Single visual transition |
+| --- | --- | --- |
+| Chunk Store | Cool cyan paper with a dark frame boundary | A two-byte selection lights up `CD` in block 1; block 0 remains untouched. |
+| Deadline Scheduler | Ink paper with coral worker lane | C arrives at tick 1 while A continues until tick 6; only then is another dispatch possible. |
+| Durable Queue | Mint field with orange leased state | Nack returns A behind B without releasing resident capacity; B is next. |
+| Fair Gate | Butter field with cobalt token cells | Spend three of four, reject cost three, refill two at tick 3, then admit. |
+
+The typography remains Bricolage for the question and JetBrains Mono for
+bytes, ticks, and tokens. Motion is a finite reveal, never a loop. The queue
+example chooses `Nack` rather than expiry because it matches the published
+worked example; the caption explains that expiry follows the same tail rule.

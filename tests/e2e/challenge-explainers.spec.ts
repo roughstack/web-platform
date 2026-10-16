@@ -48,6 +48,33 @@ test.describe("challenge explainers", () => {
     await expect(page.getByText("count 1 · sum 7")).toBeVisible();
   });
 
+  test("chunk read decodes only the indexed block", async ({ page }) => {
+    await page.goto("/challenges/chunk-store-easy");
+    await expect(page.getByRole("img", { name: /Only block 1 is verified and decoded/ })).toBeVisible();
+    await expect(page.getByText("CRC verified · CD copied")).toBeVisible();
+    await expect(page.getByText("result: CD")).toBeVisible();
+  });
+
+  test("non-preemptive worker makes its next choice at tick six", async ({ page }) => {
+    await page.goto("/challenges/deadline-scheduler-easy");
+    await expect(page.getByRole("img", { name: /C arrives at tick 1 and waits/ })).toBeVisible();
+    await expect(page.getByText("next dispatch @ 6")).toBeVisible();
+  });
+
+  test("nack returns A behind B and keeps capacity occupied", async ({ page }) => {
+    await page.goto("/challenges/durable-queue-easy");
+    await expect(page.getByRole("img", { name: /ready order B then A/ })).toBeVisible();
+    await expect(page.getByText("resident: A + B")).toBeVisible();
+    await expect(page.getByText("old A token: stale")).toBeVisible();
+  });
+
+  test("the token gate admits the retry at the exact refill tick", async ({ page }) => {
+    await page.goto("/challenges/fair-gate-easy");
+    await expect(page.getByRole("img", { name: /earliest RetryAt tick three/ })).toBeVisible();
+    await expect(page.getByText("3 spent · 0 left")).toBeVisible();
+    await expect(page.getByText("ALLOWED", { exact: true })).toBeVisible();
+  });
+
   test("the finite story settles and can be replayed", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto("/challenges/cache-pressure-easy");
