@@ -173,6 +173,9 @@ This ordering borrows proven patterns without copying another product's surface:
 
 ## Recommended implementation order
 
+The [execution-plane implementation plan](execution-plane-implementation.md)
+tracks the first production-readiness project and its migration prerequisite.
+
 1. Define the immutable execution job and result provenance schema.
 2. Publish and verify arena bundles independently of the platform image.
 3. Implement the queue, worker lease, production sandbox adapter, and reconciler.
