@@ -101,3 +101,18 @@ The typography remains Bricolage for the question and JetBrains Mono for
 bytes, ticks, and tokens. Motion is a finite reveal, never a loop. The queue
 example chooses `Nack` rather than expiry because it matches the published
 worked example; the caption explains that expiry follows the same tail rule.
+
+## SSD ladder batch
+
+The ranked ladder keeps its original blue/orange identity but each rung asks
+one harder question. The examples remain teaching examples, not grades.
+
+| Rung | Surface | Consequential action |
+| --- | --- | --- |
+| Compaction | Peach field, ink slot array, cyan filled holes | Three values outside the five-slot prefix move directly into its three holes. Slot 3 stays put. |
+| Victim Selection | Cobalt field, one-page lime marker | Block 3 migrates one live page, then erases eight pages; block 1 would migrate two. |
+| Wear Levelling | Lilac field, two contrasted wear columns | On the separate worked snapshot, block 3 has 17 erases; choosing block 1 costs one extra migration without worsening that tail. |
+
+The previous Compaction end frame showed `[4,7,2,9,5]` and claimed three
+moves. That order requires moving the resident 7 as a fourth move. The correct
+three-move end frame is `[4,2,9,7,5]`.

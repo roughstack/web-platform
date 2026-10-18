@@ -12,6 +12,7 @@ import { registerIllustration, registerInterface } from "../registry";
 import { BlockGrid } from "./illustrations/block-grid";
 import { EfficiencyDial, WearHistogram, WriteAmpBar } from "./illustrations/metrics";
 import { SlotStrip } from "./illustrations/slot-strip";
+import { CompactionStory, VictimStory, WearChoiceStory } from "./illustrations/ladder-stories";
 import { SSD_INTERFACES } from "./interfaces";
 
 export const PACK_ID = "ssd";
@@ -21,6 +22,9 @@ registerIllustration("ssd.blockGrid", BlockGrid);
 registerIllustration("ssd.writeAmpBar", WriteAmpBar);
 registerIllustration("ssd.wearHistogram", WearHistogram);
 registerIllustration("ssd.efficiencyDial", EfficiencyDial);
+registerIllustration("ssd.compaction-story", CompactionStory);
+registerIllustration("ssd.victim-story", VictimStory);
+registerIllustration("ssd.wear-story", WearChoiceStory);
 
 for (const [task, snippets] of Object.entries(SSD_INTERFACES)) {
   for (const language of LANGUAGE_IDS) {

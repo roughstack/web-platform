@@ -13,21 +13,6 @@ import { COMPACTION_STARTERS, VICTIM_STARTERS } from "./starters";
 
 const ALL_LANGUAGES = ["GO", "PYTHON", "C", "CPP", "JAVA", "RUST"];
 
-/** A small hand-made instance, used to illustrate rather than to grade. */
-const EXAMPLE_SLOTS = [4, -1, -1, 7, -1, 2, -1, -1, 9, -1, -1, 5];
-
-/** A device mid-life: some blocks mostly dead, one already empty. */
-const EXAMPLE_BLOCKS = [
-  { index: 0, valid: 7, invalid: 1, free: 0, eraseCount: 3, isOverProvision: false },
-  { index: 1, valid: 2, invalid: 6, free: 0, eraseCount: 4, isOverProvision: false },
-  { index: 2, valid: 8, invalid: 0, free: 0, eraseCount: 2, isOverProvision: false },
-  { index: 3, valid: 1, invalid: 7, free: 0, eraseCount: 5, isOverProvision: false },
-  { index: 4, valid: 4, invalid: 3, free: 1, eraseCount: 3, isOverProvision: false },
-  { index: 5, valid: 0, invalid: 0, free: 8, eraseCount: 6, isOverProvision: true },
-];
-
-const UNEVEN_WEAR = [3, 4, 2, 5, 3, 17, 4, 3, 2, 4, 3, 5];
-
 export const CHALLENGES = [
   // ------------------------------------------------------------ rung 1
   {
@@ -82,16 +67,17 @@ export const CHALLENGES = [
       {
         kind: "figure",
         label: "FIG 1",
-        illustration: { id: "ssd.slotStrip", props: { slots: EXAMPLE_SLOTS, prefix: 5 } },
+        presentation: "immersive" as const,
+        illustration: { id: "ssd.compaction-story", props: {} },
         caption:
-          "Five live values scattered across twelve slots. The line marks where they need to end up: slots 0 to 4.",
+          "Five live values scattered across twelve slots. Three direct moves fill the empty positions in the target prefix, slots 0 to 4.",
       },
       {
         kind: "figure",
         label: "FIG 2",
         illustration: {
           id: "ssd.slotStrip",
-          props: { slots: [4, 7, 2, 9, 5, -1, -1, -1, -1, -1, -1, -1], prefix: 5, highlight: [1, 2, 4] },
+          props: { slots: [4, 2, 9, 7, 5, -1, -1, -1, -1, -1, -1, -1], prefix: 5, highlight: [1, 2, 4] },
         },
         caption:
           "Move the three values outside the prefix into its three holes. Each value moves once; all free slots end up together at the back.",
@@ -201,11 +187,12 @@ export const CHALLENGES = [
         kind: "figure",
         label: "FIG 1",
         illustration: {
-          id: "ssd.blockGrid",
-          props: { blocks: EXAMPLE_BLOCKS, pagesPerBlock: 8 },
+          id: "ssd.victim-story",
+          props: {},
         },
+        presentation: "immersive" as const,
         caption:
-          "Six blocks of eight pages. Block 3 is almost entirely dead; block 2 is entirely live. Block 5 is over-provision space, held back for migrations.",
+          "Among six blocks of eight pages, block 3 needs only one live-page migration before erase. The held-back reserve receives that page.",
       },
       {
         kind: "callout",
@@ -346,9 +333,10 @@ export const CHALLENGES = [
       {
         kind: "figure",
         label: "FIG 1",
-        illustration: { id: "ssd.wearHistogram", props: { eraseCounts: UNEVEN_WEAR } },
+        illustration: { id: "ssd.wear-story", props: {} },
+        presentation: "immersive" as const,
         caption:
-          "This policy optimises only for write amplification. Block 5 has 17 erases; the next highest has 5. One block is wearing more than three times as fast as the others.",
+          "A wear-aware choice may migrate one more live page to avoid erasing the most-worn block again. Whether that trade is worthwhile depends on future writes.",
       },
       {
         kind: "callout",

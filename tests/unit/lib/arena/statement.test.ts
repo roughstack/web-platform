@@ -67,6 +67,10 @@ describe("arena educational statements", () => {
     expect(parseArenaStatement(figure("systems.journal-story", {}))).toHaveLength(1);
     expect(parseArenaStatement(figure("systems.lsm-story", {}))).toHaveLength(1);
     expect(parseArenaStatement(figure("systems.window-story", {}))).toHaveLength(1);
+    for (const id of ["systems.chunk-story", "systems.scheduler-story", "systems.queue-story", "systems.gate-story"]) {
+      expect(parseArenaStatement(figure(id, {}))).toHaveLength(1);
+      expect(() => parseArenaStatement(figure(id, { imaginary: true }))).toThrow();
+    }
     expect(() => parseArenaStatement(figure("systems.cache-story", { mode: "invented" }))).toThrow();
     expect(() => parseArenaStatement(figure("systems.lost-ack-story", {}, "flashing"))).toThrow();
     expect(() => parseArenaStatement(figure("systems.window-story", { imaginary: true }))).toThrow();

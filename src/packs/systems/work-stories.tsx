@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 
-import { Replay, useVisibleStory } from "./story-illustrations";
+import { Replay, useVisibleStory } from "../story-motion";
 
 function StoryFooter({ copy, finished, reducedMotion, replay }: {
   copy: string;
