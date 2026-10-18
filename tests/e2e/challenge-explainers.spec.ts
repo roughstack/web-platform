@@ -83,3 +83,38 @@ test.describe("challenge explainers", () => {
     await expect(page.getByText("A is oldest. B is newest. The 66-byte budget is full.")).toBeVisible();
   });
 });
+
+test.describe("ranked SSD ladder explainers", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+  });
+
+  test("compaction fills three holes without moving the resident value", async ({ page }) => {
+    await page.goto("/challenges/compaction");
+    await expect(page.getByRole("img", { name: /Slot 3 remains in place/ })).toBeVisible();
+    await expect(page.getByText("free suffix: 7")).toBeVisible();
+    await expect(page.getByText("Move slot 11 into slot 4. Slot 3 never moves.")).toBeVisible();
+  });
+
+  test("victim selection migrates one live page before erase", async ({ page }) => {
+    await page.goto("/challenges/victim-selection");
+    await expect(page.getByRole("img", { name: /Block 1 would need two migrations/ })).toBeVisible();
+    await expect(page.getByText("+7 net free")).toBeVisible();
+    await expect(page.getByText("Erase the whole block. Seven net free pages are gained.")).toBeVisible();
+  });
+
+  test("wear-aware choice pays one migration to avoid the worst-worn block", async ({ page }) => {
+    await page.goto("/challenges/wear-levelling");
+    await expect(page.getByRole("img", { name: /not a guaranteed global optimum/ })).toBeVisible();
+    await expect(page.getByText("wear-aware → block 1")).toBeVisible();
+    await expect(page.getByText("+1 migration")).toBeVisible();
+  });
+
+  test("compaction's finite sequence settles and replays", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto("/challenges/compaction");
+    await expect(page.getByText("Move slot 11 into slot 4. Slot 3 never moves.")).toBeVisible({ timeout: 10_000 });
+    await page.getByRole("button", { name: "Replay" }).click();
+    await expect(page.getByText("Five live values; three sit beyond the required prefix.")).toBeVisible();
+  });
+});
