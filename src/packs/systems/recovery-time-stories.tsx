@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 
-import { Replay, useVisibleStory } from "./story-illustrations";
+import { Replay, useVisibleStory } from "../story-motion";
 
 const JOURNAL_STEPS = [
   "LSN 1 and 2 are synced, complete frames with valid checksums.",
